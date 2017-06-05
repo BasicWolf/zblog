@@ -1,0 +1,88 @@
+Why Opera?
+==========
+
+:slug: why_opera
+:categories: Articles
+:tags: Opera
+:date: 2010-04-28 12:00
+
+:summary: There are so many browsers out there! Internet Explorer, Chrome, Firefox, Safari - are the major players on the market. But hey, there is another major and one of the oldest browsers in the world: Opera. You might have heard lots of rumours about it. Maybe even used it. Or maybe you belong to a small group of people, who actually use this browser everyday. Would you like to know, why I've been using Opera for 10 years?
+
+A real hacker?
+--------------
+Opera is my major browser since version 5.02. I discovered it in "Хакер"
+(russian word for "Hacker") monthly magazine. It was described as an innovative
+browser with a "jet engine" inside. With the "A real hacker should use
+Opera!" motto I launched the program... And for ten years Opera never stopped
+surprising me.
+
+You can find lots of "Opera vs. Firefox" or "Opera vs. Chrome" or "Opera vs.
+Something-something-something". Most of those articles will lead you to a
+"speed test" results. Do you really care, if your browser runs a benchmark
+in 10.1 seconds, with top competitor running it in 9.812 s.? I don't. What
+I really care of is how the browser is easy-to-use, is compatible with
+standards and well.. how good it serves my needs.
+
+
+Features?
+---------
+Even if you're an experienced user, you may find lots of features you've
+never heard about. For example, do you know that Opera has a "Show" mode?
+No a common feature though.
+
+What about the common features?
+
+* **Trash bin** for closed tabs. If you close a tab accidentally, ``Ctrl + z``
+  restores it immediately.
+* **Navigation** via mouse or keyboard is very fast in Opera. There are
+  *mouse gestures*, back-and-forward clicks (press left button while holding
+  right button to navigate back), Wand password manager (just press
+  ``Ctrl + Enter`` or the `Wand` button on toolbar to login automatically),
+  keyboard navigation (e.g. ``Shift + arrow keys``), middle-click panning..
+  have I forgotten something?
+* **Zooming** is another great usability feature. A user can combine it with
+  the `Fit to width` feature - that allows zooming into page and being able
+  to navigate without using horizontal scroll bar at all!
+* **Search engine customization** allows one to create a "search engine" from
+  any text box on any website. For example, I often use Google translate's
+  Finnish-to-English page. With custom "search engine" in Opera , all I have
+  to do is to type ``"gfi [word or phrase]"`` in address bar and press
+  "Enter" - Opera will take me to a page with translated text.
+* **Opera Unite** is a technology that turns a browser into a web server.
+  One can share files, music, pictures, serve static html pages, create
+  chatrooms.. you name it!
+
+This is a very short incomplete list and there are lots and lots of other
+great features. But I'm sure you get the idea :)
+
+
+Portability?
+------------
+You see, with Opera you can get it's all wonderful features in one place,
+without messing with add-ons, extensions, plug-ins etc. I get very annoyed
+when I have to use a computer at the university with a "blank" Firefox on it.
+"Blank" means - no particular extensions that could ease user's work. I can
+have a perfectly customized Firefox on my own computer.. but as soon as I
+reach a "blank" installation or even another persons customized environment
+- I fail.
+
+Sorry for mentioning Firefox, but I wanted to explain, why "add-ons" approach
+might not work for a person who seeks a complete solution. I respect Mozilla
+foundation and understand why the "add-ons" way was chosen. Moreover,
+this way has proved it's consistency and our days Firefox has a much bigger
+market share than Opera.
+
+But let's continue with Opera. Opera is truly cross-platform software. Opera
+remains the same on Linux, Windows, MacOS, \*BSD. A user gets the same features
+on all platforms!. Does your mobile phone supports Java? There is Opera Mini
+to serve you. Here comes another feature that was introduced in Opera 9.5
+(back in 2007): synchronization. You add a bookmark in your mobile phone and
+it appears in your desktop browser. You type an address in Opera's address bar
+at work, and then get a clue from the browser's "typed addresses history"
+at home. Will you agree that all this makes Opera extremely portable?
+
+Give it a try!
+--------------
+I hope that I convinced you to give Opera_ another try :) Enjoy!
+
+.. _Opera: http://my.opera.com/community/download.pl?ref=BasicWolf&p=opera_desktop

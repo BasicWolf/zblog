@@ -1,0 +1,58 @@
+.. _pyregs:
+
+PyRegs: The Python Regex Debugger
+=================================
+
+:slug: pyregs
+:categories: Articles
+:tags: programming, Python
+:date: 2013-05-22 12:00
+
+:summary: Long ago, I learned the regular expressions in order to write a simple syntax highlighting engine. Regular expressions are not hard to master, but take time to practice. Kodos_ was the regex debugger of my choice, as it was written in Python. All these years Kodos was a "must have" tool on my development machines. Suddenly with the new version of Debian operating system, Kodos was not in the repositories anymore! Why? Kodos is based on QT3 widgets toolkit, which is a bit outdated nowadays (QT5 has been released recently) and was removed from Debian 7.0 ("Wheezy"). That is how I decided to write a small Python regex debugger in Python 3 and its de-facto standard Tkinter_ bindings to the Tk_ GUI toolkit.
+
+
+PyRegs v0.1
+-----------
+
+Features:
+
+* Written in Python 3
+* Tkinter widgets, which are available on most of the Python-supported
+  platforms.
+* Python 3 regular expressions with Unicode support.
+* Easy matches and grouped values navigation.
+* Regex analysis in separate thread.
+* Quick regex reference.
+* Licensed under GPLv3.
+
+Pyregs v0.1 is ready, you are encouraged to give it a try!
+
+Installation
+------------
+
+Run:
+
+.. code-block:: none
+
+   pip install pyregs
+
+Or clone the repository from https://github.com/BasicWolf/pyregs
+
+Screenshots
+...........
+
+Match tab:
+
+.. image:: {filename}/images/pyregs_v0.1_0.png
+   :align: center
+   :alt: pyregs v0.1
+
+Grouping by name:
+
+.. image:: {filename}/images/pyregs_v0.1_1.png
+   :align: center
+   :alt: pyregs grouping
+
+.. _Tkinter: http://en.wikipedia.org/wiki/Tkinter
+.. _Tk: http://en.wikipedia.org/wiki/Tk_(framework)
+.. _Kodos: http://kodos.sourceforge.net/

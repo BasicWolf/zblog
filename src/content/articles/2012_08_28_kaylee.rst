@@ -1,0 +1,61 @@
+Kaylee
+======
+
+:slug: kaylee
+:categories: Articles
+:tags: programming, projects, Python, CoffeeScript, Kaylee
+:date: 2012-08-28 12:00
+
+:summary: I just returned from my summer vacation and can finally state: another summer is over. But wonderful summer it was! I finally graduated and got a Master's degree in computer science. I cycled a lot and upgraded my MTB skills. I read lot of fiction. And somewhere between work, sports reading and sleeping was **Kaylee**, a distributed and volunteer in-browser computing framework.
+
+
+Kaylee is
+---------
+Kaylee is a Python and JavaScript framework for developing in-browser
+distributed and volunteer computing applications that allows programmers
+to concentrate on business logic by leaving all the computational nodes
+handling to Kaylee.
+
+
+Why?
+----
+Do you have a wast amount of data to be analyzed? Are you deciphering
+a life-and-death matter e-mail? Do you have a smart algorithm to find
+the question with the known "42" answer? Do you have computing resources
+to do any of it? If the answer to the last question is "No! :(" then Kaylee
+is the right solution.
+
+
+With Kaylee you are able to distribute the computation between millions
+of Internet users and they even don't have to know that! This is how it
+works:
+
+1. A user opens a link / enters a web site via a modern browser.
+2. Kaylee is started in background.
+3. The application and the data are downloaded from the server.
+4. The application solves the given tasks.
+5. The results are sent back to the server.
+6. Getting and solving the tasks continues as long as the user stays on
+   the page or there are no more tasks left.
+
+All this happens via JavaScript code executed in a separate so-called
+`Web Worker <http://en.wikipedia.org/wiki/Web_worker>`_ thread. That's
+how Kaylee does not interfere with the browser's main JavaScript loop
+and the user interface is intact.
+
+Documentation
+-------------
+The documentation is available right
+`here <http://kaylee.znasibov.info/docs>`_.
+
+
+Get it!
+-------
+The repository is located at http://github.com/basicwolf/kaylee
+
+
+Release history
+---------------
+
+
+TODO: Kaylee v0.3 <kaylee_0_3>
