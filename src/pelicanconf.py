@@ -51,7 +51,9 @@ DEFAULT_PAGINATION = 10
 
 THEME = os.path.abspath(os.path.join(MYDIR, '../Flex/'))
 
-STATIC_PATHS = ['images', 'attachments', 'static']
+STATIC_PATHS = ['images', 'attachments', 'static', 'extra/CNAME']
+
+EXTRA_PATH_METADATA = {'extra/CNAME': {'path': 'CNAME'},}
 
 PYGMENTS_RST_OPTIONS = {'linenos': 'table'}
 
