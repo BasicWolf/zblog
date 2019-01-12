@@ -447,80 +447,31 @@ The problem is that ``wrapper`` does not mimic the original function. To overcom
 Though this code works fine, it means that one would have to write the same attributes copying routine in every decorator. Sounds familiar? Indeed, why not write yet another decorator, which does the attributes copying? Guess what, the standard library already contains a function ``wraps()`` [2]_ which gracefully handles this issue:
 
 
-.. container:: toggle
 
-  .. code-block:: python3
+.. code-block:: python3
 
-     import time
-     from functools import wraps
+  from functools import wraps
 
-     def timeit(f):
-         @wraps(f)
-         def wrapper(*args, **kw):
-             tick = time.time()
-             ret = f(*args, **kw)
-             tock = time.time()
-
-             print('{}() execution time: {} s.'.format(f.__name__, tock - tick))
-             return ret
-
-         return wrapper
-
-     def log_fn(f):
-         @wraps(f)
-         def wrapper(*args, **kwargs):
-             ret = f(*args, **kwargs)
-             sargs = ', '.join(repr(arg) for arg in args)
-             skwargs = ', '.join('{}={}'.format(k, repr(v))
-                                 for k, v in kwargs.items())
-
-             print('{name}( {sargs}, {skwargs} ) => {ret}'.format(
-                   name=f.__name__,
-                   sargs=sargs,
-                   skwargs=skwargs,
-                   ret=repr(ret)
-             ))
-             return ret
-         return wrapper
-
-     @timeit
-     @log_fn
-     def sum_up_to(x):
-         res = 0
-         for i in range(0, x):
-             res += i
-         return res
-
-     >>> sum_up_to(int(10e6))
-     sum_up_to( 10000000,  ) => 49999995000000
-     sum_up_to() execution time: 0.9093782901763916 s.
-
-  .. code-block:: python3
-
-     from functools import wraps
-
-     def timeit(f):
-         @wraps(f)
-         def wrapper(*args, **kw):
-            ...
-         return wrapper
-
-     def log_fn(f):
-         @wraps(f)
-         def wrapper(*args, **kwargs):
-             ...
-         return wrapper
-
-     @timeit
-     @log_fn
-     def sum_up_to(x):
+  def timeit(f):
+      @wraps(f)
+      def wrapper(*args, **kw):
          ...
+      return wrapper
 
+  def log_fn(f):
+      @wraps(f)
+      def wrapper(*args, **kwargs):
+          ...
+      return wrapper
 
-     >>> sum_up_to(int(10e6))
-     sum_up_to( 10000000,  ) => 49999995000000
-     sum_up_to() execution time: 0.9093782901763916 s.
+  @timeit
+  @log_fn
+  def sum_up_to(x):
+      ...
 
+  >>> sum_up_to(int(10e6))
+  sum_up_to( 10000000,  ) => 49999995000000
+  sum_up_to() execution time: 0.9093782901763916 s.
 
 
 Wonderful! Now ``timeit()`` prints the name of the decorated function.
@@ -548,36 +499,16 @@ thus accepting an integer in the example above breaks the rules.
 The trick is that it is not ``timeit`` which decorates ``sum_up_to``,
 but rather the result of ``timeit(0.1)`` call:
 
-.. container:: toggle
 
-   .. code-block:: python3
+.. code-block:: python3
 
-      import time
-      from functools import wraps
-
-      def timeit(limit):
-          def decorator(f):
-              @wraps(f) # wrap properly
-              def wrapper(*args, **kw):
-                  tick = time.time()
-                  ret = f(*args, **kw)
-                  tock = time.time()
-                  diff = tock - tick
-                  if diff  > limit:
-                      print('{}() execution time: {} s.'.format(f.__name__, diff))
-                  return ret
-              return wrapper
-          return decorator
-
-   .. code-block:: python3
-
-      def timeit(limit):
-          def decorator(f):
-              @wraps(f) # wrap properly
-              def wrapper(*args, **kw):
-                  ...
-              return wrapper
-          return decorator
+   def timeit(limit):
+       def decorator(f):
+           @wraps(f) # wrap properly
+           def wrapper(*args, **kw):
+               ...
+           return wrapper
+       return decorator
 
 
 What happens when a function e.g. ``sum_up_to`` is decorated as ``@timeit(0.1)``?
@@ -586,48 +517,17 @@ Then, Python decorates ``sum_up_to`` with the obtained decorator. It all can be
 decomposed as follows:
 
 
-.. container:: toggle
+.. code-block:: python3
 
-   .. code-block:: python3
+  def timeit(limit):
+      ...
+      return decorator
 
-     import time
-     from functools import wraps
+  timeit_decorator_100ms = timeit(0.1)
 
-     def timeit(limit):
-         def decorator(f):
-             @wraps(f) # wrap properly
-             def wrapper(*args, **kw):
-                 tick = time.time()
-                 ret = f(*args, **kw)
-                 tock = time.time()
-                 diff = tock - tick
-                 if diff > limit:
-                     print('{}() execution time: {} s.'.format(f.__name__, diff))
-                 return ret
-             return wrapper
-         return decorator
-
-     timeit_decorator_100ms = timeit(0.1)
-
-     @timeit_decorator_100ms
-     def sum_up_to(x):
-         res = 0
-         for i in range(0, x):
-             res += i
-         return res
-
-
-   .. code-block:: python3
-
-     def timeit(limit):
-         ...
-         return decorator
-
-     timeit_decorator_100ms = timeit(0.1)
-
-     @timeit_decorator_100ms
-     def sum_up_to(x):
-         ...
+  @timeit_decorator_100ms
+  def sum_up_to(x):
+      ...
 
 
 There are no limits on decorators' arguments design. For example, a
@@ -635,58 +535,25 @@ version of ``timeit`` which accepts two arguments: a limit and a printer
 function:
 
 
-.. container:: toggle
+.. code-block:: python3
 
-   .. code-block:: python3
+   import logging
+   log = logging.getLogger(__name__)
 
-      import time
-      from functools import wraps
+   def timeit(limit, printer_fn=print):
+       def decorator(f):
+           @wraps(f)
+           def wrapper(*args, **kw):
+               ...
+               if diff > limit:
+                   printer_fn('{}() execution time: {:.2} s.'.format(f.__name__, diff))
+               return ret
+           return wrapper
+       return decorator
 
-      import logging
-      log = logging.getLogger(__name__)
-
-      def timeit(limit, printer_fn=print):
-          def decorator(f):
-              @wraps(f)
-              def wrapper(*args, **kw):
-                  tick = time.time()
-                  ret = f(*args, **kw)
-                  tock = time.time()
-                  diff = tock - tick
-                  if diff > limit:
-                      printer_fn('{}() execution time: {:.2} s.'.format(f.__name__, diff))
-                  return ret
-              return wrapper
-          return decorator
-
-      @timeit(0.01, printer_fn=log.warning)
-      def sum_up_to(x):
-          res = 0
-          for i in range(0, x):
-              res += i
-          return res
-
-      sum_up_to(int(10e6))
-
-   .. code-block:: python3
-
-      import logging
-      log = logging.getLogger(__name__)
-
-      def timeit(limit, printer_fn=print):
-          def decorator(f):
-              @wraps(f)
-              def wrapper(*args, **kw):
-                  ...
-                  if diff > limit:
-                      printer_fn('{}() execution time: {:.2} s.'.format(f.__name__, diff))
-                  return ret
-              return wrapper
-          return decorator
-
-      @timeit(100, printer_fn=log.warning)
-      def sum_up_to(x):
-          ...
+   @timeit(100, printer_fn=log.warning)
+   def sum_up_to(x):
+       ...
 
 
 Class as a decorator
