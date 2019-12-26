@@ -43,7 +43,7 @@ will be added to a panel during all test-runs.
 Every applet has a basic context popup-menu with three (at least in GNOME
 v2.26) items:
 
-.. image:: {filename}/images/gnomeapplet/gnomeapplet_1_applet_sample.png
+.. image:: {static}/images/gnomeapplet/gnomeapplet_1_applet_sample.png
    :alt: applet sample
    :align: center
 
@@ -84,7 +84,7 @@ The required xml string is in a very easy-to-understand XML format:
 The example above creates a menu of two items, a separator between them
 and a single sub-item:
 
-.. image:: {filename}/images/gnomeapplet/gnomeapplet_2_menu.png
+.. image:: {static}/images/gnomeapplet/gnomeapplet_2_menu.png
    :alt: applet menu
    :align: center
 
@@ -235,14 +235,14 @@ The code below demonstrates how change-orient signal could be used:
 
 The applet was added to a vertical panel:
 
-.. image:: {filename}/images/gnomeapplet/gnomeapplet_2_vertical.png
+.. image:: {static}/images/gnomeapplet/gnomeapplet_2_vertical.png
    :align: center
    :alt: vertical applet
 
 
 Then, dragged to a auto-hidden horizontal one:
 
-.. image:: {filename}/images/gnomeapplet/gnomeapplet_2_horizontal.png
+.. image:: {static}/images/gnomeapplet/gnomeapplet_2_horizontal.png
    :align: center
    :alt: horizontal applet
 
@@ -251,7 +251,7 @@ Then, dragged to a auto-hidden horizontal one:
 
 The GNOME panel has three background options:
 
-.. image:: {filename}/images/gnomeapplet/gnomeapplet_2_panel.png
+.. image:: {static}/images/gnomeapplet/gnomeapplet_2_panel.png
    :align: center
    :alt: applet on a panel
 
@@ -273,7 +273,7 @@ In Python it is:
 
 Now, the applet should look like this:
 
-.. image:: {filename}/images/gnomeapplet/gnomeapplet_2_transparency.png
+.. image:: {static}/images/gnomeapplet/gnomeapplet_2_transparency.png
    :align: center
    :alt: transparent applet
 

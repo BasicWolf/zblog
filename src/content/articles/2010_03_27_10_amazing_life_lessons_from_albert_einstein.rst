@@ -12,7 +12,7 @@
 1. Follow Your Curiosity
 ------------------------
 
-.. image:: {filename}/images/einstein.jpg
+.. image:: {static}/images/einstein.jpg
    :align: right
    :alt: Albert Einstein
 

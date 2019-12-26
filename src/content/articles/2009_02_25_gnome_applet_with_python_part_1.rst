@@ -107,7 +107,7 @@ After that, the GNOME session could be restarted (restarting X-server via
 Ctrl+Alt+Backspace will do). Try adding the new applet to a panel. The dialog
 should look like this:
 
-.. image:: {filename}/images/gnomeapplet/gnomeapplet_1_select_applet_1.png
+.. image:: {static}/images/gnomeapplet/gnomeapplet_1_select_applet_1.png
    :alt: Add to Panel dialog
    :align: center
 
@@ -123,7 +123,7 @@ The **value="no-picture-yet.png"** string should be changed to
 **value="gnome-laptop.png"**. After restarting GNOME session the
 "Add to panel" dialog should look like this:
 
-.. image:: {filename}/images/gnomeapplet/gnomeapplet_1_select_applet_2.png
+.. image:: {static}/images/gnomeapplet/gnomeapplet_1_select_applet_2.png
    :alt: Add to Panel dialog
    :align: center
 
@@ -131,7 +131,7 @@ If by accident the gnome-laptop.png is absent, it could be saved to
 **/usr/share/pixmaps** from here:
 
 
-.. image:: {filename}/images/gnomeapplet/gnomeapplet_1_gnome-laptop.png
+.. image:: {static}/images/gnomeapplet/gnomeapplet_1_gnome-laptop.png
    :alt: laptop
    :align: center
 
@@ -203,6 +203,9 @@ The bonobo_factory(IID,Type,Description,Version,Callback) arguments are:
 
 "It works!" label should appear on a panel:
 
+.. image:: {static}/images/gnomeapplet/gnomeapplet_1_applet_sample.png
+   :alt: Applet window
+   :align: center
 
 3.2 Debugging routine
 *********************
@@ -251,7 +254,7 @@ Now the applet can be launched from a console with the ``-d`` key, e.g.
 ``./applet.py -d``. The applet should appear in a window. It's a common
 GNOME window:
 
-.. image:: {filename}/images/gnomeapplet/gnomeapplet_1_applet_debug.png
+.. image:: {static}/images/gnomeapplet/gnomeapplet_1_applet_debug.png
    :alt: Applet window
    :align: center
 

@@ -22,7 +22,7 @@ It is a properly brewed tea almost at a boiling point of water.
 The taste is great and is fully-flavoured.
 
 
-.. image:: {filename}/images/articles/caffeine_withdrawal_azeri_tea.jpg
+.. image:: {static}/images/articles/caffeine_withdrawal_azeri_tea.jpg
    :align: center
    :alt: Tea set, Lahic, Azerbaijan | photographer: Orkhan Gurbanzada | from photodom.com
 
@@ -44,7 +44,7 @@ I had a cup of coffee in the morning right after logging in.
 I had another cup right after lunch and usually the third cup
 just before leaving home.
 
-.. image:: {filename}/images/articles/caffeine_withdrawal_coffee.jpg
+.. image:: {static}/images/articles/caffeine_withdrawal_coffee.jpg
    :align: center
    :alt: A cup of coffee
 
@@ -82,7 +82,7 @@ naughty move. The detox process went as follows:
   itch.
 
 
-.. image:: {filename}/images/articles/caffeine_withdrawal_inside.jpg
+.. image:: {static}/images/articles/caffeine_withdrawal_inside.jpg
    :align: center
    :alt: Inside caffeine withdrawal
 

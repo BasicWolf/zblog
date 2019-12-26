@@ -43,13 +43,13 @@ Screenshots
 
 Match tab:
 
-.. image:: {filename}/images/pyregs_v0.1_0.png
+.. image:: {static}/images/pyregs_v0.1_0.png
    :align: center
    :alt: pyregs v0.1
 
 Grouping by name:
 
-.. image:: {filename}/images/pyregs_v0.1_1.png
+.. image:: {static}/images/pyregs_v0.1_1.png
    :align: center
    :alt: pyregs grouping
 

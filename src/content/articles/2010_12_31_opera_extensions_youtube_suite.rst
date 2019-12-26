@@ -35,7 +35,7 @@ The extension provides an easy and convenient way to download YouTube
 videos in all available formats, including mp3 (through the
 `videodroid.org <http://videodroid.org>`_ service).
 
-.. image:: {filename}/images/opera_extensions_youtube_suite/easy_youtube_video_downloader.png
+.. image:: {static}/images/opera_extensions_youtube_suite/easy_youtube_video_downloader.png
    :align: center
    :alt: Opera Video Downloader
 
@@ -70,13 +70,13 @@ Watching videos
 Focus on Videos is a nice extension that deems everything but the video
 you're watching. As a video starts playing, the extension turns this
 
-.. image:: {filename}/images/opera_extensions_youtube_suite/focus_on_video_1.png
+.. image:: {static}/images/opera_extensions_youtube_suite/focus_on_video_1.png
    :align: center
    :alt: Focus On Video
 
 Into this:
 
-.. image:: {filename}/images/opera_extensions_youtube_suite/focus_on_video_2.png
+.. image:: {static}/images/opera_extensions_youtube_suite/focus_on_video_2.png
    :align: center
    :alt: Focus On Video
 
@@ -95,7 +95,7 @@ top corner of the keyboard :).
 An extension that makes user's dream come true. As a user, I'm very
 embarrassed with these kind of ads:
 
-.. image:: {filename}/images/opera_extensions_youtube_suite/ad.png
+.. image:: {static}/images/opera_extensions_youtube_suite/ad.png
    :align: center
    :alt: Adware
 
@@ -118,7 +118,7 @@ playback loop. LoopTube is a small extension that makes our live easier
 by providing that feature. You can manage it's behaviour via additional
 control button:
 
-.. image:: {filename}/images/opera_extensions_youtube_suite/loop_tube.png
+.. image:: {static}/images/opera_extensions_youtube_suite/loop_tube.png
    :align: center
    :alt: Loop Tube
 
@@ -157,7 +157,7 @@ The steps are simple:
 2. Search for videos.
 3. Watch video without Flash plugin involved.
 
-.. image:: {filename}/images/opera_extensions_youtube_suite/html5_video.png
+.. image:: {static}/images/opera_extensions_youtube_suite/html5_video.png
    :align: center
    :alt: Html5 Video extension
 

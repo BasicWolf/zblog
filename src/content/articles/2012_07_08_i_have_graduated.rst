@@ -27,7 +27,7 @@ to another end of the conversation. It saves your battery and network
 bandwidth a lot.
 
 So, without any further hesitation, here is the
-`Download <{filename}/attachments/2012_MSc_Nasibov_Zaur.pdf>`_ link.
+`Download <{static}/attachments/2012_MSc_Nasibov_Zaur.pdf>`_ link.
 I hope you will my thesis interesting and will enjoy reading it.
 
 -- Zaur.

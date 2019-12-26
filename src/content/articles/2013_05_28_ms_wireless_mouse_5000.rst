@@ -22,7 +22,7 @@ on the right. But guess what is the trick in this situation? Most modern
 *ergonomical* mice are created for right-handed persons. For example, this
 nice Logitech M705:
 
-.. image:: {filename}/images/ms_wireless_mouse_5000/logitech_M705.png
+.. image:: {static}/images/ms_wireless_mouse_5000/logitech_M705.png
    :align: center
    :alt: logitech m705
 
@@ -31,7 +31,7 @@ You are probably asking "why not use symmetrical mouse?". And that is
 exactly the kind of mouse I've been using since 2005. This is my old
 Defender (the blue one):
 
-.. image:: {filename}/images/ms_wireless_mouse_5000/defender_orig.jpg
+.. image:: {static}/images/ms_wireless_mouse_5000/defender_orig.jpg
    :align: center
    :alt: defender mouse
 
@@ -60,7 +60,7 @@ I have considered several models, which dropped out of the list one-by-one
 was not big enough for my palm). In the end, the only mouse that seemed to
 fit all these requirements was:
 
-.. image:: {filename}/images/ms_wireless_mouse_5000/mk_wm5000_large.jpg
+.. image:: {static}/images/ms_wireless_mouse_5000/mk_wm5000_large.jpg
    :align: center
    :alt: MS Wireles 5000
 
@@ -82,7 +82,7 @@ big and located directly under the thumb and the little finger.
 The side buttons on MS 5000 are small and very hard to click as they are
 located above of where thumb and little finger are placed:
 
-.. image:: {filename}/images/ms_wireless_mouse_5000/defender_ms_02.jpg
+.. image:: {static}/images/ms_wireless_mouse_5000/defender_ms_02.jpg
    :align: center
    :alt: ms 5000 vs. defender
 
