@@ -47,6 +47,8 @@ SOCIAL = (
     ('rss', '/feeds/atom.xml'),
 )
 
+GOOGLE_ANALYTICS = 'UA-123'
+
 DEFAULT_PAGINATION = 10
 
 THEME = os.path.abspath(os.path.join(MYDIR, '../Flex/'))
@@ -72,3 +74,6 @@ PAGE_SAVE_AS = 'pages/{slug}/index.html'
 #          ('Python.org', 'http://python.org/'),
 #          ('Jinja2', 'http://jinja.pocoo.org/'),
 #          ('You can modify those links in your config file', '#'),)
+
+PAGES_SORT_ATTRIBUTE = 'sortorder'
+LINKS_IN_NEW_TAB = False

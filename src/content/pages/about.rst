@@ -1,6 +1,8 @@
 About
 =====
 
+:sortorder: Z
+
 Hello, I'm Zaur. It's nice to meet you on my website.
 
 About me
