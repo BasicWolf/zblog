@@ -5,8 +5,8 @@ MYDIR = os.path.dirname(__file__)
 
 AUTHOR = "Zaur Nasibov"
 AUTHORS = {}
-SITENAME = "Zaurun Fikirləri"
-SITEDESCRIPTION = "Zaur's Thoughts"
+SITENAME = "Zaur's Thoughts"
+SITEDESCRIPTION = "Zaurun Fikirləri"
 SITELOGO = '/images/logo.png'
 FAVICON = '/images/favicon.png'
 COPYRIGHT_YEAR = 2020
