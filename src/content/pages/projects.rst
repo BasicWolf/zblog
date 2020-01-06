@@ -1,6 +1,8 @@
 Projects
 ========
 
+:sortorder: A
+
 My Master's thesis
 ------------------
 
