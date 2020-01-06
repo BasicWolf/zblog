@@ -1,14 +1,14 @@
 About
 =====
 
-:sortorder:
+:sortorder: X
 
 Hello, I'm Zaur. It's nice to meet you on my website.
 
 About me
 --------
 
-.. image:: {filename}/images/zaur_nasibov.jpg
+.. image:: {static}/images/zaur_nasibov.jpg
    :align: right
    :alt: Zaur Nasibov
 

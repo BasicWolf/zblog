@@ -1,7 +1,7 @@
 Privacy policy
 ==============
 
-:sortorder: X
+:sortorder: Z
 
 Dear visitor.
 
