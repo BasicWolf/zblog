@@ -1,0 +1,21 @@
+sudo: false
+
+language: python
+
+dist: bionic
+
+python:
+  - '3.8'
+
+addons:
+  apt:
+    update: true
+    packages:
+      - plantuml
+      - ghp-import
+
+install:
+  - pip install -r requirements.txt
+
+script:
+  - make publish github
