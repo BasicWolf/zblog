@@ -1,7 +1,7 @@
 About
 =====
 
-:sortorder: Z
+:sortorder:
 
 Hello, I'm Zaur. It's nice to meet you on my website.
 
@@ -22,10 +22,8 @@ Petersburg State Polytechnival University and master's degree at University
 of Eastern Finland. I still love programming and think of it as an art.
 I love beautiful ideas and their implementation in code.
 
-I live in Finland and work in Keycore OY, developing state of the art
-GIS and CAD software.
-The other part of my life is my Family, science fiction, interesting
-science-related books, mountain biking in summer and snowboarding in winter.
+I live in Finland and work at Abloy developing state of the art
+smart locking systems.
 
 Contact me
 -----------
