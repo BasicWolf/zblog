@@ -10,9 +10,9 @@ Concrete Settings: a new way to manage configurations in Python projects
 
 **Concrete Settings** is a new configuration management library for Python projects.
 
-Concrete Settings was born as an effort to improve a configuration of
+Concrete Settings was born as an effort to improve configuration handling in
 a huge decade-old Django application. At the heart of the application
-is a ``settings.py`` file, which originally contained Django-specific settings only.
+is a ``settings.py`` file, which initially contained Django-specific settings.
 What could go wrong if you start adding *application-specific* settings to the file?
 One setting, two settings, four...
 
@@ -22,15 +22,13 @@ One setting, two settings, four...
    FEATURE_Y_ENABLED = True
    FEATURE_Z = 'square'
 
-In time, there are so many settings, that developers loose track of them.
-
-The settings validation is scattered around the code, unless there is no validation
-and settings are used in runtime as-is.
-Some settings are documented, but the documentation is not generated automatically
-from the source files. How soon does the documentation become outdated?
+In time, there were so many settings, that developers loose track of them.
+The documentation was scattered around issues tracking tool and outdated wiki pages.
+There was little or no settings validation - sometimes customers were getting
+``HTTP 500 - Internal Server Error`` due to typo in a setting value.
 
 **Concrete Settings** tries to tackle these problems.
-It is built around developer's experience and end-user application interaction in mind.
+It was built with developers and end-users experience in mind.
 
 Settings with their validation rules and documentation are defined in classes.
 Validation can happen independently from the application, allowing early fails.
@@ -41,9 +39,12 @@ An application should not interact with settings definition directly.
 Instead, a developer can enable reading application configuration from various sources
 like YAML, JSON or Python files, environmental variables and so on.
 
-Have a look at a simple example:
+Let's take a look at a simple example and explore all the bells and whistles
+(aka cool features) you can find in Concrete Settings.
 
 .. code-block:: python
+
+   # app_settings.py
 
    from concrete_settings import Settings
    from concrete_settings.contrib.sources import EnvVarSource
@@ -54,9 +55,11 @@ Have a look at a simple example:
        #: Whether debug mode is enabled
        DEBUG: bool = False
 
+       #: HTTP server host
+       HOST: str = '127.0.0.1'
+
        #: HTTP server listening port
        PORT: int = 8080
-
 
    # Verify settings definition and construct settings object
    app_settings = AppSettings()
@@ -66,6 +69,8 @@ Have a look at a simple example:
    app_settings.update(EnvVarSource())
 
    app_settings.is_valid(raise_exception=True)
+
+   print(f"Server HOST is {app_settings.HOST} ({AppSettings.HOST.__doc__})")
    print(f"Server PORT is {app_settings.PORT} ({AppSettings.PORT.__doc__})")
    print(f"DEBUG is {app_settings.DEBUG} ({AppSettings.DEBUG.__doc__})")
 
@@ -77,11 +82,115 @@ With ``settings.yml`` controlled by an end-user:
    PORT: 8081
 
 
-And an environmental variable ``DEBUG`` set to ``true``, the output is:
+and an environmental variable ``DEBUG`` set to ``true``, the output is:
 
 .. code-block:: pycon
 
-   Server PORT is 8081 (HTTP server listening port)
-   DEBUG is False (Whether debug mode is enabled)
+   Server HOST is 127.0.0.1 (HTTP server host)
+   Server PORT is 80 (HTTP server listening port)
+   DEBUG is True (Whether debug mode is enabled)
 
 
+Document via sphinx-style docstrings
+------------------------------------
+
+Concrete Settings uses Sphinx to extract documentation
+written in ``#:`` comments above settings definitions
+and stores it to ``Setting.__doc__``.
+Documentation can be also passed in an explicit Setting
+definition.
+
+Let's compare these explicit and implicit definitions:
+
+.. code-block:: python
+
+   class AppSettingsExplicit(Settings):
+
+       HOST = Setting(
+           '127.0.0.1',
+           type_hint=str,
+           doc='HTTP server host'
+       )
+
+   class AppSettingsImplicit(Settings):
+
+       #: HTTP server host
+       HOST: str = '127.0.0.1'
+
+
+
+They are equivalent for Concrete Settings and you can use either.
+However, which one is more readable in your opinion?
+
+
+Validate settings early and...
+------------------------------
+
+What if a user makes a typo and the supplied port is not an integer?
+
+Let's change a value in ``settings.yml``:
+
+.. code-block:: yaml
+
+   PORT: 8081
+
+to
+
+.. code-block:: yaml
+
+   PORT: "8081"
+
+Since we are calling ``settings.is_valid()`` with argument ``raise_exception=True``,
+a validation error is raised:
+
+.. code-block:: pycon
+
+   concrete_settings.exceptions.ValidationError: PORT: Expected value of type `<class 'int'>` got value of type `<class 'str'>`.
+
+
+What you see there is ``ValueTypeValidator`` from ``Settings.default_validators`` in action.
+
+... add custom validators with style!
+-------------------------------------
+
+
+Let's craft add a validator which checks that port number is equal or greater than ``8000``:
+
+.. code-block:: python
+
+   from concrete_settings import Settings, ValidationError, validate
+
+
+   def port_validator(value: int, **ignore):
+       if not 8000 <= value <= 65535:
+           raise ValidationError('Expected value in range 8000..65535')
+
+
+   class AppSettings(Settings):
+
+       #: HTTP server listening port
+       PORT: int = 8080 @validate(port_validator)
+
+
+   app_settings = AppSettings()
+   app_settings.update('settings.yml')
+
+   print(app_settings.is_valid())
+   print(app_settings.errors)
+
+Isn't that ``PORT`` definition truly readable? You can add validators
+to a setting via a decorator-like syntax
+(actually it's a matrix multiplication operator in this case :).
+
+Let's test it out by changing ``PORT`` value in ``settings.yml`` to 80:
+
+.. code-block:: yaml
+
+   PORT: 80
+
+The result of running the snippet above is
+
+.. code-block:: pycon
+
+   False
+   {'PORT': ['Expected value in range 8000..65535']}
