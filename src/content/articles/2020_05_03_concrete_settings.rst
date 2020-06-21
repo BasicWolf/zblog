@@ -74,21 +74,22 @@ Let's take a look at a simple example and explore all the bells and whistles
    print(f"Server PORT is {app_settings.PORT} ({AppSettings.PORT.__doc__})")
    print(f"DEBUG is {app_settings.DEBUG} ({AppSettings.DEBUG.__doc__})")
 
-With ``settings.yml`` controlled by an end-user:
+An end-user is happy with the default ``HOST`` value, but wants to override
+the rest of the configuration in ``settings.yml``
 
 .. code-block:: yaml
 
-   DEBUG: false
    PORT: 8081
 
+and set ``DEBUG=true`` via an environmental variable.
 
-and an environmental variable ``DEBUG`` set to ``true``, the output is:
+The output in this case would be:
 
 .. code-block:: pycon
 
-   Server HOST is 127.0.0.1 (HTTP server host)
-   Server PORT is 80 (HTTP server listening port)
-   DEBUG is True (Whether debug mode is enabled)
+   Server HOST is 127.0.0.1 (HTTP server host)       # default value
+   Server PORT is 8080 (HTTP server listening port)  # settings.yml
+   DEBUG is True (Whether debug mode is enabled)     # environmental variable
 
 
 Document via sphinx-style docstrings
@@ -116,7 +117,6 @@ Let's compare these explicit and implicit definitions:
 
        #: HTTP server host
        HOST: str = '127.0.0.1'
-
 
 
 They are equivalent for Concrete Settings and you can use either.
@@ -178,8 +178,7 @@ Let's craft add a validator which checks that port number is equal or greater th
    print(app_settings.is_valid())
    print(app_settings.errors)
 
-Isn't that ``PORT`` definition truly readable? You can add validators
-to a setting via a decorator-like syntax
+Here we use a decorator-like syntax of so-called *behaviors*
 (actually it's a matrix multiplication operator in this case :).
 
 Let's test it out by changing ``PORT`` value in ``settings.yml`` to 80:
@@ -194,3 +193,18 @@ The result of running the snippet above is
 
    False
    {'PORT': ['Expected value in range 8000..65535']}
+
+If you are still uncomfortable with @behaviors - there is an explicit way to
+add validators to settings. Simply pass ``validators`` to ``Setting`` constructor:
+
+
+.. code-block:: python
+
+   class AppSettings(Settings):
+
+       #: HTTP server listening port
+       PORT: int = Setting(8080, validators=(port_validator,))
+
+
+Hierarchy is nice
+-----------------
