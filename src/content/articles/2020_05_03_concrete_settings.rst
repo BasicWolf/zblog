@@ -7,8 +7,9 @@ Concrete Settings: a new way to manage configurations in Python projects
 :date: 2020-05-03 12:00
 :status: draft
 
-
-**Concrete Settings** is a new configuration management library for Python projects.
+After two years of developing a hobby project,
+I am proud to announce **Concrete Settings** -
+a new configuration management library for Python projects.
 
 Concrete Settings was born as an effort to improve configuration handling in
 a huge decade-old Django application. At the heart of the application
@@ -185,6 +186,7 @@ Let's test it out by changing ``PORT`` value in ``settings.yml`` to 80:
 
 .. code-block:: yaml
 
+
    PORT: 80
 
 The result of running the snippet above is
@@ -206,5 +208,98 @@ add validators to settings. Simply pass ``validators`` to ``Setting`` constructo
        PORT: int = Setting(8080, validators=(port_validator,))
 
 
-Hierarchy is nice
------------------
+Helpful hierarchies
+-------------------
+
+I never liked settings names like ``DB_HOST_ADDRESS``.
+Why have flat settings names, with feature, sub-feature,
+configuration, sub-configuration... in them?
+
+Concrete Settings provides both extension and grouping
+mechanism for settings. For example, let's define database and logging
+settings in separate classes:
+
+.. code-block:: python
+
+   from concrete_settings import Settings
+
+   class DBSettings(Settings):
+       USER = 'alex'
+       PASSWORD  = 'secret'
+       SERVER = 'localhost@5432'
+
+   class LoggingSettings(Settings):
+       LEVEL = 'INFO'
+       FORMAT = '%(asctime)s %(levelname)-8s %(name)-15s %(message)s'
+
+   class AppSettings(Settings):
+       DB = DBSettings()
+       LOG = LoggingSettings()
+
+   app_settings = AppSettings()
+   print(app_settings.LOG.LEVEL)
+
+At first glance, there is nothing special about this code.
+What makes it special and somewhat confusing is
+that class ``Settings`` is a subclass of ``Setting``!
+Hence, nested Settings behave and can be treated
+as Setting descriptors - have validators, documentation
+or bound behavior.
+
+Additionally, validating top-level settings
+automatically cascades to all nested settings.
+The following example ends up with a validation error:
+
+.. code-block:: python
+
+   from concrete_settings import Settings
+
+   class DBSettings(Settings):
+       USER: str = 123
+       ...
+
+   class AppSettings(Settings):
+       DB = DBSettings()
+       ...
+
+   app_settings = AppSettings()
+   app_settings.is_valid(raise_exception=True)
+
+.. code-block:: pytb
+
+   Traceback (most recent call last):
+       ...
+   concrete_settings.exceptions.ValidationError: DB: Expected value of type `<class 'str'>` got value of type `<class 'int'>`
+
+Finally, the settings can be read from a similarly nested structure. For example ``settings.json``:
+
+.. code-block:: json
+
+   "DB": {
+       "USER": "admin"
+   }
+
+or environmental variable ``DB_USER``.
+
+
+In a retrospective
+------------------
+
+This project took a long time to develop. What I did right was
+no releasing an unfinished and buggy library. That is probably also
+what I did wrong. Trying to polish everything before the first
+public release without getting any users feedback is not the best
+way to go. Hopefully, there will be feedback and the project
+would steer towards its users needs and wishes.
+
+Let's start!
+------------
+
+Install it via pip:
+
+.. code-block:: shell
+
+   pip install concrete-settings
+
+and don't forget to check the the
+`documentation <https://concrete-settings.readthedocs.org>`_!
