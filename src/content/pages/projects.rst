@@ -9,10 +9,11 @@ Current
 Concrete Settings
 -----------------
 
-**Concrete Settings** is a Python library which facilitates
+`Concrete Settings <https://github.com/basicwolf/concrete-settings>`_
+is a Python library which facilitates
 configuration management in big and small programs.
 
-The project was born out of necessity to manage a huge
+It was born out of necessity to manage a huge
 decade-old Django-based SaaS solution with more than two hundred
 different application settings scattered around ``settings.py``.
 *What does this setting do?*
@@ -26,7 +27,7 @@ The settings are defined via normal Python code with few
 tricks which significantly improve readability
 and maintainability.
 
-`Repository <https://github.com/basicwolf/concrete-settings>`_
+
 
 Archived
 ========
