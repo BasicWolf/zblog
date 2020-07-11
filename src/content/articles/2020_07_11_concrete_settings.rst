@@ -4,8 +4,7 @@ Concrete Settings: a new way to manage configurations in Python projects
 :slug: concrete_settings
 :categories: Articles
 :tags: programming, library, python, concrete settings
-:date: 2020-05-03 12:00
-:status: draft
+:date: 2020-07-11 13:06
 
 After two years of developing a hobby project,
 I am proud to announce **Concrete Settings** -
@@ -199,7 +198,7 @@ Let's craft a validator which checks that port number is equal or greater than `
    class AppSettings(Settings):
 
        #: HTTP server listening port
-       PORT: int = 8080 @validate(port_validator)
+       PORT: int = 8080 @validate(port_validator)  # <--- I know you are scrolling, but have you noticed this?
 
 
    app_settings = AppSettings()
