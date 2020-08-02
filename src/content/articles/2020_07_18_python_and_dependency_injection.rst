@@ -7,8 +7,8 @@ Python and dependency injection
 :date: 2020-07-18 12:00
 :status: draft
 
-Dependencies and interfaces
----------------------------
+Dependencies and abstractions
+-----------------------------
 
 Beep... beep.. beep... - an alarm clock wakes me up.
 I have to get up early and make breakfast for kids.
@@ -26,11 +26,10 @@ brings us to being dependent on the constant
 laws of physics!
 
 Dependencies are everywhere. However, is it a concrete
-dependency or just its interface exposed to the outer
-world, that we depend upon?
+dependency or just its abstract capabilities that we depend upon?
 
-Imagine that you have to make a phone call. Does it matter,
-whether you use an IPhone, or some Android
+Imagine that you have to make a phone call over GSM phone network.
+Does it matter, whether you use an IPhone, or some Android
 device, or even a good-old stationary phone?
 
 You are probably reading this article from
@@ -43,6 +42,16 @@ electric, diesel or even a steam -powered
 pulls the train. Hah, it could be the Superman working out.
 I'd be a happy passenger as long as the
 locomotive dependency does the job.
+
+Tadaaam! We've just rediscovered the **Dependency Inversion Principle**.
+Robert Martin defined the Dependency Inversion Principle in two statements [2]_:
+
+  1. High-level modules should not depend on low-level modules. Both should depend on abstractions.
+  2. Abstractions should not depend on details. Details should depend upon abstractions.
+
+Back to the train example, a train (**high-level module**)
+does not depend on a kind of the locomotive (**low-level module**).
+It simply depends on being pulled (**abstraction**).
 
 
 Dependencies through eye of the Python
@@ -72,7 +81,7 @@ and its ``.send()`` method.
 In other words, **message_bus is a dependency of  send_alert()**.
 
 
-Dependency Injection
+Passing dependencies
 ....................
 
 Using a global variable as a dependency is simple and easy to start with,
@@ -97,15 +106,17 @@ argument:
 
 This small change brings an immediate improvement to the code.
 There are no more magic global variables, and what is even
-more important - **it becomes obvious that send_alert()
-depends on MessageBus object**.
+more important - **it is obvious that send_alert()
+depends on a MessageBus object**.
 
 Testing ``send_alert()`` is now also simple, since
 a test double, such as a mocked ``MessageBus`` instance
 is explicitly passed to the function.
 
+The huge downside is that ``message_bus`` has to be
+passed to every ``send_alert()`` call.
 
-
+There are different ways to overcome this.
 
 
 
@@ -144,3 +155,4 @@ References
 ----------
 
 .. [1] `Dependency injection in ASP.NET Core <https://docs.microsoft.com/en-us/aspnet/core/fundamentals/dependency-injection?view=aspnetcore-3.1>`_
+.. [2] Robert Martin C. (2003), *Agile Software Development, Principles, Patterns, and Practices*. ISBN 978-0135974445.
