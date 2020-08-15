@@ -10,22 +10,17 @@ Python and dependency injection
 Dependencies and abstractions
 -----------------------------
 
-Beep... beep.. beep... - an alarm clock wakes me up.
-I have to get up early and make breakfast for kids.
-I depend on alarm being triggered at the right time.
-The alarm clock application runs on a mobile phone.
-It has a galaxy of dependencies! Software, hardware...
-down to the power source and *electricity*. The battery has
-to be charged, otherwise the phone won't work at all.
-But the electricity for charging has to come from somewhere.
-I depend on my energy company to produce and deliver
-electricity. And the energy company gets it from
-a sources like a solar or a nuclear power plant.
-Going deeper and deeper in eventually
-brings us to being dependent on the constant
-laws of physics!
+Dependencies are everywhere. Our mornings
+often start with the least pleasing dependency
+- an alarm clock. The following dependencies
+are running water in a bathroom and electricity
+to brew hot coffee and have a fresh breakfast.
+Imagine the galaxy of dependencies required
+to pump that water and electricity into
+a house. Water and power plants, all the equipment
+and all the plumbing and power lines!
 
-Dependencies are everywhere. However, is it a concrete
+Our world runs on dependencies. However, is it a concrete
 dependency or just its abstract capabilities that we depend upon?
 
 Imagine that you have to make a phone call over GSM phone network.
@@ -44,21 +39,21 @@ I'd be a happy passenger as long as the
 locomotive dependency does the job.
 
 Tadaaam! We've just rediscovered the **Dependency Inversion Principle**.
-Robert Martin defined the Dependency Inversion Principle in two statements [2]_:
+Robert Martin defined the Dependency Inversion Principle in two statements: [2]_
 
-  1. High-level modules should not depend on low-level modules. Both should depend on abstractions.
-  2. Abstractions should not depend on details. Details should depend upon abstractions.
+1. High-level modules should not depend on low-level modules. Both should depend on abstractions.
+2. Abstractions should not depend on details. Details should depend upon abstractions.
 
 Back to the train example, a train (**high-level module**)
 does not depend on a kind of the locomotive (**low-level module**).
 It simply depends on being pulled (**abstraction**).
 
 
-Dependencies through eye of the Python
---------------------------------------
+Dependencies through the eye of the Python
+------------------------------------------
 
 Getting back to programming and Python - what is a dependency?
-*A dependency is an object, that another object requires.* [1]_.
+*A dependency is an object, that another object requires.* [1]_
 
 Let's have at an example function which sends an alert
 via a messaging bus:
@@ -78,11 +73,11 @@ via a messaging bus:
 
 Here ``send_alert()`` function depends on ``message_bus`` object
 and its ``.send()`` method.
-In other words, **message_bus is a dependency of  send_alert()**.
+In other words, ``message_bus`` is a **dependency** of  ``send_alert()``.
 
 
-Passing dependencies
-....................
+Dependency Injection
+--------------------
 
 Using a global variable as a dependency is simple and easy to start with,
 but it quickly becomes a maintenance nightmare.
@@ -108,36 +103,87 @@ This small change brings an immediate improvement to the code.
 There are no more magic global variables, and what is even
 more important - **it is obvious that send_alert()
 depends on a MessageBus object**.
-
 Testing ``send_alert()`` is now also simple, since
 a test double, such as a mocked ``MessageBus`` instance
 is explicitly passed to the function.
-
 The huge downside is that ``message_bus`` has to be
 passed to every ``send_alert()`` call.
 
-There are different ways to overcome this.
+There are different ways to tackle this:
 
+**Functional** - create a closure (a partial function)
+which wraps ``send_alert`` and supplies its first
+argument. For example:
+
+.. code-block:: python
+   :linenos:
+
+   from functools import partial
+   from message_bus_library import MessageBus, get_message_bus
+
+   def _send_alert(message_bus: MessageBus, message: str):
+       ...
+
+   send_alert = partial(_send_alert, message_bus=get_message_bus())
+
+Do you see the trap? ``send_alert`` is a closure which is initialized
+"right here, right now" - when Python processes line #7.
+This means that the ``message_bus`` argument has to be resolved
+while not all of the application code is loaded.
+This problem can be naturally solved the object-oriented way.
+
+**Object-Oriented** - put the ``send_alert`` method in a class
+and store the dependency to the class field via ``__init__()``:
+
+.. code-block:: python
+
+  class AlertDispatcher:
+      _message_bus: MessageBus
+
+      def __init__(self, message_bus: MessageBus):
+          self._message_bus = message_bus
+
+      def send(message: str):
+          self._message_bus.send(
+              topic='alert',
+              priority=Priority.HIGHEST,
+              message=message
+          )
+
+This eliminates the immediate initialization problem:
+``AlertDispatcher`` can be instantiated with the required dependency
+after Python fully loads the program files to memory.
+
+Now that dispatching alerts is handled by a class,
+wrapping a message bus and an alert dispatcher is simple:
+
+.. code-block:: python
+
+   ...
+   rabbit_message_bus = RabbitMQBus()
+   alert_dispatcher =  AlertDispatcher(rabbit_message_bus)
+
+   try:
+       ...
+   except ReactorMetldownError as e:
+     alert_dispatcher.send(str(e))
+     ...
+
+Notice how ``AlertDispatcher`` object is constructed.
+Its ``message_bus`` dependency is fulfilled by  an instance of``RabbitMQBus``.
+In other words, the *dependency is injected* into an object, while the object
+is being initialized (constructed).
+
+  In software engineering, *dependency injection* is a technique in which an
+  object receives other objects that it depends on.
+  The receiving object is called a *client* and the passed (that is, "injected")
+  object is called a *service*.
+  The service is made part of the client's state. Passing the service to the client,
+  rather than allowing a client to build or find the service, is the fundamental
+  requirement of the pattern. [3]_
 
 
 ----
-
-For example, ``message_bus`` is imported from
-a global application context.
-
-Passing a dependency
-to a
-
-This small example comes with a big architectural decision:
-``message_bus`` is  passed to ``send_alert()`` via a global
-variable.
-
-and is being **injected** into ``send_alert()``
-  as a global variable.
-
-
-What dependency injection is and is not
----------------------------------------
 
 
 Improved application structure
@@ -156,3 +202,4 @@ References
 
 .. [1] `Dependency injection in ASP.NET Core <https://docs.microsoft.com/en-us/aspnet/core/fundamentals/dependency-injection?view=aspnetcore-3.1>`_
 .. [2] Robert Martin C. (2003), *Agile Software Development, Principles, Patterns, and Practices*. ISBN 978-0135974445.
+.. [3] Dependency Injection. From Wikipedia. Retrieved on 2020.08.15. URL: https://en.wikipedia.org/wiki/Dependency_injection
