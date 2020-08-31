@@ -52,10 +52,10 @@ It simply depends on being pulled (**abstraction**).
 Dependencies through the eye of the Python
 ------------------------------------------
 
-Getting back to programming and Python - what is a dependency?
-*A dependency is an object, that another object requires.* [1]_
+In terms of software development,
+*a dependency is an object, that another object requires.* [1]_
 
-Let's have at an example function which sends an alert
+Let's have a look at an example function which sends an alert
 via a messaging bus:
 
 .. code-block:: python
@@ -85,7 +85,7 @@ Consider the kind of "dark magic" required to write a unit test
 for ``send_alert`` - the module has to be monkey patched in order
 to replace ``message_bus`` with a test double.
 
-Another way would be passing the dependency as a function
+Another way is to pass the dependency as a function
 argument:
 
 .. code-block:: python
@@ -129,8 +129,9 @@ argument. For example:
 Do you see the trap? ``send_alert`` is a closure which is initialized
 "right here, right now" - when Python processes line #7.
 This means that the ``message_bus`` argument has to be resolved
-while not all of the application code is loaded.
-This problem can be naturally solved the object-oriented way.
+*before* application code is fully loaded.
+To solve this problem ``send_alert`` initialization must be delayed
+until its dependencies are ready.
 
 **Object-Oriented** - put the ``send_alert`` method in a class
 and store the dependency to the class field via ``__init__()``:
@@ -150,31 +151,29 @@ and store the dependency to the class field via ``__init__()``:
               message=message
           )
 
-This eliminates the immediate initialization problem:
+This eliminates the initialization problem:
 ``AlertDispatcher`` can be instantiated with the required dependency
 after Python fully loads the program files to memory.
 
 Now that dispatching alerts is handled by a class,
-wrapping a message bus and an alert dispatcher is simple:
+putting a message bus and an alert dispatcher together is simple:
 
 .. code-block:: python
 
    ...
    rabbit_message_bus = RabbitMQBus()
    alert_dispatcher =  AlertDispatcher(rabbit_message_bus)
+   ...
+   if reactor_meltdown_detected:
+       alert_dispatcher.send('Reactor is no more!')
 
-   try:
-       ...
-   except ReactorMetldownError as e:
-     alert_dispatcher.send(str(e))
-     ...
 
 Notice how ``AlertDispatcher`` object is constructed.
 Its ``message_bus`` dependency is fulfilled by  an instance of``RabbitMQBus``.
 In other words, the *dependency is injected* into an object, while the object
 is being initialized (constructed).
 
-  In software engineering, *dependency injection* is a technique in which an
+  In software engineering, *dependency injection* (DI) is a technique in which an
   object receives other objects that it depends on.
   The receiving object is called a *client* and the passed (that is, "injected")
   object is called a *service*.
@@ -183,7 +182,23 @@ is being initialized (constructed).
   requirement of the pattern. [3]_
 
 
-----
+**Passing the service to the client, rather than allowing a client to build
+or find the service** is the key concept of DI. In the example above
+``AlertDispatcher`` doesn't look for ``message_bus``, but instead requires
+``message_bus`` to be passed during initialization.
+
+
+Abstract dependencies
+---------------------
+
+Did you notice that ``AlertDispatcher`` does not depend on concrete
+``MessageBus`` implementation? It could be ``MemoryMessageBus``,
+``DBus``, ``RabbitMQ`` or anything else implementing the required
+interface. 
+
+Remember how Superman was pulling a train instead of a locomotive?
+
+
 
 
 Improved application structure
