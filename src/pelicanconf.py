@@ -55,7 +55,9 @@ THEME = os.path.abspath(os.path.join(MYDIR, '../Flex/'))
 
 STATIC_PATHS = ['images', 'attachments', 'static', 'extra/CNAME']
 
-EXTRA_PATH_METADATA = {'extra/CNAME': {'path': 'CNAME'},}
+EXTRA_PATH_METADATA = {
+    'extra/CNAME': {'path': 'CNAME'},
+}
 
 PYGMENTS_RST_OPTIONS = {'linenos': 'table'}
 
@@ -65,9 +67,10 @@ ARTICLE_SAVE_AS = 'posts/{date:%Y}/{date:%m}/{date:%d}/{slug}/index.html'
 PAGE_URL = 'pages/{slug}/'
 PAGE_SAVE_AS = 'pages/{slug}/index.html'
 
-#PLUGINS_PATH = os.path.abspath(os.path.join(MYDIR, '../pelican-plugins'))
-#PLUGIN_PATHS = [PLUGINS_PATH]
-#PLUGINS = ["tag_cloud", "assets"]
+# PLUGINS_PATH = os.path.abspath(os.path.join(MYDIR, '../pelican-plugins'))
+# PLUGIN_PATHS = [PLUGINS_PATH]
+# PLUGINS = ["tag_cloud", "assets"]
+PLUGINS = []
 
 # Blogroll
 # LINKS = (('Pelican', 'http://getpelican.com/'),
