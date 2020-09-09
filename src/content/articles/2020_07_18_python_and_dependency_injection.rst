@@ -24,30 +24,32 @@ Our world runs on dependencies. However, is it a concrete
 dependency or just its abstract capabilities that we depend upon?
 
 Imagine that you have to make a phone call over GSM phone network.
-Does it matter, whether you use an IPhone, or some Android
+Does it matter, whether you use an IPhone, an Android
 device, or even a good-old stationary phone?
 
 You are probably reading this article from
 a screen - be it a monitor, a mobile device,
 or a e-Ink display. It doesn't really matter which one.
 
-Sitting in a car of a train,
-we don't care what kind of locomotive - an
-electric, diesel or even a steam -powered
-pulls the train. Hah, it could be the Superman working out.
-I'd be a happy passenger as long as the
-locomotive dependency does the job.
+It is a wonderful Saturday evening and you are
+on a geeks meetup. "Can someone please pass me a beer?"
+Someone passes you a beer and you thank them. It could
+be anyone, your best friend, or someone you've
+met for the first time. It doesn't matter since
+you got the beer.
 
-Tadaaam! We've just rediscovered the **Dependency Inversion Principle**.
+Tadaaam! You've just rediscovered the **Dependency Inversion Principle**.
 Robert Martin defined the Dependency Inversion Principle in two statements: [2]_
 
 1. High-level modules should not depend on low-level modules. Both should depend on abstractions.
 2. Abstractions should not depend on details. Details should depend upon abstractions.
 
-Back to the train example, a train (**high-level module**)
-does not depend on a kind of the locomotive (**low-level module**).
-It simply depends on being pulled (**abstraction**).
-
+Back to the beer example: you, a lazy and thirsty Python developer (**high-level module**)
+does not depend on a concrete person (**low-level module**) in the room.
+All you want is to get a beer (**abstract action**). You also do not depend upon **details**:
+it could be a bottle, a can, a pint glass - your friend would figure it out.
+But he knows, that you won't be happy with a 2 litre plastic bottle:
+it is too thick to be comfortably held in one hand (**detail depending upon abstraction**).
 
 Dependencies through the eye of the Python
 ------------------------------------------
@@ -103,7 +105,7 @@ This small change brings an immediate improvement to the code.
 There are no more magic global variables, and what is even
 more important - **it is obvious that send_alert()
 depends on a MessageBus object**.
-Testing ``send_alert()`` is now also simple, since
+Testing ``send_alert()`` is also simple, since
 a test double, such as a mocked ``MessageBus`` instance
 is explicitly passed to the function.
 The huge downside is that ``message_bus`` has to be
@@ -194,7 +196,7 @@ Abstract dependencies
 Did you notice that ``AlertDispatcher`` does not depend on concrete
 ``MessageBus`` implementation? It could be ``MemoryMessageBus``,
 ``DBus``, ``RabbitMQ`` or anything else implementing the required
-interface. 
+interface.
 
 Remember how Superman was pulling a train instead of a locomotive?
 
