@@ -190,21 +190,51 @@ or find the service** is the key concept of DI. In the example above
 ``message_bus`` to be passed during initialization.
 
 
-Abstract dependencies
----------------------
+Inversion of Control Containers
+-------------------------------
+
+Dependency Injection pattern seems to solve many problems, but it
+comes at a dangerously high cost. In one word: big bowl of
+dependencies spaghetti. What if ``AlertDispatcher`` requires
+two dependencies, and each of those requires even more?
+
+.. code-block:: python
+
+  class AlertDispatcher:
+      def __init__(
+          message_bus: MessageBus,
+          alert_serializer: AlertSerializer
+      )
+          ...
+
+  class MemoryMessageBus:
+      def __init__(heap_memory_provider: HeapMemoryProvider)
+          ...
+
+  class AlertSerializer:
+      def __init__(
+          string_serializer: StringSerializer,
+          binary_serializer: BinarySerializer
+      ):
+          ...
+
+Imagine that one has to initialize all these dependencies manually!
+Imagine that dependencies are initialized somewhere at the middle
+of the running application process. Sounds terrific, doesn't it?
+
+
+
+Abstractions and dependencies
+-----------------------------
+
 
 Did you notice that ``AlertDispatcher`` does not depend on concrete
 ``MessageBus`` implementation? It could be ``MemoryMessageBus``,
 ``DBus``, ``RabbitMQ`` or anything else implementing the required
-interface.
-
-Remember how Superman was pulling a train instead of a locomotive?
+method - after all, Python is a dynamic language with duck typing.
 
 
-
-
-Improved application structure
-------------------------------
+``MessageBus`` could be defined as an abstract class, or a protocol:
 
 
 Targeted unit testing
