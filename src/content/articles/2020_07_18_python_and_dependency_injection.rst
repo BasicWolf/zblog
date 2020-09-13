@@ -194,8 +194,9 @@ Inversion of Control Containers
 -------------------------------
 
 Dependency Injection pattern seems to solve many problems, but it
-comes at a dangerously high cost. In one word: big bowl of
-dependencies spaghetti. What if ``AlertDispatcher`` requires
+comes at a dangerously high cost. In one sentence: big bowl of
+dependencies spaghetti.
+Consider this: what if ``AlertDispatcher`` requires
 two dependencies, and each of those requires even more?
 
 .. code-block:: python
@@ -222,6 +223,62 @@ Imagine that one has to initialize all these dependencies manually!
 Imagine that dependencies are initialized somewhere at the middle
 of the running application process. Sounds terrific, doesn't it?
 
+That's where **Inversion of Control (IoC) containers** or
+**Dependency Injection frameworks** come into play.
+
+An IoC container is an application component
+(a tool, a library, a framework - pick your favourite)
+which manages the dependencies life cycle.
+*Inversion* means that it is the container which instantiates
+the dependencies and their consumers and routes the control
+flow to the consumers' methods.
+This may sound a bit cryptic, but I am sure you will get the idea
+in a moment.
+
+Some IoC containers require explicit dependencies declaration,
+other scan application code and structure to build the dependencies
+tree automatically.
+
+**Pytest** is probably the most famous IoC container in Python
+ecosystem. Pytest
+
+1. Scans the application for tests and fixtures.
+2. Instantiates the fixtures.
+3. Calls the tests (``test_*()``) functions and methods
+4. Injects the instantiated fixtures into the test by matching
+   test function arguments and fixture names.
+
+Here is an example from pytest documentation:
+
+
+.. code-block:: python
+
+    # content of conftest.py
+    import pytest
+    import smtplib
+
+
+    @pytest.fixture(scope="module")
+    def smtp_connection():
+        return smtplib.SMTP("smtp.gmail.com", 587, timeout=5)
+
+The name of the fixture is ``smtp_connection`` and you can access
+its result by listing the name ``smtp_connection`` as an input
+parameter in any test function.
+
+.. code-block:: python
+
+    # content of test_module.py
+
+    def test_ehlo(smtp_connection):
+        response, msg = smtp_connection.ehlo()
+        assert response == 250
+        assert b"smtp.gmail.com" in msg
+        assert 0  # for demo purposes
+
+Here, ``smtp_connection`` is a *dependency*, ``test_ehlo`` is
+a dependency *consumer* and pytest is an *IoC container*, which
+orchestrates the execution flow.
 
 
 Abstractions and dependencies
