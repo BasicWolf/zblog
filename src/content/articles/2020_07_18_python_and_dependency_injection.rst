@@ -23,9 +23,9 @@ and all the plumbing and power lines!
 Our world runs on dependencies. However, is it a concrete
 dependency or just its abstract capabilities that we depend upon?
 
-Imagine that you have to make a phone call over GSM phone network.
+Imagine that you have to make a phone call.
 Does it matter, whether you use an IPhone, an Android
-device, or even a good-old stationary phone?
+device, or a good old stationary phone?
 
 You are probably reading this article from
 a screen - be it a monitor, a mobile device,
@@ -48,7 +48,7 @@ Back to the beer example: you, a lazy and thirsty Python developer (**high-level
 does not depend on a concrete person (**low-level module**) in the room.
 All you want is to get a beer (**abstract action**). You also do not depend upon **details**:
 it could be a bottle, a can, a pint glass - your friend would figure it out.
-But he knows, that you won't be happy with a 2 litre plastic bottle:
+But she knows, that you won't be happy with a 2 litre plastic bottle:
 it is too thick to be comfortably held in one hand (**detail depending upon abstraction**).
 
 Dependencies through the eye of the Python
@@ -106,16 +106,13 @@ There are no more magic global variables, and what is even
 more important - **it is obvious that send_alert()
 depends on a MessageBus object**.
 Testing ``send_alert()`` is also simple, since
-a test double, such as a mocked ``MessageBus`` instance
+a test double such as a mocked ``MessageBus`` instance
 is explicitly passed to the function.
 The huge downside is that ``message_bus`` has to be
 passed to every ``send_alert()`` call.
 
-There are different ways to tackle this:
-
-**Functional** - create a closure (a partial function)
-which wraps ``send_alert`` and supplies its first
-argument. For example:
+This can be tackled by creating a factory function, which
+produces ``send_alert`` with the required dependency:
 
 .. code-block:: python
    :linenos:
@@ -126,17 +123,15 @@ argument. For example:
    def _send_alert(message_bus: MessageBus, message: str):
        ...
 
-   send_alert = partial(_send_alert, message_bus=get_message_bus())
+   def build_send_alert(message_bus: MessageBus):
+      return partial(_send_alert, message_bus=message_bus)
 
-Do you see the trap? ``send_alert`` is a closure which is initialized
-"right here, right now" - when Python processes line #7.
-This means that the ``message_bus`` argument has to be resolved
-*before* application code is fully loaded.
-To solve this problem ``send_alert`` initialization must be delayed
-until its dependencies are ready.
+   send_alert = build_send_alert(get_message_bus())
 
-**Object-Oriented** - put the ``send_alert`` method in a class
-and store the dependency to the class field via ``__init__()``:
+
+An **object-oriented** way solution is to
+put the ``send_alert`` method in a class
+and pass the dependency through ``__init__()``:
 
 .. code-block:: python
 
@@ -153,12 +148,9 @@ and store the dependency to the class field via ``__init__()``:
               message=message
           )
 
-This eliminates the initialization problem:
-``AlertDispatcher`` can be instantiated with the required dependency
-after Python fully loads the program files to memory.
-
-Now that dispatching alerts is handled by a class,
-putting a message bus and an alert dispatcher together is simple:
+Now the application now has two separate components, each
+with its own *single responsibility*: ``AlertDispacher``
+and a ``MessageBus``:
 
 .. code-block:: python
 
@@ -169,11 +161,11 @@ putting a message bus and an alert dispatcher together is simple:
    if reactor_meltdown_detected:
        alert_dispatcher.send('Reactor is no more!')
 
-
-Notice how ``AlertDispatcher`` object is constructed.
-Its ``message_bus`` dependency is fulfilled by  an instance of``RabbitMQBus``.
-In other words, the *dependency is injected* into an object, while the object
-is being initialized (constructed).
+``AlertDispatcher``'s ``message_bus`` dependency is fulfilled
+by  an instance of ``RabbitMQBus``.
+In other words, the objects are *wired* together and
+the *dependency is injected* into an object
+while the object is being initialized (constructed).
 
   In software engineering, *dependency injection* (DI) is a technique in which an
   object receives other objects that it depends on.
@@ -193,7 +185,7 @@ or find the service** is the key concept of DI. In the example above
 Inversion of Control Containers
 -------------------------------
 
-Dependency Injection pattern seems to solve many problems, but it
+Dependency Injection solves many problems, but it
 comes at a dangerously high cost. In one sentence: big bowl of
 dependencies spaghetti.
 Consider this: what if ``AlertDispatcher`` requires
@@ -219,12 +211,10 @@ two dependencies, and each of those requires even more?
       ):
           ...
 
-Imagine that one has to initialize all these dependencies manually!
-Imagine that dependencies are initialized somewhere at the middle
-of the running application process. Sounds terrific, doesn't it?
-
-That's where **Inversion of Control (IoC) containers** or
-**Dependency Injection frameworks** come into play.
+Initializing and *wiring* dependencies together can be done manually.
+However as an application grows, this task can be handled to
+**Inversion of Control (IoC) containers** or
+**Dependency Injection frameworks**.
 
 An IoC container is an application component
 (a tool, a library, a framework - pick your favourite)
@@ -240,16 +230,15 @@ other scan application code and structure to build the dependencies
 tree automatically.
 
 **Pytest** is probably the most famous IoC container in Python
-ecosystem. Pytest
+ecosystem.
 
-1. Scans the application for tests and fixtures.
+1. pytest scans the application for tests and fixtures.
 2. Instantiates the fixtures.
 3. Calls the tests (``test_*()``) functions and methods
 4. Injects the instantiated fixtures into the test by matching
    test function arguments and fixture names.
 
 Here is an example from pytest documentation:
-
 
 .. code-block:: python
 
@@ -281,9 +270,8 @@ a dependency *consumer* and pytest is an *IoC container*, which
 orchestrates the execution flow.
 
 
-Abstractions and dependencies
------------------------------
-
+IoC container and application layers
+------------------------------------
 
 Did you notice that ``AlertDispatcher`` does not depend on concrete
 ``MessageBus`` implementation? It could be ``MemoryMessageBus``,
@@ -291,7 +279,6 @@ Did you notice that ``AlertDispatcher`` does not depend on concrete
 method - after all, Python is a dynamic language with duck typing.
 
 
-``MessageBus`` could be defined as an abstract class, or a protocol:
 
 
 Targeted unit testing
