@@ -62,7 +62,7 @@ via a messaging bus:
 
 .. code-block:: python
 
-  from message_bus_library import MessageBus, MemoryMessageBus, Priority
+  from message_bus_library import MessageBus, MemoryMessageBus
 
   message_bus: MessageBus = MemoryMessageBus()
 
