@@ -355,26 +355,80 @@ class BasketItemController:
         self._add_item_to_basket_use_case = add_item_to_basket_use_case
 
     @post('/basket/{basket_id}/items')
-    def add_item(self, basket_id: UUID, item: BasketItemDto):
+    def add_item(self, basket_id: UUID, item: BasketItemRequestDto):
         basket_item_id = self._add_item_to_basket_use_case
             .add_item_to_basket(basket_id, item.product_id, item.count)
 
-        return basket_item_id
+        return Response(
+            status=HTTP_CREATED,
+            content=BasketItemCreatedResponseDto(basket_item_id)
+        )
 ```
 
-Заметьте, что уже на этом этапе мы можем применить практики TDD, и
-начать с юнит-теста. "Позвольте, а как же `AddItemToBasketUseCase`? -
+У этого адаптера чёткие обязанности:
+
+1. Принимать определённые HTTP запросы.
+2. Десериализовывать и валидировать входные данные.
+3. Запустить свенарий пользования `AddItemToBasketUseCase`.
+4. Сериализовать и возвращать результат выполненного сценария.
+5. А также обрабатывать исключения.
+
+!!!!!!!!!
+Explain DTO!
+В приведённом примере за нас это делает некая http-библиотека или
+фреймворк. Она превращает входной JSON-поток в дата-класс
+`BasketItemDto` и валидирует значения а-ля `Serializer` из
+DjangoRestFramework.
+
+Уже на этом этапе мы могли бы применить практики TDD и
+начать с написания теста и по ходу действия - контроллера.
+"Позвольте, а как же `AddItemToBasketUseCase`? -
 спросите вы. Очень просто. Это же абстракция! Её конкретной
 имплементацией может быть тестовый двойник, например
-тот же `unittest.mock.MagicMock`. Давайте так и
+тот же `MagicMock`.
+Давайте для простоты договоримся, что приложение выполняется
+в некоем контексте `app_context`, который также
+можно передать в pytest-тест.
 
 ```python
 # test/adapter/rest/test_basket_item_controller.py
 
+def test_add_item_to_basket(app_context: AppContext, http_client: TestHttpClient):
+    add_item_to_basket_use_case_mock  = MagicMock()
+    add_item_to_basket_use_case_mock.add_item_to_basket = MagicMock(
+        return_value = UUID('245c8e37-95bb-4a01-be45-38f72550698d')
+    )
 
-def test_add_item_to_basket(http_client, add_item_to_basket_use_case):
+    app_context.add_controller(
+        BasketItemController(add_item_to_basket_use_case_mock)
+    )
+
+    response = http_client.post(
+        f'/basket/{uuid4()}/items',
+        {
+            'product_id': uuid4(),
+            'count': 1
+        }
+    )
+
+    assert response.status_code == HTTP_CREATED
+    assert response.content == json.serialize(
+        BasketItemCreatedResponseDto(
+            basket_item_id=UUID('245c8e37-95bb-4a01-be45-38f72550698d')
+        )
+    }
 
 ```
+
+Заметьте, насколько *облегчённее* становится тестирование, когда
+нам не нужно загружать всё приложение целиком. Адепты Django
+вспомнят о легковесном тестировании вьюшек посредством `RequestFactory`.
+Но гексагональная архитектура позволяет шагнуть дальше.
+Мы избавились от обезьяних патчей и mock-обёрток конкретных классов.
+Мы можем идеально контролировать поведение зависимостей контроллера
+благодаря взаимодействию с ними через абстрактный интерфейс.
+И тест и контроллер легко модифицировать и отлаживать.
+
 
 Здесь `BasketItem` - это доменная модель (Domain Model).
 
