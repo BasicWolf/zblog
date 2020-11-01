@@ -313,8 +313,8 @@ Spoiler: Это один из этажей библиотеки Oodi в Хель
 лежит на поверхности!
 
 В "Гексагональной архитекруте", гексагон призван
-упростить восприятие архитекруты с визуальной
-точки зрения. Мудрёно? Пардон, сейчас всё будет
+упростить восприятие архитекруты.
+Мудрёно? Пардон, сейчас всё будет
 продемонстрировано наглядно.
 
 ## Hexagonal architecture of Ports and Adapters
@@ -382,29 +382,135 @@ OFFTOP: Анемичные модели, или Фаулер и Эванс не 
 камнями, когда вместо знакомого кода вы наткнётесь на некое
 допущение из разряда, "возвращаем объект, который где-то в пути
 к клиенту сериализуется в JSON...".
-Это сделано для того, чтобы мы фокусировались на важном,
-а не отвлекались на второстепенные детали.
+Это сделано для того, чтобы мы фокусировались на важном
+и не отвлекались на второстепенные детали.
 
 ## Upvote a post at Hubr
 
 Представим, что мы разрабатываем новую платформу
-коллективных технических блогов "Хубрухубр"
+коллективных технических блогов "Хубрухубр".
 и нам нужно реализовать сценарий пользования
 "Проголосовать за публикацию".
-Команда экспертов разъясняет некоторые нюансы этого сценария:
+Вместе с командой экспертов мы разобрали некоторые нюансы этого сценария:
 
 0. Рейтинг публикации меняется путём голосования пользователей.
 1. Пользоатель может проголосовать "ЗА" или "ПРОТИВ" публикации.
 2. Пользователь может голосовать за публикации если его карма ≥ 5.
 3. За каждую публикацию пользователь может проголосовать один раз.
-4. Сразу после голосования, пользователь получает значение
-   рейтинга публикации.
+4. Изменить голос нельзя.
+
+
+### Driver port
+
+Итак, переводя на язык архитекруты - в наше приложение
+нужно добавить ведущий порт `VoteForPostUseCase`, который
+принимает ID пользователя, ID поста и значение голоса: за или против.
+
+
+
+```python
+# src/myapp/application/ports/api/vote_for_post_use_case.py
+from uuid import UUID
+
+from myapp.application.domain.model.vote import Vote
+from myapp.application.domain.model.user_vote_for_post import UserVoteForPost
+
+class VoteForPostUseCase(typing.Protocol):
+    def vote_for_post(
+        self,
+        user_id: UUID,
+        post_id: UUID,
+        vote: Vote
+    ): UserVoteForPost
+        pass
+```
+
+Заметьте, что `VoteForPostUseCase`, как и все порты в нашей архитектуре
+- это голая абстракция aka интерфейс.
+
+Здесь же незаметно появляются первые модели домена - `Vote` и
+`UserVoteForPost`:
+
+
+```python
+# src/myapp/application/domain/model/vote.py
+
+from enum import Enum, auto
+
+class Vote(Enum):
+    UP_VOTE = auto()
+    DOWN_VOTE = auto()
+    NO_VOTE = auto()
+```
+
+```python
+# src/myapp/application/domain/model/user_vote_for_post.py
+
+from .vote import Vote
+
+@dataclass
+class UserVoteForPost:
+    id: UUID
+    user_id: UUID
+    post_id: UUID
+    vote: Vote
+
+
+### Domain
+
+Обе вышеприведённые 
+
+
+### Application service
+
+Давайте набросаем сервис приложения, который реализует вышеприведённый
+сценарий и связывает требуемые для него компоненты:
+
+```python
+# src/myapp/application/services/post_rating_service.py
+
+from myapp.application.port.spi import (
+    GetVotingUserPort
+    GetUserVoteForPostPort,
+    SaveUserVoteForPostPort
+)
+
+class PostRatingService(VoteForPostUseCase):
+    get_user_vote_for_post_port: GetUserVoteForPostPort
+    get_voting_user_port: GetVotingUserPort
+    save_user_vote_for_post_port: SaveUserVoteForPostPort
+
+    def __init__(self, ...):
+        ...
+
+    def vote_for_post(self, user_id: UUID, post_id: UUID, vote: Vote):
+        user_vote_for_post = get_user_vote_for_post_port.get_user_vote_for_post(
+            user_id,
+            post_id
+        )
+
+        if user_vote_for_post is not None:
+            return user_vote_for_post
+
+
+        voting_user = get_voting_user_port.get_voting_user(user_id)
+
+        user_vote_for_post = voting_user.cast_vote(post_id, vote)
+
+        save_user_vote_for_post_port.save_user_vote_for_post(
+            user_vote_for_post
+        )
+```
+
+
+
 
 ### Domain model
 
 В нашем приложении уже присутствуют домменые модели описывающие
 пользователя и публикацию. Но вот объекта-значения (value object)
 описывающего рейтинг публикации - нет.
+
 
 ~~Начнём с доменной модели.~~
 Начнём с теста доменной модели описывающей рейтинг публикации:
@@ -413,12 +519,14 @@ OFFTOP: Анемичные модели, или Фаулер и Эванс не 
 
 # test/myapp/application/domain/model/test_rating.py
 
-from myapp.application.domain.model.post_rating import PostRating
+from uuid import uuid4
+
+from myapp.application.domain.model.user_post_rating import PostRating
+
 
 def test_upvote():
-    post_rating = PostRating(10)
+    post_rating = PostRating(id=uuid4(), value=10)
     post_rating.cast_vote(PostRatingVote.UPVOTE)
-
     assert post_rating.rating == 10  # No pasaran!
 ...
 ```
@@ -437,20 +545,20 @@ def test_upvote():
 ```python
 # src/myapp/application/domain/model/post_rating.py
 
-from dataclasses import dataclass
-
 from .post_rating_vote import PostRatingVote
 
-@dataclass
-class Rating:
+class PostRating:
     _rating: int
 
-    def cast_vote(self, vote: Vote):
+    def __init__(self, rating: int):
+        self._rating = rating
+
+    def cast_vote(self, vote: PostRatingVote):
         # mypy предупредит если сравнение выполнено не по всем
         # элементам перечисления.
-        if vote == Vote.UPVOTE:
+        if vote == PostRatingVote.UPVOTE:
             self._increase()
-        elif vote == Vote.DOWNVOTE:
+        elif vote == PostRatingVote.DOWNVOTE:
             self._decrease()
 
     def _increase(self):
@@ -465,42 +573,41 @@ class Rating:
 
 # ------
 
-# src/myapp/application/domain/model/post_rating_vote.py
 
-from enum import Enum, auto
-
-class PostRatingVote(Enum):
-    UPVOTE = auto()
-    DOWNVOTE = auto()
 ```
 
 За кулисами мы также добавим поле `rating: Rating` в класс `Post`.
 
-Пока всё просто. Дальше будет интереснее!
-
-### Driver port
-
-Переводя на язык архитекруты - в наше приложение
-нужно добавить ведущий порт `VoteForPostUseCase`:
-
+A как будет выглядеть модель голосующего пользователя? Ведь всё
+что нужно для возможности голосовать - это значение кармы более или
+равное пяти!
 
 ```python
-# src/myapp/application/ports/api/vote_for_post_use_case.py
+# src/myapp/application/domain/model/voting_user.py
 
-from myapp.application.domain.model.post_rating_vote import PostRatingVote
+from .post_rating import PostRating
+from .post_rating_vote import PostRatingVote
+from .post_rating_vote_cast_error import PostRatingVoteCastError
 
-class VoteForPostUseCase(typing.Protocol):
-    def vote_for_post(
-        self,
-        user_id: UUID,
-        post_id: UUID,
-        vote: PostRatingVote
-    ):
-        pass
+class VotingUser:
+    karma: int
+
+    def __init__(self, karma: int):
+        self.karma = karma
+
+    def vote_for_post(self, post_rating: PostRating, vote: PostRatingVote):
+        if self.karma >= 5:
+            post_rating.cast_vote(vote)
+        else:
+            raise PostRatingVoteCastError('User karma is too low!')
+
 ```
 
-Заметьте, что `VoteForPostUseCase`, как и все порты в нашей архитектуре
-- это голая абстракция aka интерфейс.
+Пока всё просто. Дальше будет интереснее!
+
+
+
+
 
 Чуть позже мы поговорим о сервисе приложения, который имплементирует этот порт.
 А пока напишем REST-адаптер который будет запускать данный сценарий.
