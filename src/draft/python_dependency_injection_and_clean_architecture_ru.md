@@ -302,7 +302,7 @@ screenshot
 для чего предназначено это здание?
 
 
-Spoiler: Это один из этажей библиотеки Oodi в Хельсинки.
+Spoiler: [Разгадка] Это один из этажей библиотеки Oodi в Хельсинки.
 
 Надеюсь вам было несложно отгадать эту маленькую загадку
 и из неё вы вынесли главное:
@@ -407,7 +407,6 @@ OFFTOP: Анемичные модели, или Фаулер и Эванс не 
 принимает ID пользователя, ID поста и значение голоса: за или против.
 
 
-
 ```python
 # src/myapp/application/ports/api/vote_for_post_use_case.py
 from uuid import UUID
@@ -438,9 +437,8 @@ class VoteForPostUseCase(typing.Protocol):
 from enum import Enum, auto
 
 class Vote(Enum):
-    UP_VOTE = auto()
-    DOWN_VOTE = auto()
-    NO_VOTE = auto()
+    UP = auto()
+    DOWN = auto()
 ```
 
 ```python
@@ -454,17 +452,14 @@ class UserVoteForPost:
     user_id: UUID
     post_id: UUID
     vote: Vote
-
-
-### Domain
-
-Обе вышеприведённые 
-
+```
 
 ### Application service
 
 Давайте набросаем сервис приложения, который реализует вышеприведённый
-сценарий и связывает требуемые для него компоненты:
+сценарий и связывает требуемые для него компоненты. Разработку конечно
+же правильнее начинать с тестов, но воспринимать ход мыслей в статье,
+как мне кажется, проще в "традиционном" порядке - утром код, вечером тесты:
 
 ```python
 # src/myapp/application/services/post_rating_service.py
@@ -475,6 +470,9 @@ from myapp.application.port.spi import (
     SaveUserVoteForPostPort
 )
 
+from myapp.application.domain.model.voting_user import VotingUser
+
+
 class PostRatingService(VoteForPostUseCase):
     get_user_vote_for_post_port: GetUserVoteForPostPort
     get_voting_user_port: GetVotingUserPort
@@ -483,17 +481,17 @@ class PostRatingService(VoteForPostUseCase):
     def __init__(self, ...):
         ...
 
-    def vote_for_post(self, user_id: UUID, post_id: UUID, vote: Vote):
+    def vote_for_post(self, user_id: UUID, post_id: UUID, vote: Vote): UserVoteForPost
         user_vote_for_post = get_user_vote_for_post_port.get_user_vote_for_post(
             user_id,
             post_id
         )
 
+        # Has user already voted?
         if user_vote_for_post is not None:
             return user_vote_for_post
 
-
-        voting_user = get_voting_user_port.get_voting_user(user_id)
+        voting_user: VotingUser = get_voting_user_port.get_voting_user(user_id)
 
         user_vote_for_post = voting_user.cast_vote(post_id, vote)
 
@@ -502,7 +500,74 @@ class PostRatingService(VoteForPostUseCase):
         )
 ```
 
+Как мы видим, в сервисте выполняются *некоторые* из бизнес-требований
+данного сценария, например *"За каждую публикацию пользователь может проголосовать один раз"*. В то же время требование *Пользователь может голосовать за публикации если его карма ≥ 5* скрыто глубже в доменной модели `VotingUser`.
+~~Вот она:~~ Эта модель - отличный пример для TDD в рамках архитектуры
+портов и адаптеров. Давайте приведём один тест, а остальные попросим додумать
+вас, уважаемый читатель.
 
+!!!! OFFTOP: TDD
+Мой личный подход к TDD - сначала полностью написать тест, невзирая
+на отсутствие классов, методов и т.д. Убедиться, что тест
+легко читается и обладает другими качествами упомянутыми
+Кентом Бэком в [Test Desiderada](https://medium.com/@kentbeck_7670/test-desiderata-94150638a4b3).
+И уже потом разбираться с ошибками компиляции и теста.
+
+```python
+
+# test/myapp/application/domain/model/test_voting_user.py
+
+from uuid import uuid4
+
+from myapp.application.domain.model.vote import Vote
+from myapp.application.domain.model.voting_user import VotingUser, InsufficientKarmaError
+
+def test_user_with_karma_smaller_than_5_cannot_cast_vote():
+    voting_user = VotingUser(karma=4)
+
+    with pytest.raises(InsufficientKarmaError):
+        voting_user.cast_vote(uuid4(), Vote.UP)
+```
+
+И собственно модель, которая проходит вышеприведённый тест:
+
+```python
+# src/myapp/application/domain/model/voting_user.py
+
+from uuid import uuid4, UUID
+
+from .vote import Vote
+
+MINIMAL_KARMA_FOR_VOTE = 5
+
+class VotingUser:
+    _id: UUID
+    _karma: int
+
+    def __init__(self, id: UUID, karma: int):
+        self._id = id
+        self._karma = karma
+
+    def cast_vote(self, post_id: UUID, vote: Vote):
+        if self._karma < MINIMAL_KARMA_FOR_VOTE:
+            raise InsufficientKarmaError(
+                `User [{self._id}] does not have enough karma to vote`
+            )
+
+        return UserVoteForPost(
+            id=uuid4(),
+            user_id=self._id,
+            post_id=post_id,
+            vote=vote
+        )
+
+class InsufficientKarmaError(Exception):
+    ...
+
+# ------
+
+
+```
 
 
 ### Domain model
@@ -512,69 +577,15 @@ class PostRatingService(VoteForPostUseCase):
 описывающего рейтинг публикации - нет.
 
 
-~~Начнём с доменной модели.~~
-Начнём с теста доменной модели описывающей рейтинг публикации:
-
-```python
-
-# test/myapp/application/domain/model/test_rating.py
-
-from uuid import uuid4
-
-from myapp.application.domain.model.user_post_rating import PostRating
 
 
-def test_upvote():
-    post_rating = PostRating(id=uuid4(), value=10)
-    post_rating.cast_vote(PostRatingVote.UPVOTE)
-    assert post_rating.rating == 10  # No pasaran!
-...
-```
 
 
-!!!! OFFTOP: TDD
-Мой личный подход к TDD - сначала полностью написать тест, невзирая
-на отсутствие классов, методов и т.д. Убедиться, что тест
-легко читается и обладает другими качествами упомянутыми
-Кентом Бэком в [Test Desiderada](https://medium.com/@kentbeck_7670/test-desiderata-94150638a4b3).
-И уже потом разбираться с ошибками компиляции и собственно теста.
+
 
 А вот и модель. Как и другие модели она находится в
 `src/myapp/application/domain/model/`:
 
-```python
-# src/myapp/application/domain/model/post_rating.py
-
-from .post_rating_vote import PostRatingVote
-
-class PostRating:
-    _rating: int
-
-    def __init__(self, rating: int):
-        self._rating = rating
-
-    def cast_vote(self, vote: PostRatingVote):
-        # mypy предупредит если сравнение выполнено не по всем
-        # элементам перечисления.
-        if vote == PostRatingVote.UPVOTE:
-            self._increase()
-        elif vote == PostRatingVote.DOWNVOTE:
-            self._decrease()
-
-    def _increase(self):
-        self._rating += 1
-
-    def _decrease(self):
-        self._rating -= 1
-
-    @property
-    def rating(self):
-        return self._rating
-
-# ------
-
-
-```
 
 За кулисами мы также добавим поле `rating: Rating` в класс `Post`.
 
