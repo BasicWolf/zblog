@@ -472,17 +472,16 @@ from myapp.application.port.spi import (
 
 from myapp.application.domain.model.voting_user import VotingUser
 
-
 class PostRatingService(VoteForPostUseCase):
-    get_user_vote_for_post_port: GetUserVoteForPostPort
-    get_voting_user_port: GetVotingUserPort
-    save_user_vote_for_post_port: SaveUserVoteForPostPort
+    _get_user_vote_for_post_port: GetUserVoteForPostPort
+    _get_voting_user_port: GetVotingUserPort
+    _save_user_vote_for_post_port: SaveUserVoteForPostPort
 
-    def __init__(self, ...):
-        ...
+    # Здесь и далее для краткости опущен метод `__init__()`,
+    # через который инициализуются поля-зависимости компонента.
 
-    def vote_for_post(self, user_id: UUID, post_id: UUID, vote: Vote): UserVoteForPost
-        user_vote_for_post = get_user_vote_for_post_port.get_user_vote_for_post(
+    def vote_for_post(self, user_id: UUID, post_id: UUID, vote: Vote):
+        user_vote_for_post = self._get_user_vote_for_post_port.get_user_vote_for_post(
             user_id,
             post_id
         )
@@ -491,17 +490,18 @@ class PostRatingService(VoteForPostUseCase):
         if user_vote_for_post is not None:
             return user_vote_for_post
 
-        voting_user: VotingUser = get_voting_user_port.get_voting_user(user_id)
+        voting_user: VotingUser = self._get_voting_user_port.get_voting_user(user_id)
 
         user_vote_for_post = voting_user.cast_vote(post_id, vote)
 
-        save_user_vote_for_post_port.save_user_vote_for_post(
+        self._save_user_vote_for_post_port.save_user_vote_for_post(
             user_vote_for_post
         )
 ```
 
 Как мы видим, в сервисте выполняются *некоторые* из бизнес-требований
-данного сценария, например *"За каждую публикацию пользователь может проголосовать один раз"*. В то же время требование *Пользователь может голосовать за публикации если его карма ≥ 5* скрыто глубже в доменной модели `VotingUser`.
+данного сценария, например *"За каждую публикацию пользователь может проголосовать один раз"*.
+В то же время требование *Пользователь может голосовать за публикации если его карма ≥ 5* скрыто глубже в доменной модели `VotingUser`.
 ~~Вот она:~~ Эта модель - отличный пример для TDD в рамках архитектуры
 портов и адаптеров. Давайте приведём один тест, а остальные попросим додумать
 вас, уважаемый читатель.
@@ -565,8 +565,6 @@ class InsufficientKarmaError(Exception):
     ...
 
 # ------
-
-
 ```
 
 
