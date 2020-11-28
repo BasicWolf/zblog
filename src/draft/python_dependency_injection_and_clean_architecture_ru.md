@@ -264,8 +264,8 @@ def alert(message: Message):
   ~~"тесты утром, вечером код"~~ "сначала пишем тест, потом пишем код".
 * С учётом того, что зависимости описываются абстракциями, можно
   безболезненно заменить один компонент другим. В нашем примере -
-  вместо `MemoryMessageBus` можно бухнуть `DbMessageBus` да хоть
-  в файл на диске писать - тому, кто вызывает `message_bus.send(...)`
+  вместо `MemoryMessageBus` можно бухнуть `DbMessageBus`, да хоть
+  в файл на диске писать - тому кто вызывает `message_bus.send(...)`
   нет до этого никакого дела.
 
 "Да это же SOLID!" - скажите вы. И будете абсолютно правы.
@@ -282,7 +282,7 @@ def alert(message: Message):
 
 Одно из замечательных высказываний дяди Боба на тему
 архитектуры приложений - *Architecture is about intent*
-(Архитекрура - в намерениях).
+(Намерения - в архитектуре).
 
 Что вы видите на этом скриншоте?
 
@@ -347,21 +347,15 @@ Mежду портами и доменом сидят дирижёры - **се�
 будет ли сценарий выполнятся в рамках общей транзакции, или нет.
 
 OFFTOP: Анемичные модели, или Фаулер и Эванс не одобряе.
-Со временем мы обнаружили, что большинство моделей в нашем домене - анемичны
+Со временем мы обнаружили, что некоторые модели в нашем домене - анемичны
 и немалая связующая часть бизнес-логики лежит в сервисах приложения.
-Обсудив ситуацию и алтернативы, мы решили оставить всё как есть.
 Советую ознакомится с [переводом](https://habr.com/ru/post/346016/)
 (спасибо, @pankraty!) статьи [The Anaemic Domain Model is no Anti-Pattern, it’s a SOLID design](https://blog.inf.ed.ac.uk/sapm/2014/02/04/the-anaemic-domain-model-is-no-anti-pattern-its-a-solid-design/) в которой данная проблема рассмотрена на порядок глубже.
 
 Всё это - и порты, и адаптеры и сервисы приложения и даже домен - **слои**
-архитектуры. И единственной заповедью взаимодействия между слоями является
+архитектуры. Главной заповедью взаимодействия между слоями является
 "Зависимости всегда направлены от внешних слоёв к центру приложения".
 Например, адаптер может ссылаться на домен, но не наоборот.
-
-Наконец, мы показываем файловую структуру нашего приложение. На Питоне
-это выглядело бы приблизительно так:
-
-!!!!!!
 
 И... ВСЁ. Это - вся суть Гексагональной архитектуры портов и адаптеров.
 Она замечательно подходит для задач с обширной предметной областью.
@@ -403,33 +397,36 @@ OFFTOP: Анемичные модели, или Фаулер и Эванс не 
 ### Driver port
 
 Итак, переводя на язык архитекруты - в наше приложение
-нужно добавить ведущий порт `VoteForPostUseCase`, который
-принимает ID пользователя, ID поста и значение голоса: за или против.
-
+нужно добавить ведущий порт CastArticleVotingtUseCase`, который
+принимает ID пользователя, ID публикации и значение голоса: за или против.
 
 ```python
-# src/myapp/application/ports/api/vote_for_post_use_case.py
+# src/myapp/application/ports/api/cast_article_vote_use_case.py
+
+from typing import Protocol
 from uuid import UUID
 
 from myapp.application.domain.model.vote import Vote
-from myapp.application.domain.model.user_vote_for_post import UserVoteForPost
+from myapp.application.domain.model.cast_article_vote_result import CastArticleVoteResult
 
-class VoteForPostUseCase(typing.Protocol):
-    def vote_for_post(
+
+class CastArticleVoteUseCase(Protocol):
+    def cast_article_vote(
         self,
         user_id: UUID,
         post_id: UUID,
         vote: Vote
-    ): UserVoteForPost
+    ) -> CastArticleVoteResult:
         pass
 ```
 
-Заметьте, что `VoteForPostUseCase`, как и все порты в нашей архитектуре
+Заметьте, что `CastArticleVoteUseCase`, как и все порты в нашей архитектуре
 - это голая абстракция aka интерфейс.
 
-Здесь же незаметно появляются первые модели домена - `Vote` и
-`UserVoteForPost`:
+Здесь же незаметно появляются первые доменные модели - `Vote` и
+`CastArticleVoteResult`.
 
+И если модель `Vote` выглядит очень просто,
 
 ```python
 # src/myapp/application/domain/model/vote.py
@@ -441,18 +438,119 @@ class Vote(Enum):
     DOWN = auto()
 ```
 
+то с `CastArticleVoteResult` всё немного сложнее.
+
+### There is a result about it. No exceptions.
+
+Давайте на секунду отвлечёмся и подумаем, как сигнализировать
+о том, что пользователь уже проглосовал или о том, что у пользователя
+недостаточно кармы для голосования?
+Выкрики из аудитории: "Это ПИТОН, кидай исключения!"
+Кхм, но разве речь идёт об *исключительной* ситуации? Сей
+результат вполне ожидаем и отображён в сценарии! "Функциональное
+программирование! Монады!" - уже лучше. Но что если есть ещё более
+элегантный механизм возвращения и обработки результата выполненного
+сценария? И как вам понравится факт, что этот механизм,
+в основе которого лежит ООП, позволяет отбросить исключения
+и забыть простыни а-ля `if-elif-elif-...`?
+
+Идея очень проста - в результат операции передаётся объект-обработчик
+этого результата. Результат операции сам решает, какие методы
+обработчика нужно вызвать. Думаю адепты трудов GoF точно определят
+название данного шаблона. Мы же разложим его по полочкам.
+
+`CastArticleVoteResult` - это класс лежащий в основе всех результатов
+нашего сценария:
+
 ```python
-# src/myapp/application/domain/model/user_vote_for_post.py
+# src/myapp/application/domain/model/cast_article_vote_result.py
+
+from .cast_article_vote_result_handler import CastArticleVoteResultHandler
+
+class CastArticleVoteResult:
+    def process(self, handler: CastArticleVoteResultHandler):
+        pass
+```
+
+А вот и контретные результаты:
+
+```python
+# src/myapp/application/domain/model/cast_article_vote.py
+
+from dataclasses import dataclass
 
 from .vote import Vote
+from .cast_article_vote_result import CastArticleVoteResult
+from .cast_article_vote_result_handler import CastArticleVoteResultHandler
 
 @dataclass
-class UserVoteForPost:
+class CastArticleVote:
     id: UUID
     user_id: UUID
     post_id: UUID
     vote: Vote
+
+    def process(self, handler: CastArticleVoteResultHandler):
+        handler.handle_cast_aritcle_vote(self)
 ```
+
+```python
+# src/myapp/application/domain/model/article_vote_already_cast.py
+
+from dataclasses import dataclass
+
+from .cast_article_vote_result import CastArticleVoteResult
+from .cast_article_vote_result_handler import CastArticleVoteResultHandler
+
+
+@dataclass
+class ArticleVoteAlreadyCast(CastArticleVoteResult):
+    user_id: UUID
+    post_id: UUID
+
+    def process(self, handler: CastArticleVoteResultHandler):
+        handler.handle_article_vote_already_cast(self)
+```
+
+```python
+# src/myapp/application/domain/model/article_vote_already_cast_result.py
+
+from dataclasses import dataclass
+
+from .cast_article_vote_result import CastArticleVoteResult
+from .cast_article_vote_result_handler import CastArticleVoteResultHandler
+
+
+@dataclass
+class InsufficientUserKarmaToCastArticleVoteResult(CastArticleVoteResult):
+    user_id: UUID
+
+    def process(self, handler: CastArticleVoteResultHandler):
+        handler.handle_insufficient_user_to_cast_article_vote(self)
+```
+
+Вы наверняка уже представили, как выглядит интерфейс `CastArticleVoteResultHandler`.
+На всякий случай, приведём его здесь:
+
+```python
+
+class CastArticleVoteResultHandler(Protocol):
+    def handle_insufficient_user_to_cast_article_vote_result(
+        self,
+        result: InsufficientUserKarmaToCastArticleVoteResult
+    ):
+        pass
+
+
+```
+
+
+Очень важно, что "Пользователь уже проголосовал" является частью
+котранкта данного сценария, а не исключением, за которым
+придётся гоняться. У данной проблемы есть куда более элегантные
+решения, например монады, но если мы сейчас залезем в эти дебри, то
+статья в конец раздуется и лопнет.
+
 
 ### Application service
 
@@ -463,47 +561,80 @@ class UserVoteForPost:
 
 ```python
 # src/myapp/application/services/post_rating_service.py
+from typing import Union
 
-from myapp.application.port.spi import (
-    GetVotingUserPort
-    GetUserVoteForPostPort,
-    SaveUserVoteForPostPort
-)
+from myapp.application.port.spi.get_voting_user_port import GetVotingUserPort
+from myapp.application.port.spi.user_vote_for_post_exists_port import UserVoteForPostExistsPort
+from myapp.application.port.spi.save_user_vote_for_post_port import SaveUserVoteForPostPort
 
 from myapp.application.domain.model.voting_user import VotingUser
+from myapp.application.domain.model.exceptions.user_already_voted_for_post import UserAlreadyVotedForPostError
+
+from myapp.infrastructure import transactional
+
 
 class PostRatingService(VoteForPostUseCase):
-    _get_user_vote_for_post_port: GetUserVoteForPostPort
+    _user_vote_for_post_exists_port: UserVoteForPostExistsPort
     _get_voting_user_port: GetVotingUserPort
     _save_user_vote_for_post_port: SaveUserVoteForPostPort
 
     # Здесь и далее для краткости опущен метод `__init__()`,
     # через который инициализуются поля-зависимости компонента.
 
-    def vote_for_post(self, user_id: UUID, post_id: UUID, vote: Vote):
-        user_vote_for_post = self._get_user_vote_for_post_port.get_user_vote_for_post(
+    @transactional
+    def vote_for_post(self, user_id: UUID, post_id: UUID, vote: Vote)
+        -> Union[UserVoteForPost, UserVoteForPostAlreadyCast]:
+
+        # Если пользователь уже проголосовал, то возвращаем
+        # специальное значение:
+        if self._user_vote_for_post_exists_port.user_vote_for_post_exists(
             user_id,
             post_id
-        )
+        ):
+            raise UserVoteForPostAlreadyCast(user_id, post_id)
 
-        # Has user already voted?
-        if user_vote_for_post is not None:
-            return user_vote_for_post
+        # Если же полжьзователь не голосовал...
 
+        # Загрузим модель "голосующего пользователя" из БД
         voting_user: VotingUser = self._get_voting_user_port.get_voting_user(user_id)
 
+        # Попробуем проголосовать
         user_vote_for_post = voting_user.cast_vote(post_id, vote)
 
+        # И сохранить голос (в БД)
         self._save_user_vote_for_post_port.save_user_vote_for_post(
             user_vote_for_post
         )
+
+        return user_vote_for_post
 ```
 
-Как мы видим, в сервисте выполняются *некоторые* из бизнес-требований
+Очень надеюсь, что вышеприведённый код был лёгок для чтения и понимания.
+Ведь иначё всё это не имеет никакого значения!
+
+У сервиса три зависимости:
+
+* `get_user_vote_for_post_port: GetUserVoteForPostPort` - загружает голос
+  пользовареля, если такой имеется
+* `get_voting_user_port: GetVotingUserPort` - загружает и создаёт модель
+  пользователя, с помощью которой можно проголосовать за публикацию
+* `save_user_vote_for_post_port: SaveUserVoteForPostPort` - сохраняет
+  голос пользователя.
+
+Взаимодействие с ними происходит в методе `vote_for_post()`.
+Сервис не имеет ни малейшего понятия, каким образом имплементированы
+эти зависимости и какого рода хранилище они используют.
+Однако важно показать, что взаимодействие должно выполняться
+в рамках одной транзакции. Поэтому метод обрамляется декоратором `transactional`.
+
+В сервисе также выполняются *некоторые* из бизнес-требований
 данного сценария, например *"За каждую публикацию пользователь может проголосовать один раз"*.
-В то же время требование *Пользователь может голосовать за публикации если его карма ≥ 5* скрыто глубже в доменной модели `VotingUser`.
-~~Вот она:~~ Эта модель - отличный пример для TDD в рамках архитектуры
-портов и адаптеров. Давайте приведём один тест, а остальные попросим додумать
+В то же время требование *Пользователь может голосовать за публикации если его карма ≥ 5* скрыто в доменной модели `VotingUser`.
+
+### Domain model
+
+~~Вот она:~~ Модель `VotingUser` - отличный пример для TDD в рамках архитектуры
+портов и адаптеров. Давайте напишем один тест, а остальные попросим додумать
 вас, уважаемый читатель.
 
 !!!! OFFTOP: TDD
@@ -525,11 +656,15 @@ from myapp.application.domain.model.voting_user import VotingUser, InsufficientK
 def test_user_with_karma_smaller_than_5_cannot_cast_vote():
     voting_user = VotingUser(karma=4)
 
+    # `VotingUser.cast_vote()` выкидывает исключение,
+    # если кармы пользователя не достаточно для голосования
     with pytest.raises(InsufficientKarmaError):
         voting_user.cast_vote(uuid4(), Vote.UP)
 ```
 
-И собственно модель, которая проходит вышеприведённый тест:
+А вот и модель, которая проходит вышеприведённый тест.
+Заметьте, что код компонентов и тестов лежат в файлах с практически
+идентичными путямии. Разница лишь в директориях верхнего уровня: `src/` и `test/`.
 
 ```python
 # src/myapp/application/domain/model/voting_user.py
@@ -563,59 +698,50 @@ class VotingUser:
 
 class InsufficientKarmaError(Exception):
     ...
-
-# ------
 ```
 
+SPI Ports and Adapters
+======================
 
-### Domain model
+Работа с гексагональной архитектурой чем-то напоминает знаменитый
+мем "We need to go deeper".
+Набросав код сервиса и даже написав код домена, можно было позабыть
+о том, что в приложении пока нет ни требуемых SPI-портов ни адаптеров.
+Нужно дальше углубляться в цепочку вызовов и достраивать необходимые
+компоненты.
 
-В нашем приложении уже присутствуют домменые модели описывающие
-пользователя и публикацию. Но вот объекта-значения (value object)
-описывающего рейтинг публикации - нет.
-
-
-
-
-
-
-
-
-А вот и модель. Как и другие модели она находится в
-`src/myapp/application/domain/model/`:
-
-
-За кулисами мы также добавим поле `rating: Rating` в класс `Post`.
-
-A как будет выглядеть модель голосующего пользователя? Ведь всё
-что нужно для возможности голосовать - это значение кармы более или
-равное пяти!
+Давайте рассмотрим SPI-порты и адаптеры на примере ``GetUserVoteForPostPort``:
 
 ```python
-# src/myapp/application/domain/model/voting_user.py
 
-from .post_rating import PostRating
-from .post_rating_vote import PostRatingVote
-from .post_rating_vote_cast_error import PostRatingVoteCastError
+# src/myapp/application/port/spi/get_user_vote_for_post_port.py
 
-class VotingUser:
-    karma: int
+from uuid import UUID
+from typing import Protocol
 
-    def __init__(self, karma: int):
-        self.karma = karma
+from myapp.application.domain.model.user_vote_for_post import UserVoteForPost
 
-    def vote_for_post(self, post_rating: PostRating, vote: PostRatingVote):
-        if self.karma >= 5:
-            post_rating.cast_vote(vote)
-        else:
-            raise PostRatingVoteCastError('User karma is too low!')
-
+  class GetUserVoteForPostPort(Protocol):
+    def get_user_vote_for_post(user_id: UUID, post_id: UUID): UserVoteForPost
+        pass
 ```
 
-Пока всё просто. Дальше будет интереснее!
+Стоит обратить внимание, что один адаптер может имплементировать несколько
+портов. Например, имеет смысл сгруппировать операции на определённой
+сущности базы данных в одном и том же адаптере.
 
+```python
 
+from myapp.application.adapter.db.entities.user_vote_for_post_entity import UserVoteForPostEntity
 
+class PostVoteDatabaseOperations(GetUserVoteForPostPort):
+    def get_user_vote_for_post(user_id: UUID, post_id: UUID) -> UserVoteForPost:
+        return UserVoteForPostEntity.objects.get_or_none(
+            user_id=user_id,
+            post_id=post_id
+        )
+
+```
 
 
 Чуть позже мы поговорим о сервисе приложения, который имплементирует этот порт.
