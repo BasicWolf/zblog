@@ -370,14 +370,17 @@ OFFTOP: Анемичные модели, или Фаулер и Эванс не 
 не утомил вас, а наоборот оказался познавательным и интересным.
 
 Во второй части вас ждёт реализация гексагональной архитектуры
-на знакомом нам всем примере. Как вы заметили, мы
-абстрагируемся от конкретных решений: будь то фреймворки или
-библиотеки. Всвязи с этим, прошу не бузить и не бросаться
-камнями, когда вместо знакомого кода вы наткнётесь на некое
-допущение из разряда, "возвращаем объект, который где-то в пути
-к клиенту сериализуется в JSON...".
-Это сделано для того, чтобы мы фокусировались на важном
-и не отвлекались на второстепенные детали.
+на знакомом нам всем примере. В первой части мы старались
+абстрагироваться от конкретных решений: будь то фреймворки или
+библиотеки. Последующий пример построен на основе Django и DRF
+с целью продемонстрировать, как можно вплести гексагональную
+архитектуру в фреймворк с устоявшимися традициями и архитектурными
+решениями.
+В приведённых примерах вырезаны некоторые необязательные участки
+и имеются допущения. Это сделано для того, чтобы мы могли сфокусироваться
+на важном и не отвлекались на второстепенные детали.
+Полный код доступен в репозитории https://github.com/basicWolf/hexagonal-architecture-django
+
 
 ## Upvote a post at Hubr
 
@@ -390,35 +393,158 @@ OFFTOP: Анемичные модели, или Фаулер и Эванс не 
 0. Рейтинг публикации меняется путём голосования пользователей.
 1. Пользоатель может проголосовать "ЗА" или "ПРОТИВ" публикации.
 2. Пользователь может голосовать за публикации если его карма ≥ 5.
-3. За каждую публикацию пользователь может проголосовать один раз.
-4. Изменить голос нельзя.
+3. Изменить голос нельзя.
 
 
 ### Driver port
 
-Итак, переводя на язык архитекруты - в наше приложение
+Переводя на язык архитекруты - в наше приложение
 нужно добавить ведущий порт CastArticleVotingtUseCase`, который
 принимает ID пользователя, ID публикации и значение голоса: за или против.
 
 ```python
-# src/myapp/application/ports/api/cast_article_vote_use_case.py
+# myapp/application/ports/api/cast_article_vote/cast_aticle_vote_use_case.py
 
-from typing import Protocol
+class CastArticleVoteUseCase(Protocol):
+    def cast_article_vote(self, command: CastArticleVoteCommand) -> CastArticleVoteResult:
+        raise NotImplementedError()
+```
+
+Все входные параметры сценария обёрнуты в единую структуру
+`CastArticleVoteCommand`, а все возможные результаты объединены
+посредством `typing.Union` в `CastArticleVoteResult`.
+
+<spoiler title="CastArticleVoteResult и CastArticleVoteResult">
+```python
+# myapp/application/ports/api/cast_article_vote/cast_article_vote_command.py
+
+from dataclasses import dataclass
 from uuid import UUID
 
 from myapp.application.domain.model.vote import Vote
-from myapp.application.domain.model.cast_article_vote_result import CastArticleVoteResult
 
 
-class CastArticleVoteUseCase(Protocol):
-    def cast_article_vote(
-        self,
-        user_id: UUID,
-        post_id: UUID,
-        vote: Vote
-    ) -> CastArticleVoteResult:
-        pass
+@dataclass
+class CastArticleVoteCommand:
+    user_id: UUID
+    article_id: UUID
+    vote: Vote
+
 ```
+
+
+```python
+myapp/application/ports/api/cast_article_vote/cast_article_vote_result.py
+
+from __future__ import annotations
+
+from typing import Union
+from uuid import UUID
+
+from myapp.application.domain.model.article_vote import ArticleVote
+
+
+class InsufficientKarmaResult:
+    user_with_insufficient_karma_id: UUID
+
+    def __init__(self, user_with_insufficient_karma_id: UUID):
+        self.user_with_insufficient_karma_id = user_with_insufficient_karma_id
+
+    def __str__(self) -> str:
+        return f'User {self.user_with_insufficient_karma_id} does not have ' \
+                'enough karma to cast a vote'
+
+
+class VoteAlreadyCastResult:
+    cast_vote_user_id: UUID
+    cast_vote_article_id: UUID
+
+    def __init__(self, user_id: UUID, article_id: UUID):
+        self.cast_vote_user_id = user_id
+        self.cast_vote_article_id = article_id
+
+    def __str__(self) -> str:
+        return f"User \"{self.cast_vote_user_id}\" has already cast a vote " \
+               f"for article \"{self.cast_vote_article_id}\""
+
+
+class VoteCastResult:
+    def __init__(self, article_vote: ArticleVote):
+        self.article_vote = article_vote
+
+
+CastArticleVoteResult = Union[
+    InsufficientKarmaResult,
+    VoteAlreadyCastResult,
+    VoteCastResult,
+]
+```
+</spoiler>
+
+Работа с гексагональной архитектурой чем-то напоминает
+мем с прищурившимся Леонардо ди Каприо "We need to go deeper".
+Набросав интерфейс сценария пользования дальше мы можем двигаться 
+в двух направлениях. Можно погрузиться в бизнес-логику сценария
+или всплыть наверх к вызывающим его API адаптерам.
+Давайте так и поступим - напишем HTTP адаптер с помощью
+Django Rest Framework.
+
+### HTTP API Adapter
+
+У HTTP адаптера, или на языке Django и DRF - View, есть чёткие
+обязанности:
+
+1. Принимать HTTP запросы
+2. [Десериализовывать и валидировать входные данные.]
+3. Запустить свенарий пользования`.
+4. [Сериализовать] и возвращать результат выполненного сценария.
+5. [А также обрабатывать исключения.]
+
+
+```python
+# myapp/application/adapter/api/http/article_vote_view.py
+
+class ArticleVoteView(APIView):
+    def __init__(self, cast_article_vote_use_case: CastArticleVoteUseCase):
+        self.cast_article_vote_use_case = cast_article_vote_use_case
+        super().__init__()
+
+    def post(self, request: Request) -> Response:
+        serializer = CastArticleVoteCommandDeserializer(data=request.data)
+
+        serializer.is_valid(raise_exception=True):
+
+        cast_article_vote_command = serializer.create()
+
+        result = self.cast_article_vote_use_case.cast_article_vote(
+            cast_article_vote_command
+        )
+
+        response = None
+        if isinstance(result, VoteCastResult):
+            response_data = ArticleVoteSerializer(result.article_vote).data
+            response = Response(response_data, status=HTTPStatus.CREATED)
+        elif isinstance(result, InsufficientKarmaResult):
+            response = problem_response(
+                title='Cannot cast a vote',
+                detail=str(result),
+                status=HTTPStatus.BAD_REQUEST
+            )
+        elif isinstance(result, VoteAlreadyCastResult):
+            response = problem_response(
+                title='Cannot cast a vote',
+                detail=str(result),
+                status=HTTPStatus.CONFLICT
+            )
+        else:
+            assert_never(result)
+
+        return response
+
+
+
+
+# OLD
 
 Заметьте, что `CastArticleVoteUseCase`, как и все порты в нашей архитектуре
 - это голая абстракция aka интерфейс.
@@ -979,3 +1105,6 @@ class ChatOpsController:
 * Физический экран и колонки телевизора - это **SPI адаптеры**.
 
 Надеюсь вам стало чуточку понятнее. Воплотим же всё это в коде!
+
+
+* https://github.com/basicWolf/hexagonal-architecture-django
