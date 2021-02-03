@@ -87,7 +87,7 @@ def send_alert(message: str):
 совершенно не очевидна! А если вы хотите отправить сообщение
 по другой шине? А как насчёт уровня магии, необходимой
 чтобы это протестировать. Что, что? `mock.patch(...)` говорите?
-Коллеги, подобная атака в лоб никуда не годится, давайте зайдём с флангов.
+Коллеги, атака в лоб провалилась, давайте зайдём с флангов.
 
 ```python
 
@@ -108,7 +108,7 @@ def send_alert(message: str):
 
 def test_send_alert_sends_message_to_alert_topic()
     message_bus_mock = MessageBusMock()
-    send_alert(message_bus_mock, "A week of astrology at Habrahabr!")
+    send_alert(message_bus_mock, "A week of astrology at Habr!")
 
     assert message_bus_mock.sent_to_topic == 'alert'
     assert message_bus_mock.sent_message == "A week of astrology at Habrahabr!"
@@ -302,7 +302,9 @@ screenshot
 для чего предназначено это здание?
 
 
-Spoiler: [Разгадка] Это один из этажей библиотеки Oodi в Хельсинки.
+<spoiler title="Разгадка">
+Это один из этажей библиотеки Oodi в Хельсинки.
+</spoiler>
 
 Надеюсь вам было несложно отгадать эту маленькую загадку
 и из неё вы вынесли главное:
@@ -336,7 +338,7 @@ Spoiler: [Разгадка] Это один из этажей библиотек
 
 Зато всему этому празднику технологий есть место в **адаптерах**
 подсоединяемых к **портам**. Команды и запросы поступают в приложение
-через **ведущие** (driven) или **API** порты.
+через **ведущие** (driver) или **API** порты.
 Команды и запросы которые отдаёт приложение поступают в **ведомые** порты (driven port).
 Их также называют портами интерфейса поставщика услуг (Service Provider Interface, SPI).
 
@@ -382,7 +384,7 @@ OFFTOP: Анемичные модели, или Фаулер и Эванс не 
 Полный код доступен в репозитории https://github.com/basicWolf/hexagonal-architecture-django
 
 
-## Upvote a post at Hubr
+# Upvote a post at Hubr
 
 Представим, что мы разрабатываем новую платформу
 коллективных технических блогов "Хубрухубр".
@@ -395,28 +397,31 @@ OFFTOP: Анемичные модели, или Фаулер и Эванс не 
 2. Пользователь может голосовать за публикации если его карма ≥ 5.
 3. Изменить голос нельзя.
 
-
-### Driver port
-
 Переводя на язык архитекруты - в наше приложение
 нужно добавить ведущий порт CastArticleVotingtUseCase`, который
 принимает ID пользователя, ID публикации и значение голоса: за или против.
 
+## Driver port: Cast article vote use case
+
+TODO: КАРТИНКА
+
+Итак, первый кусочек реализации сценария - это его абстрактное описание.
+
 ```python
-# myapp/application/ports/api/cast_article_vote/cast_aticle_vote_use_case.py
+# src/myapp/application/ports/api/cast_article_vote/cast_aticle_vote_use_case.py
 
 class CastArticleVoteUseCase(Protocol):
     def cast_article_vote(self, command: CastArticleVoteCommand) -> CastArticleVoteResult:
         raise NotImplementedError()
 ```
 
-Все входные параметры сценария обёрнуты в единую структуру
+Все входные параметры сценария обёрнуты в единую структуру-команду
 `CastArticleVoteCommand`, а все возможные результаты объединены
 посредством `typing.Union` в `CastArticleVoteResult`.
 
 <spoiler title="CastArticleVoteResult и CastArticleVoteResult">
 ```python
-# myapp/application/ports/api/cast_article_vote/cast_article_vote_command.py
+# src/myapp/application/ports/api/cast_article_vote/cast_article_vote_command.py
 
 from dataclasses import dataclass
 from uuid import UUID
@@ -434,7 +439,7 @@ class CastArticleVoteCommand:
 
 
 ```python
-myapp/application/ports/api/cast_article_vote/cast_article_vote_result.py
+# src/myapp/application/ports/api/cast_article_vote/cast_article_vote_result.py
 
 from __future__ import annotations
 
@@ -442,6 +447,11 @@ from typing import Union
 from uuid import UUID
 
 from myapp.application.domain.model.article_vote import ArticleVote
+
+
+class VoteCastResult:
+    def __init__(self, article_vote: ArticleVote):
+        self.article_vote = article_vote
 
 
 class InsufficientKarmaResult:
@@ -468,22 +478,48 @@ class VoteAlreadyCastResult:
                f"for article \"{self.cast_vote_article_id}\""
 
 
-class VoteCastResult:
-    def __init__(self, article_vote: ArticleVote):
-        self.article_vote = article_vote
-
-
 CastArticleVoteResult = Union[
+    VoteCastResult,
     InsufficientKarmaResult,
     VoteAlreadyCastResult,
-    VoteCastResult,
 ]
+```
+
+А также модели домена `Vote` и `ArticleVote`, используемые в команде и результатах:
+
+```python
+# src/myapp/application/domain/model/vote.py
+
+from enum import Enum
+
+
+class Vote(Enum):
+    UP = 'up'
+    DOWN = 'down'
+```
+
+```python
+# src/myapp/application/domain/model/article_vote.py
+
+from dataclasses import dataclass, field
+from uuid import UUID, uuid4
+
+from myapp.application.domain.model.vote import Vote
+
+
+@dataclass
+class ArticleVote:
+    user_id: UUID
+    article_id: UUID
+    vote: Vote
+    id: UUID = field(default_factory=uuid4)
+
 ```
 </spoiler>
 
 Работа с гексагональной архитектурой чем-то напоминает
 мем с прищурившимся Леонардо ди Каприо "We need to go deeper".
-Набросав интерфейс сценария пользования дальше мы можем двигаться 
+Набросав интерфейс сценария пользования, дальше мы можем двигаться
 в двух направлениях. Можно погрузиться в бизнес-логику сценария
 или всплыть наверх к вызывающим его API адаптерам.
 Давайте так и поступим - напишем HTTP адаптер с помощью
@@ -491,191 +527,98 @@ Django Rest Framework.
 
 ### HTTP API Adapter
 
-У HTTP адаптера, или на языке Django и DRF - View, есть чёткие
-обязанности:
+TODO: КАРТИНКА
 
-1. Принимать HTTP запросы
-2. [Десериализовывать и валидировать входные данные.]
-3. Запустить свенарий пользования`.
-4. [Сериализовать] и возвращать результат выполненного сценария.
-5. [А также обрабатывать исключения.]
-
+Наш HTTP адаптера, или на языке Django и DRF - View, до безобразия
+прост. За исключением преобразований запроса и ответа, он уменьшается
+в несколько строк (TODO: [full source](http://) ):
 
 ```python
-# myapp/application/adapter/api/http/article_vote_view.py
+# src/myapp/application/adapter/api/http/article_vote_view.py
 
 class ArticleVoteView(APIView):
+    ...
+
     def __init__(self, cast_article_vote_use_case: CastArticleVoteUseCase):
         self.cast_article_vote_use_case = cast_article_vote_use_case
         super().__init__()
 
     def post(self, request: Request) -> Response:
-        serializer = CastArticleVoteCommandDeserializer(data=request.data)
-
-        serializer.is_valid(raise_exception=True):
-
-        cast_article_vote_command = serializer.create()
-
+        cast_article_vote_command = self._read_command(request)
         result = self.cast_article_vote_use_case.cast_article_vote(
             cast_article_vote_command
         )
+        return self._build_response(result)
 
-        response = None
-        if isinstance(result, VoteCastResult):
-            response_data = ArticleVoteSerializer(result.article_vote).data
-            response = Response(response_data, status=HTTPStatus.CREATED)
-        elif isinstance(result, InsufficientKarmaResult):
-            response = problem_response(
-                title='Cannot cast a vote',
-                detail=str(result),
-                status=HTTPStatus.BAD_REQUEST
-            )
-        elif isinstance(result, VoteAlreadyCastResult):
-            response = problem_response(
-                title='Cannot cast a vote',
-                detail=str(result),
-                status=HTTPStatus.CONFLICT
-            )
-        else:
-            assert_never(result)
-
-        return response
-
-
-
-
-# OLD
-
-Заметьте, что `CastArticleVoteUseCase`, как и все порты в нашей архитектуре
-- это голая абстракция aka интерфейс.
-
-Здесь же незаметно появляются первые доменные модели - `Vote` и
-`CastArticleVoteResult`.
-
-И если модель `Vote` выглядит очень просто,
-
-```python
-# src/myapp/application/domain/model/vote.py
-
-from enum import Enum, auto
-
-class Vote(Enum):
-    UP = auto()
-    DOWN = auto()
+    ...
 ```
 
-то с `CastArticleVoteResult` всё немного сложнее.
+И как вы поняли, смысл всего этого сводится к
 
-### There is a result about it. No exceptions.
+1. Принять HTTP запрос, десериализовывать и валидировать входные данные.
+2. **Запустить сценарий пользования**.
+3. Сериализовать и возвратить результат выполненного сценария.
 
-Давайте на секунду отвлечёмся и подумаем, как сигнализировать
-о том, что пользователь уже проглосовал или о том, что у пользователя
-недостаточно кармы для голосования?
-Выкрики из аудитории: "Это ПИТОН, кидай исключения!"
-Кхм, но разве речь идёт об *исключительной* ситуации? Сей
-результат вполне ожидаем и отображён в сценарии! "Функциональное
-программирование! Монады!" - уже лучше. Но что если есть ещё более
-элегантный механизм возвращения и обработки результата выполненного
-сценария? И как вам понравится факт, что этот механизм,
-в основе которого лежит ООП, позволяет отбросить исключения
-и забыть простыни а-ля `if-elif-elif-...`?
 
-Идея очень проста - в результат операции передаётся объект-обработчик
-этого результата. Результат операции сам решает, какие методы
-обработчика нужно вызвать. Думаю адепты трудов GoF точно определят
-название данного шаблона. Мы же разложим его по полочкам.
+Этот адаптер конечно же строился по кирпичику с пременением практик TDD
+и использованием инструментов Django и DRF для тестирования view-шек.
+Ведь для теста достаточно построить запрос (request), скормить
+его адаптеру и проверить ответ (response). При этом мы полностью контролируем
+основную зависимость `cast_article_vote_use_case: CastArticleVoteUseCase`
+и можем внедрить на её место тестового двойника.
 
-`CastArticleVoteResult` - это класс лежащий в основе всех результатов
-нашего сценария:
+Например, давайте напишем тест для сценария, в котором пользователь
+пытается проголосовать повторно. Ожидаемо, что статус в ответе будет
+`409 CONFLICT` (TODO: [full source](http://) ):
 
 ```python
-# src/myapp/application/domain/model/cast_article_vote_result.py
+# tests/test_myapp/application/adapter/api/http/test_article_vote_view.py
 
-from .cast_article_vote_result_handler import CastArticleVoteResultHandler
+def test_post_article_vote_returns_conflict(
+    arf: APIRequestFactory,
+    user_id: UUID,
+    article_id: UUID
+):
+    cast_article_use_case_mock = CastArticleVoteUseCaseMock(
+        returned_result=VoteAlreadyCastResult(
+            user_id=user_id,
+            article_id=article_id
+        )
+    )
 
-class CastArticleVoteResult:
-    def process(self, handler: CastArticleVoteResultHandler):
-        pass
+    article_vote_view = ArticleVoteView.as_view(
+        cast_article_vote_use_case=cast_article_use_case_mock
+    )
+
+    response: Response = article_vote_view(
+        arf.post(
+            f'/article_vote',
+            {
+                'user_id': user_id,
+                'article_id': article_id,
+                'vote': Vote.UP.value
+            },
+            format='json'
+        )
+    )
+
+    assert response.status_code == HTTPStatus.CONFLICT
+    assert response.data == {
+        'status': 409,
+        'detail': f"User \"{user_id}\" has already cast a vote for article \"{article_id}\"",
+        'title': "Cannot cast a vote"
+    }
 ```
 
-А вот и контретные результаты:
+Адаптер получает на вход валидные данные, собирает из них команду и вызывает сценарий.
+Oднако вместо продакшн-кода, этот вызов получает двойник, который тут же возвращает
+`VoteAlreadyCastResult`. Адаптеру остаётся правильно обработать этот результат и
+сформировать `HTTP Response`. Остаётся протестировать, соответствует ли
+сформированный ответ и его статус ожидаемым значениям.
 
-```python
-# src/myapp/application/domain/model/cast_article_vote.py
-
-from dataclasses import dataclass
-
-from .vote import Vote
-from .cast_article_vote_result import CastArticleVoteResult
-from .cast_article_vote_result_handler import CastArticleVoteResultHandler
-
-@dataclass
-class CastArticleVote:
-    id: UUID
-    user_id: UUID
-    post_id: UUID
-    vote: Vote
-
-    def process(self, handler: CastArticleVoteResultHandler):
-        handler.handle_cast_aritcle_vote(self)
-```
-
-```python
-# src/myapp/application/domain/model/article_vote_already_cast.py
-
-from dataclasses import dataclass
-
-from .cast_article_vote_result import CastArticleVoteResult
-from .cast_article_vote_result_handler import CastArticleVoteResultHandler
-
-
-@dataclass
-class ArticleVoteAlreadyCast(CastArticleVoteResult):
-    user_id: UUID
-    post_id: UUID
-
-    def process(self, handler: CastArticleVoteResultHandler):
-        handler.handle_article_vote_already_cast(self)
-```
-
-```python
-# src/myapp/application/domain/model/article_vote_already_cast_result.py
-
-from dataclasses import dataclass
-
-from .cast_article_vote_result import CastArticleVoteResult
-from .cast_article_vote_result_handler import CastArticleVoteResultHandler
-
-
-@dataclass
-class InsufficientUserKarmaToCastArticleVoteResult(CastArticleVoteResult):
-    user_id: UUID
-
-    def process(self, handler: CastArticleVoteResultHandler):
-        handler.handle_insufficient_user_to_cast_article_vote(self)
-```
-
-Вы наверняка уже представили, как выглядит интерфейс `CastArticleVoteResultHandler`.
-На всякий случай, приведём его здесь:
-
-```python
-
-class CastArticleVoteResultHandler(Protocol):
-    def handle_insufficient_user_to_cast_article_vote_result(
-        self,
-        result: InsufficientUserKarmaToCastArticleVoteResult
-    ):
-        pass
-
-
-```
-
-
-Очень важно, что "Пользователь уже проголосовал" является частью
-котранкта данного сценария, а не исключением, за которым
-придётся гоняться. У данной проблемы есть куда более элегантные
-решения, например монады, но если мы сейчас залезем в эти дебри, то
-статья в конец раздуется и лопнет.
+В такой же манаере мы продолжим писать тесты и имплементацию для остальных
+частей сценария. Адаптер, Контроллер, Вью - как бы мы его не назвали, написан и протестирован,
+хотя на руках у нас нет и строки бизнес-логики сценария!
 
 
 ### Application service
