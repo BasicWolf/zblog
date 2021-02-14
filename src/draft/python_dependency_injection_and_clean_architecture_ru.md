@@ -397,7 +397,7 @@ https://github.com/basicWolf/hexagonal-architecture-django.
 
 1. Пользоатель может проголосовать "ЗА" или "ПРОТИВ" публикации.
 2. Пользователь может голосовать за публикации если его карма ≥ 5.
-3. Изменить голос нельзя.
+3. Проголосовать можно лишь один раз, изменить голос нельзя.
 
 Переводя на язык архитекруты - в наше приложение
 нужно добавить ведущий порт CastArticleVotingtUseCase`, который
@@ -593,6 +593,7 @@ Oднако вместо продакшн-кода, этот вызов полу
 это `Vote` [↑](http://anchor) и `ArticleVote` [↑](http://anchor).
 Но вот модели, представляющей "голосующего пользователя" пока нет.
 
+
 ### VotingUser
 
 Итак, пользователь может проголосовать за публиакцию.
@@ -605,9 +606,9 @@ Oднако вместо продакшн-кода, этот вызов полу
 Но разве это исключительная ситуация? Совсем наоборт - она вполне
 ожидаема и описана в сценарии.
 
-
-
 ```python
+# src/myapp/application/domain/model/voting_user.py
+
 MINIMUM_KARMA_REQUIRED_FOR_VOTING = 5
 
 class VotingUser:
@@ -632,7 +633,63 @@ class InsufficientKarma:
 CastVoteResult = Union[InsufficientKarma, ArticleVote]
 ```
 
-## Application servic
+Все модели предметной области на месте. Осталось их связать в
+имплементации сценария.
+
+
+## Application service
+
+Как дирижёр упрявляет оркестром исполняющим произведение,
+так и сервис приложения управляет доменом и ведомыми портами
+для выполнении сценария.
+
+
+### PostRatingService
+
+С места в карьер погрузимся в имплементацию нашего сценария:
+
+```python
+# src/myapp/application/service/post_rating_service.py
+
+class PostRatingService(
+    CastArticleVoteUseCase  # имплементируем протокол явным образом
+):
+    def cast_article_vote(self, command: CastArticleVoteCommand) -> CastArticleVoteResult:
+        ...
+```
+
+Давайте временно опустим ограничения (constraints) сценария и займёмся
+интересной частью -  м
+
+Начнём с ограничений  (constraints) сценария:
+`Проголосовать можно лишь один раз, изменить голос нельзя.`.
+
+```python
+class PostRatingService(
+    CastArticleVoteUseCase  # имплементируем протокол явным образом
+):
+    ...
+    def cast_article_vote(self, command: CastArticleVoteCommand) -> CastArticleVoteResult:
+        # Обратимся в порт ArticleVoteExists чтобы проверить,
+        # голосовал ли пользователь за публикацию
+        if self._article_vote_exists_port.article_vote_exists(
+            user_id=command.user_id,
+            article_id=command.article_id
+        ):
+            return VoteAlreadyCastResult(
+                cast_vote_user_id=command.user_id,
+                cast_vote_article_id=command.article_id
+            )
+        ...
+
+
+    # добавим SPI-зависимость ArticleVoteExistsPort
+    article_vote_exists_port: ArticleVoteExistsPort
+
+    def __init__(self, article_vote_exists_port: ArticleVoteExistsPort):
+        self._article_vote_exists_port = article_vote_exists_port
+```
+
 
 Пользователь может проголосовать "ЗА" или "ПРОТИВ" публикации.
 
