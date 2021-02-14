@@ -382,7 +382,7 @@ OFFTOP: Анемичные модели, или Фаулер и Эванс не 
 и имеются допущения. Это сделано для того, чтобы мы могли сфокусироваться
 на важном и не отвлекались на второстепенные детали.
 Полностью исходный код примера доступен в репозитории
-https://github.com/basicWolf/hexagonal-architecture-django .
+https://github.com/basicWolf/hexagonal-architecture-django.
 
 
 # Upvote a post at Hubruhubr
@@ -432,6 +432,7 @@ class CastArticleVoteCommand:
     article_id: UUID
     vote: Vote
 ```
+
 ```python
 # src/myapp/application/ports/api/cast_article_vote/cast_article_vote_result.py
 
@@ -598,14 +599,40 @@ Oднако вместо продакшн-кода, этот вызов полу
 Но только если значение его кармы больше 5.
 Таким образом для модели голосующего пользователя достаточно
 двух полей: идентификатора и кармы. А метод "голосовать"
-будет возвращать голос пользователя, либо 
+будет возвращать голос пользователя, либо значение обозначающее,
+что кармы для голосования не достаточно.
+"A почему бы вместо последнего не викинуть исключение?" - спросите вы.
+Но разве это исключительная ситуация? Совсем наоборт - она вполне
+ожидаема и описана в сценарии.
 
-```
+
+
+```python
+MINIMUM_KARMA_REQUIRED_FOR_VOTING = 5
+
 class VotingUser:
     id: UUID
     karma: int
+
+    def cast_vote(self, article_id: UUID, vote: Vote) -> CastVoteResult:
+      if self.karma >= MINIMUM_KARMA_REQUIRED_FOR_VOTING:
+          return ArticleVote(self.id, article_id, vote)
+      else:
+          return InsufficientKarma(self.id)
 ```
 
+Здесь `CastVoteResult` - это
+
+```python
+@dataclass
+class InsufficientKarma:
+    user_id: UUID
+
+
+CastVoteResult = Union[InsufficientKarma, ArticleVote]
+```
+
+## Application servic
 
 Пользователь может проголосовать "ЗА" или "ПРОТИВ" публикации.
 
@@ -616,7 +643,7 @@ class VotingUser:
 Как вы помните, сущности и концепции предметной области зависят
 друг от друга, но не имеют доступа к внешним слоям приложения.
 
-## Application servic
+
 Давайте, перед тем как начинать разработку сценария подумаем,
 какие модели предметной области можно обособить и отделить
 какие концепции относятся к домену, а
