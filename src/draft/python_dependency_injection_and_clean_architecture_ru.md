@@ -646,7 +646,8 @@ CastVoteResult = Union[InsufficientKarma, ArticleVote]
 
 ### PostRatingService
 
-С места в карьер погрузимся в имплементацию нашего сценария:
+С места в карьер погрузимся в имплементацию нашего сценария.
+В первом приближении сервис реализующий сценарий выглядит так:
 
 ```python
 # src/myapp/application/service/post_rating_service.py
@@ -658,8 +659,37 @@ class PostRatingService(
         ...
 ```
 
-Давайте временно опустим ограничения (constraints) сценария и займёмся
-интересной частью -  м
+Для начала нам нужен пользователь способный проголосовать, в виде
+модели `VoteCastingUser`. Тут и появляется первая SPI-зависимость,
+которая этим и займётся:
+
+```python
+class PostRatingService(...):
+    _get_vote_casting_user_port: GetVoteCastingUserPort,
+
+    def __init__(
+        self,
+        get_vote_casting_user_port: GetVoteCastingUserPort,
+    ):
+        self._get_vote_casting_user_port = get_vote_casting_user_port
+
+    def cast_article_vote(self, command: CastArticleVoteCommand) -> CastArticleVoteResult:
+        vote_casting_user = self._get_vote_casting_user_port.get_vote_casting_user(
+            user_id=command.user_id
+        )
+
+        # пользователя можно сразу пустить в дело
+        cast_vote_result: CastVoteResult = vote_casting_user.cast_vote(
+            command.article_id,
+            command.vote
+        )
+
+        return VoteCastResult(cast_vote_result)
+
+```
+
+Вы конечно понимаете, что за кадром мы сначала пишем тесты, а потом код :)
+Как и в предыдущих примерах, роль SPI-адаптера в тестах играет дублёр.
 
 Начнём с ограничений  (constraints) сценария:
 `Проголосовать можно лишь один раз, изменить голос нельзя.`.
