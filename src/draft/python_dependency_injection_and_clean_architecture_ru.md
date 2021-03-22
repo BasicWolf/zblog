@@ -424,14 +424,14 @@ class VotingUser:
 ```python
 # src/myapp/application/domain/model/vote.py
 
-# Обозначает положительное или отрицательное значение голоса
+# Обозначает голос "За" или "Против"
 class Vote(Enum):
     UP = 'up'
     DOWN = 'down'
 ```
 
 В свою очередь `CastVoteResult` - это тип объединяющий оговорённые исходы
-сценария:  `ГолосПользователя`, `НедостаточноКармы`, `ПользовательУжеГолосовалЗаПубликацию`
+сценария:  `ГолосПользователя`, `НедостаточноКармы`, `ПользовательУжеГолосовалЗаПубликацию`:
 [TODO: source].
 ```
 # src/myapp/application/domain/model/cast_vote_result.py
@@ -440,7 +440,7 @@ CastVoteResult = Union[ArticleVote, InsufficientKarma, VoteAlreadyCast]
 ```
 
 Как вы думаете, какие данные должен нести в себе результат
-успешного выполнения сценария?
+успешного выполнения сценария `ArticleVote`?
 
 <spoiler title="Ответ">
 ```python
@@ -456,7 +456,8 @@ class ArticleVote:
 </spoiler>
 
 Но самое интересное будет происходить в теле метода `cast_article_vote()`.
-И начнём мы конечно же с тестов [TODO: source]
+И начнём мы конечно же с тестов. [TODO: source]
+Первый же тест нацелен на проверку успешного выполнения сценария:
 
 ```python
 def test_cast_vote_returns_article_vote(user_id: UUID, article_id: UUID):
@@ -474,50 +475,49 @@ def test_cast_vote_returns_article_vote(user_id: UUID, article_id: UUID):
     assert result.user_id == user_id
 ```
 
-
-### VotingUser
-
-Итак, пользователь может проголосовать за публиакцию.
-Но только если значение его кармы больше 5.
-Таким образом для модели голосующего пользователя достаточно
-двух полей: идентификатора и кармы. А метод "голосовать"
-будет возвращать голос пользователя, либо значение обозначающее,
-что кармы для голосования не достаточно.
-"A почему бы вместо последнего не викинуть исключение?" - спросите вы.
-Но разве это исключительная ситуация? Совсем наоборт - она вполне
-ожидаема и описана в сценарии.
+Запускаем тест и... ожидаемый фейл.
+В лучших традициях ТДД мы начнём игру в пинг-понг с тестами
+и кодом, с каждым тестом дописывая сценарий до полной готовности:
 
 ```python
-# src/myapp/application/domain/model/voting_user.py
-
 MINIMUM_KARMA_REQUIRED_FOR_VOTING = 5
 
-class VotingUser:
-    id: UUID
-    karma: int
+...
 
-    def cast_vote(self, article_id: UUID, vote: Vote) -> CastVoteResult:
-      if self.karma >= MINIMUM_KARMA_REQUIRED_FOR_VOTING:
-          return ArticleVote(self.id, article_id, vote)
-      else:
-          return InsufficientKarma(self.id)
+def cast_vote(self, vote: Vote) -> CastVoteResult1:
+    if self.voted:
+        return VoteAlreadyCast(
+            user_id=self.id,
+            article_id=self.voting_for_article_id
+        )
+
+    if self.karma < MINIMUM_KARMA_REQUIRED_FOR_VOTING:
+        return InsufficientKarma(user_id=self.id)
+
+    self.voted = True
+
+    return ArticleVote(
+        user_id=self.id,
+        article_id=self.voting_for_article_id,
+        vote=vote
+    )
 ```
 
-
-Все модели предметной области на месте. Осталось их связать в
-имплементации сценария.
-
-
-
-Переводя на язык архитекруты - в наше приложение
-нужно добавить ведущий порт CastArticleVotingtUseCase`, который
-принимает ID пользователя, ID публикации и значение голоса: за или против.
+На этом мы закончим моделирование предметной области.
+Если у вас остались вопросы по реализации остальных моделей, 
+приглашаю вас взглянуть на исходный код TODO:link.
 
 ## Driver port: Cast article vote use case
 
-TODO: КАРТИНКА
+Как было сказано ранее, в гексагональной архитектуре,
+приложение управляется через API-порты.
 
-Итак, первый кусочек реализации сценария - это его абстрактное описание.
+Чтобы как-то дотянуться до доменной модели, в наше приложение
+для начала нужно добавить ведущий порт `CastArticleVotingtUseCase`, который
+принимает ID пользователя, ID публикации, значение голоса: за или против
+и возвращает результат выполненного сценария.
+
+TODO: КАРТИНКА
 
 ```python
 # src/myapp/application/ports/api/cast_article_vote/cast_aticle_vote_use_case.py
@@ -529,9 +529,8 @@ class CastArticleVoteUseCase(Protocol):
 
 Все входные параметры сценария обёрнуты в единую структуру-команду
 `CastArticleVoteCommand` [source](http://todo),
-а все возможные результаты объединены
-посредством `typing.Union` в `CastArticleVoteResult` [source](http://todo).
-
+а все возможные результаты объединены - это уже знакомое объединение типов
+`CastArticleVoteResult` [source](http://todo-anchor):
 
 ```python
 # src/myapp/application/ports/api/cast_article_vote/cast_article_vote_command.py
@@ -543,44 +542,19 @@ class CastArticleVoteCommand:
     vote: Vote
 ```
 
-```python
-# src/myapp/application/ports/api/cast_article_vote/cast_article_vote_result.py
-
-@dataclass
-class InsufficientKarmaResult:
-    user_with_insufficient_karma_id: UUID
-
-    def __str__(self) -> str:
-        return f'User {self.user_with_insufficient_karma_id} does not have ' \
-                'enough karma to cast a vote'
-...
-
-CastArticleVoteResult = Union[
-    VoteCastResult,
-    InsufficientKarmaResult,
-    VoteAlreadyCastResult,
-]
-```
-
-Здесь также появляется необходимость в моделях домена,
-`Vote` [source](http://todo) - обозначающей голос: за или против
-и `ArticleVote` [source](http://todo) - описывающей голос полностью:
-кто, за что и как проголосовал:
-
-
 Работа с гексагональной архитектурой чем-то напоминает
 прищурившегося Леонардо ди Каприо с фразой "We need to go deeper".
 Набросав каркас сценария пользования, можно примкнуть к нему
 с двух сторон: имплементировать бизнес-логику сценария
-или заняться API адаптерами, которые его вызывают.
-Давайте так и поступим - напишем HTTP адаптер с помощью
+или заняться API адаптерами, которые вызывают этот сценарий.
+Давайте зайдём со стороны API и напишем HTTP адаптер с помощью
 Django Rest Framework.
 
 ### HTTP API Adapter
 
 TODO: КАРТИНКА
 
-Наш HTTP адаптера, или на языке Django и DRF - View, до безобразия
+Наш HTTP адаптер, или на языке Django и DRF - `View`, до безобразия
 прост. За исключением преобразований запроса и ответа, он уменьшается
 в несколько строк (TODO: [source](http://) ):
 
