@@ -294,13 +294,13 @@ screenshot
 Отлично! А что же делает это приложение? Вы вероятно телепат
 80го уровня, если смогли ответить на этот вопрос правильно.
 Лично я не именю ни малейшего понятия - это скриншот
-первого попавшегося Django-приложения, найденного на
-Гитхабе.
+первого попавшегося Django-приложения с Гитхаба.
 
 Роберт Мартин развивает идею [дальше](https://www.youtube.com/watch?v=WpkDN78P884).
 Взгляните на архитектурный план этажа и догадайтесь,
 для чего предназначено это здание?
 
+TODO
 
 <spoiler title="Разгадка">
 Это один из этажей библиотеки Oodi в Хельсинки.
@@ -410,7 +410,7 @@ class VotingUser:
     voted: bool
     karma: int
 
-    def cast_vote(self, vote: Vote) -> CastVoteResult:
+    def cast_vote(self, vote: Vote) -> CastArticleVoteResult:
         ...
 ```
 
@@ -419,7 +419,7 @@ class VotingUser:
 Почему бы не задать его как `voted_for_articles: Set[UUID]`?
 Как вы думаете, нужно ли знать голосовал ли пользователь за другие публикации,
 чтобы проголосовать за данную публикацию? Наверняка нет!
-Хорошо, а что такое `Vote` и `CastVoteResult`?
+Хорошо, а что такое `Vote` и `CastArticleVoteResult`?
 
 ```python
 # src/myapp/application/domain/model/vote.py
@@ -430,13 +430,13 @@ class Vote(Enum):
     DOWN = 'down'
 ```
 
-В свою очередь `CastVoteResult` - это тип объединяющий оговорённые исходы
+В свою очередь `CastArticleVoteResult` - это тип объединяющий оговорённые исходы
 сценария:  `ГолосПользователя`, `НедостаточноКармы`, `ПользовательУжеГолосовалЗаПубликацию`:
 [TODO: source].
 ```
-# src/myapp/application/domain/model/cast_vote_result.py
+# src/myapp/application/domain/model/cast_article_vote_result.py
 ...
-CastVoteResult = Union[ArticleVote, InsufficientKarma, VoteAlreadyCast]
+CastArticleVoteResult = Union[ArticleVote, InsufficientKarma, VoteAlreadyCast]
 ```
 
 Как вы думаете, какие данные должен нести в себе результат
@@ -484,7 +484,7 @@ MINIMUM_KARMA_REQUIRED_FOR_VOTING = 5
 
 ...
 
-def cast_vote(self, vote: Vote) -> CastVoteResult1:
+def cast_vote(self, vote: Vote) -> CastArticleVoteResult1:
     if self.voted:
         return VoteAlreadyCast(
             user_id=self.id,
@@ -504,7 +504,7 @@ def cast_vote(self, vote: Vote) -> CastVoteResult1:
 ```
 
 На этом мы закончим моделирование предметной области.
-Если у вас остались вопросы по реализации остальных моделей, 
+Если у вас остались вопросы по реализации остальных моделей,
 приглашаю вас взглянуть на исходный код TODO:link.
 
 ## Driver port: Cast article vote use case
@@ -513,7 +513,7 @@ def cast_vote(self, vote: Vote) -> CastVoteResult1:
 приложение управляется через API-порты.
 
 Чтобы как-то дотянуться до доменной модели, в наше приложение
-для начала нужно добавить ведущий порт `CastArticleVotingtUseCase`, который
+нужно добавить ведущий порт `CastArticleVotingtUseCase`, который
 принимает ID пользователя, ID публикации, значение голоса: за или против
 и возвращает результат выполненного сценария.
 
@@ -545,7 +545,9 @@ class CastArticleVoteCommand:
 Работа с гексагональной архитектурой чем-то напоминает
 прищурившегося Леонардо ди Каприо с фразой "We need to go deeper".
 Набросав каркас сценария пользования, можно примкнуть к нему
-с двух сторон: имплементировать бизнес-логику сценария
+с двух сторон.
+Можно имплементировать сервис, который свяжет доменную модель
+и ведомые порты для выполнения сценария,
 или заняться API адаптерами, которые вызывают этот сценарий.
 Давайте зайдём со стороны API и напишем HTTP адаптер с помощью
 Django Rest Framework.
@@ -563,7 +565,6 @@ TODO: КАРТИНКА
 
 class ArticleVoteView(APIView):
     ...
-
     def __init__(self, cast_article_vote_use_case: CastArticleVoteUseCase):
         self.cast_article_vote_use_case = cast_article_vote_use_case
         super().__init__()
@@ -574,7 +575,6 @@ class ArticleVoteView(APIView):
             cast_article_vote_command
         )
         return self._build_response(result)
-
     ...
 ```
 
@@ -606,9 +606,11 @@ def test_post_article_vote_returns_conflict(
     # В роли объекта реализующего сценарий выступает
     # специализированный двойник, возвращающий при вызове
     # .cast_article_vote() результат, который будет передан
-    # ему в конструкторе
+    # ему в конструкторе.
+    # Ответ на вопрос "Почему не MagicMock?" будет дан в
+    # конце статьи TODO.
     cast_article_use_case_mock = CastArticleVoteUseCaseMock(
-        returned_result=VoteAlreadyCastResult(
+        returned_result=VoteAlreadyCast(
             user_id=user_id,
             article_id=article_id
         )
@@ -640,16 +642,26 @@ def test_post_article_vote_returns_conflict(
 
 Адаптер получает на вход валидные данные, собирает из них команду и вызывает сценарий.
 Oднако вместо продакшн-кода, этот вызов получает двойник, который тут же возвращает
-`VoteAlreadyCastResult`. Адаптеру остаётся правильно обработать этот результат и
+`VoteAlreadyCast`. Адаптеру остаётся правильно обработать этот результат и
 сформировать `HTTP Response`. Остаётся протестировать, соответствует ли
 сформированный ответ и его статус ожидаемым значениям.
 
+TODO:
+Ещё раз попрошу заметить, насколько *облегчённее* становится тестирование, когда
+ не нужно загружать всё приложение целиком. Адепты Django
+вспомнят о легковесном тестировании вьюшек посредством `RequestFactory`.
+Но гексагональная архитектура позволяет шагнуть дальше.
+Мы избавились от обезьяних патчей и mock-обёрток конкретных классов.
+Мы легко управляем поведением зависимостей нашего `View`,
+ведь взаимодействие с ними происходит через абстрактный интерфейс.
+И всё это - легко модифицировать и отлаживать.
+
 После написания тестов и имплементации для остальных случаев входных
-и выходных данных, мы получаем отточеный API компонент,
-хотя бизнес-логика сценария существует пока лишь на бумаге!
+и выходных данных, мы получаем отточеный API компонент.
+Следующим шагом нужно пристыковать этот компонент к рабочей
+версии сценария.
 
-
-## Application service
+## Application services
 
 Как дирижёр упрявляет оркестром исполняющим произведение,
 так и сервис приложения управляет доменом и ведомыми портами
@@ -659,7 +671,8 @@ Oднако вместо продакшн-кода, этот вызов полу
 ### PostRatingService
 
 С места в карьер погрузимся в имплементацию нашего сценария.
-В первом приближении сервис реализующий сценарий выглядит так:
+В первом приближении сервис реализующий сценарий выглядит так
+(TODO: [source](http://) ):
 
 ```python
 # src/myapp/application/service/post_rating_service.py
@@ -671,287 +684,72 @@ class PostRatingService(
         ...
 ```
 
-Для минимального функционала нам нужен пользователь способный проголосовать,
-в виде модели `VoteCastingUser`.
-Тут и появляется первая SPI-зависимость `GetVoteCastingUserPort`
-задача которой найти голосующего пользователя по его ID:
+Отлично, но откуда возьмётся голосующий пользователь?
+Тут и появляется первая SPI-зависимость `GetVotingUserPort`
+задача которой найти голосующего пользователя по его ID.
+Но как мы помним, доменная модель не занимается записью
+голоса в какое-либо долговременное хранилище вроде БД.
+Для этого понадобится ещё одна SPI-зависимость `SaveArticleVotePort`:
 
-```python
-class PostRatingService(...):
-    _get_vote_casting_user_port: GetVoteCastingUserPort,
+```
+class PostRatingService(
+    CastArticleVoteUseCase
+):
+    _get_voting_user_port: GetVotingUserPort
+    _save_article_vote_port: SaveArticleVotePort
 
     def __init__(
         self,
-        get_vote_casting_user_port: GetVoteCastingUserPort,
+        get_voting_user_port: GetVotingUserPort,
+        save_article_vote_port: SaveArticleVotePort
     ):
-        self._get_vote_casting_user_port = get_vote_casting_user_port
+        self._get_voting_user_port = get_voting_user_port
+        self._save_article_vote_port = save_article_vote_port
 
     def cast_article_vote(self, command: CastArticleVoteCommand) -> CastArticleVoteResult:
-        vote_casting_user = self._get_vote_casting_user_port.get_vote_casting_user(
-            user_id=command.user_id
+        voting_user = self._get_voting_user_port.get_voting_user(
+            user_id=command.user_id,
+            article_id=command.article_id
         )
 
-        # пользователя можно сразу пустить в дело
-        cast_vote_result: CastVoteResult = vote_casting_user.cast_vote(
-            command.article_id,
-            command.vote
-        )
+        cast_vote_result = voting_user.cast_vote(command.vote)
 
-        return VoteCastResult(cast_vote_result)
+        if isinstance(cast_vote_result, ArticleVote):
+            self._save_article_vote_port.save_article_vote(cast_vote_result)
 
+        return cast_vote_result
 ```
 
-Стоит ли приводить и код порта? Разве что приличия ради:
+Вы наверняка представили как выглядят интерфейсы необходимых SPI-портов
+(TODO: [source](http://) ): (TODO: [source](http://) ).
+Давайте приведём один из них здесь
 
 ```python
-# src/myapp/application/ports/spi/get_vote_casting_user_port.py
+# src/myapp/application/ports/spi/get_voting_user_port.py
 
-class GetVoteCastingUserPort:
-    def get_vote_casting_user(self, user_id: UUID) -> VotingUser:
+class GetVotingUserPort:
+    def get_voting_user(self, user_id: UUID, article_id: UUID) -> VotingUser:
         raise NotImplementedError()
 ```
 
-Вы конечно понимаете, что за кадром мы сначала пишем тесты, а потом код :)
+За кадром мы конечно же сначала напишем тесты, а уже потом код :)
 Как и в предыдущих примерах, роль SPI-адаптеров в тестах сервиса играют
 дублёры. Но чтобы удержать сей опус в рамках статьи, позвольте
-оставить тесты в виде ссылки на исходник [TODO] и двинуться
+оставить тесты в виде ссылки на исходник (TODO: [source](http://) ) [TODO] и двинуться
 дальше.
-
-Как насчёт пользователя с недостаточной для голосования кармой?
-```python
-
-```
-
-Начнём с ограничений  (constraints) сценария:
-`Проголосовать можно лишь один раз, изменить голос нельзя.`.
-
-```python
-class PostRatingService(
-    CastArticleVoteUseCase  # имплементируем протокол явным образом
-):
-    ...
-    def cast_article_vote(self, command: CastArticleVoteCommand) -> CastArticleVoteResult:
-        # Обратимся в порт ArticleVoteExists чтобы проверить,
-        # голосовал ли пользователь за публикацию
-        if self._article_vote_exists_port.article_vote_exists(
-            user_id=command.user_id,
-            article_id=command.article_id
-        ):
-            return VoteAlreadyCastResult(
-                cast_vote_user_id=command.user_id,
-                cast_vote_article_id=command.article_id
-            )
-        ...
-
-
-    # добавим SPI-зависимость ArticleVoteExistsPort
-    article_vote_exists_port: ArticleVoteExistsPort
-
-    def __init__(self, article_vote_exists_port: ArticleVoteExistsPort):
-        self._article_vote_exists_port = article_vote_exists_port
-```
-
-
-Пользователь может проголосовать "ЗА" или "ПРОТИВ" публикации.
-
-
-обозначающие "значение голоса" и "голос пользователя за публикацию".
-А вот модели "голосующий пользователя" - нет.
-
-Как вы помните, сущности и концепции предметной области зависят
-друг от друга, но не имеют доступа к внешним слоям приложения.
-
-
-Давайте, перед тем как начинать разработку сценария подумаем,
-какие модели предметной области можно обособить и отделить
-какие концепции относятся к домену, а
-
-Наш сценарий будет воплощён в жизнь внутри сервиса приложения `PostRatingService`:
-
-```python
-class PostRatingService(CastArticleVoteUseCase):
-    ...
-    def cast_article_vote(self, command: CastArticleVoteCommand) -> CastArticleVoteResult:
-        ...
-```
-
-
-
-Давайте набросаем сервис приложения, который реализует вышеприведённый
-сценарий и связывает требуемые для него компоненты. Разработку конечно
-же правильнее начинать с тестов, но воспринимать ход мыслей в статье,
-как мне кажется, проще в "традиционном" порядке - утром код, вечером тесты:
-
-```python
-# src/myapp/application/services/post_rating_service.py
-from typing import Union
-
-from myapp.application.port.spi.get_voting_user_port import GetVotingUserPort
-from myapp.application.port.spi.user_vote_for_post_exists_port import UserVoteForPostExistsPort
-from myapp.application.port.spi.save_user_vote_for_post_port import SaveUserVoteForPostPort
-
-from myapp.application.domain.model.voting_user import VotingUser
-from myapp.application.domain.model.exceptions.user_already_voted_for_post import UserAlreadyVotedForPostError
-
-from myapp.infrastructure import transactional
-
-
-class PostRatingService(VoteForPostUseCase):
-    _user_vote_for_post_exists_port: UserVoteForPostExistsPort
-    _get_voting_user_port: GetVotingUserPort
-    _save_user_vote_for_post_port: SaveUserVoteForPostPort
-
-    # Здесь и далее для краткости опущен метод `__init__()`,
-    # через который инициализуются поля-зависимости компонента.
-
-    @transactional
-    def vote_for_post(self, user_id: UUID, post_id: UUID, vote: Vote)
-        -> Union[UserVoteForPost, UserVoteForPostAlreadyCast]:
-
-        # Если пользователь уже проголосовал, то возвращаем
-        # специальное значение:
-        if self._user_vote_for_post_exists_port.user_vote_for_post_exists(
-            user_id,
-            post_id
-        ):
-            raise UserVoteForPostAlreadyCast(user_id, post_id)
-
-        # Если же полжьзователь не голосовал...
-
-        # Загрузим модель "голосующего пользователя" из БД
-        voting_user: VotingUser = self._get_voting_user_port.get_voting_user(user_id)
-
-        # Попробуем проголосовать
-        user_vote_for_post = voting_user.cast_vote(post_id, vote)
-
-        # И сохранить голос (в БД)
-        self._save_user_vote_for_post_port.save_user_vote_for_post(
-            user_vote_for_post
-        )
-
-        return user_vote_for_post
-```
-
-Очень надеюсь, что вышеприведённый код был лёгок для чтения и понимания.
-Ведь иначё всё это не имеет никакого значения!
-
-У сервиса три зависимости:
-
-* `get_user_vote_for_post_port: GetUserVoteForPostPort` - загружает голос
-  пользовареля, если такой имеется
-* `get_voting_user_port: GetVotingUserPort` - загружает и создаёт модель
-  пользователя, с помощью которой можно проголосовать за публикацию
-* `save_user_vote_for_post_port: SaveUserVoteForPostPort` - сохраняет
-  голос пользователя.
-
-Взаимодействие с ними происходит в методе `vote_for_post()`.
-Сервис не имеет ни малейшего понятия, каким образом имплементированы
-эти зависимости и какого рода хранилище они используют.
-Однако важно показать, что взаимодействие должно выполняться
-в рамках одной транзакции. Поэтому метод обрамляется декоратором `transactional`.
-
-В сервисе также выполняются *некоторые* из бизнес-требований
-данного сценария, например *"За каждую публикацию пользователь может проголосовать один раз"*.
-В то же время требование *Пользователь может голосовать за публикации если его карма ≥ 5* скрыто в доменной модели `VotingUser`.
-
-### Domain model
-
-~~Вот она:~~ Модель `VotingUser` - отличный пример для TDD в рамках архитектуры
-портов и адаптеров. Давайте напишем один тест, а остальные попросим додумать
-вас, уважаемый читатель.
-
-!!!! OFFTOP: TDD
-Мой личный подход к TDD - сначала полностью написать тест, невзирая
-на отсутствие классов, методов и т.д. Убедиться, что тест
-легко читается и обладает другими качествами упомянутыми
-Кентом Бэком в [Test Desiderada](https://medium.com/@kentbeck_7670/test-desiderata-94150638a4b3).
-И уже потом разбираться с ошибками компиляции и теста.
-
-```python
-
-# test/myapp/application/domain/model/test_voting_user.py
-
-from uuid import uuid4
-
-from myapp.application.domain.model.vote import Vote
-from myapp.application.domain.model.voting_user import VotingUser, InsufficientKarmaError
-
-def test_user_with_karma_smaller_than_5_cannot_cast_vote():
-    voting_user = VotingUser(karma=4)
-
-    # `VotingUser.cast_vote()` выкидывает исключение,
-    # если кармы пользователя не достаточно для голосования
-    with pytest.raises(InsufficientKarmaError):
-        voting_user.cast_vote(uuid4(), Vote.UP)
-```
-
-А вот и модель, которая проходит вышеприведённый тест.
-Заметьте, что код компонентов и тестов лежат в файлах с практически
-идентичными путямии. Разница лишь в директориях верхнего уровня: `src/` и `test/`.
-
-```python
-# src/myapp/application/domain/model/voting_user.py
-
-from uuid import uuid4, UUID
-
-from .vote import Vote
-
-MINIMAL_KARMA_FOR_VOTE = 5
-
-class VotingUser:
-    _id: UUID
-    _karma: int
-
-    def __init__(self, id: UUID, karma: int):
-        self._id = id
-        self._karma = karma
-
-    def cast_vote(self, post_id: UUID, vote: Vote):
-        if self._karma < MINIMAL_KARMA_FOR_VOTE:
-            raise InsufficientKarmaError(
-                `User [{self._id}] does not have enough karma to vote`
-            )
-
-        return UserVoteForPost(
-            id=uuid4(),
-            user_id=self._id,
-            post_id=post_id,
-            vote=vote
-        )
-
-class InsufficientKarmaError(Exception):
-    ...
-```
 
 SPI Ports and Adapters
 ======================
 
-Работа с гексагональной архитектурой чем-то напоминает знаменитый
-мем "We need to go deeper".
-Набросав код сервиса и даже написав код домена, можно было позабыть
-о том, что в приложении пока нет ни требуемых SPI-портов ни адаптеров.
-Нужно дальше углубляться в цепочку вызовов и достраивать необходимые
-компоненты.
+Продолжим рассматривать SPI-порты и адаптеры на примере
+``GetVotingUserPort``. Здесь  
 
-Давайте рассмотрим SPI-порты и адаптеры на примере ``GetUserVoteForPostPort``:
+м,,,,,,,,
 
-```python
-
-# src/myapp/application/port/spi/get_user_vote_for_post_port.py
-
-from uuid import UUID
-from typing import Protocol
-
-from myapp.application.domain.model.user_vote_for_post import UserVoteForPost
-
-  class GetUserVoteForPostPort(Protocol):
-    def get_user_vote_for_post(user_id: UUID, post_id: UUID): UserVoteForPost
-        pass
-```
 
 Стоит обратить внимание, что один адаптер может имплементировать несколько
 портов. Например, имеет смысл сгруппировать операции на определённой
-сущности базы данных в одном и том же адаптере.
+сущности базы данных в одном и т¦ом же адаптере.
 
 ```python
 
@@ -965,113 +763,6 @@ class PostVoteDatabaseOperations(GetUserVoteForPostPort):
         )
 
 ```
-
-
-Чуть позже мы поговорим о сервисе приложения, который имплементирует этот порт.
-А пока напишем REST-адаптер который будет запускать данный сценарий.
-
-```python
-# src/myapp/application/adapter/rest/post_controller.py
-
-from some_http_framework import post
-
-from myapp.application.ports.api.vote_for_post_use_case import VoteForPostUseCase
-
-class BasketItemController:
-    vote_for_post_use_case: VoteForPostUseCase
-
-    def __init__(self, vote_for_post_use_case: VoteForPostUseCase)
-        self._vote_for_post_use_case = vote_for_post_use_case
-
-    @post('/post/{post_id}/rating/vote')
-    def vote_for_post(self, user_id: UUID, post_id: UUID, vote: PostRatingVoteDto):
-        rating = self._vote_for_post_use_case(
-            user_id,
-            post_id,
-            PostRatingVote(vote)
-        )
-
-        return Response(
-            status=HTTP_CREATED,
-            content=PostRatingVoteCastResultDto(rating)
-        )
-
-```
-
-У этого адаптера чёткие обязанности:
-
-1. Принимать определённые HTTP запросы.
-2. [Десериализовывать и валидировать входные данные.]
-3. Запустить свенарий пользования `AddItemToBasketUseCase`.
-4. [Сериализовать] и возвращать результат выполненного сценария.
-5. [А также обрабатывать исключения.]
-
-!!!!!!!!!
-Explain DTO!
-В приведённом примере за нас это делает некая http-библиотека или
-фреймворк. Она превращает входной JSON-поток в дата-класс
-`BasketItemDto` и валидирует значения а-ля `Serializer` из
-DjangoRestFramework.
-
-Одно из допущений в вышеприведённом коде - это `user_id`. Значение
-этого парамаетра может быть взято из JWT-токена, из данных сессии
-и т.д. - в данном контексте это не важно.
-
-
-Уже на этом этапе мы могли бы применить практики TDD и
-начать с написания теста и по ходу действия - контроллера.
-"Позвольте, а как же `AddItemToBasketUseCase`? -
-спросите вы. Очень просто. Это же абстракция! Её конкретной
-имплементацией может быть тестовый двойник, например на основе
-`MagicMock`, или ещё лучше специализированный, заточенный под
-нужды теста.
-Давайте для простоты договоримся, что приложение выполняется
-в некоем контексте `app_context` с которым может взаимодействовать
-тестовый HTTP клиент. Оба объекта передаются в `pytest`-тест.
-
-!!!! как fixture (фикстуры?)
-
-```python
-# test/adapter/rest/test_basket_item_controller.py
-
-def test_add_item_to_basket(app_context: AppContext, http_client: TestHttpClient):
-    add_item_to_basket_use_case_mock  = MagicMock()
-    add_item_to_basket_use_case_mock.add_item_to_basket = MagicMock(
-        return_value = UUID('245c8e37-95bb-4a01-be45-38f72550698d')
-    )
-
-    app_context.add_controller(
-        BasketItemController(add_item_to_basket_use_case_mock)
-    )
-
-    response = http_client.post(
-        f'/basket/{uuid4()}/items',
-        {
-            'product_id': uuid4(),
-            'count': 1
-        }
-    )
-
-    assert response.status_code == HTTP_CREATED
-    assert response.content == json.serialize(
-        BasketItemCreatedResponseDto(
-            basket_item_id=UUID('245c8e37-95bb-4a01-be45-38f72550698d')
-        )
-    }
-
-```
-
-Заметьте, насколько *облегчённее* становится тестирование, когда
-нам не нужно загружать всё приложение целиком. Адепты Django
-вспомнят о легковесном тестировании вьюшек посредством `RequestFactory`.
-Но гексагональная архитектура позволяет шагнуть дальше.
-Мы избавились от обезьяних патчей и mock-обёрток конкретных классов.
-Мы можем идеально контролировать поведение зависимостей контроллера
-благодаря взаимодействию с ними через абстрактный интерфейс.
-И тест и контроллер легко модифицировать и отлаживать.
-
-
-Здесь `BasketItem` - это доменная модель (Domain Model).
 
 
 ## Inversion of Control Containers
@@ -1170,39 +861,7 @@ class ChatOpsController:
 
 
 
-
-
-
-### Телевизор
-
-Вы когда-нибудь пользовались телевизором?
-"Аффтар, ты где берёшь такую забористую траву?" - подумало большинство читателей.
-Прошу прощения за примитивизм. Телек отлично подходит
-для объяснения основных принципов гексагональной архитекруты.
-Обещаю, что в следующем же разделе мы вернёмся к коду.
-Хотя, в качестве примера можно было бы рассмотреть и телегу с лошадью :)
-
-Представим, что телевизор - это приложение построенное по правилам
-гексагональной архитектуры. Вечереет, мы готовимся к просмотру любимого
-сериала и первым делом необходимо выполнить простейший сценарий пользования - включить телевизор.
-"Да не ворпос - нажал кнопку на пульте".
-Окей, а если в пульте сели батарейки?
-"Ну... на телеке обычно есть кнопка включения. А вообще у меня Smart-TV, и я им по вай-фаю управляю!"
-
-Итак, мы имеем:
-* *Включить телевизор* - *абстрактный* сценарий пользования телевизором.
-  На языке нашей архитектуры - это **ведущий (API) порт**, принимающий команду управления приложением.
-* *ИК пульт управления*, *Кнопочка на корпусе* и *Виртуальный пульт на смартфоне, передающий команды по WiFi*.
-  - методы запуска вышеприведённого сценария,
-  а на языке нашей архитектуры - **API адаптеры**, посылающие команды в порт "Включить телевизор".
-* Внутри телевизора есть плата, связывающая компоненты, необходимые для включения и выключения телевизора.
-  Мы называем её **сервисом приложения**.
-* Плата проводит команды от **портов API** к необходимым логическими блокам - **домену**, и связывает выходы
-  **домен** с **ведомыми (SPI) портами**: *вывести картинку*, *установить якость*,
-   *подать звук* и т.д.
-* Физический экран и колонки телевизора - это **SPI адаптеры**.
-
-Надеюсь вам стало чуточку понятнее. Воплотим же всё это в коде!
-
-
 * https://github.com/basicWolf/hexagonal-architecture-django
+
+* Transactions
+* Mocks
