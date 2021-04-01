@@ -720,9 +720,9 @@ class PostRatingService(
         return cast_vote_result
 ```
 
-Вы наверняка представили как выглядят интерфейсы необходимых SPI-портов
+Вы наверняка представили как выглядят интерфейсы этих SPI-зависимостей
 (TODO: [source](http://) ): (TODO: [source](http://) ).
-Давайте приведём один из них здесь
+Давайте приведём один из интерфейсов здесь:
 
 ```python
 # src/myapp/application/ports/spi/get_voting_user_port.py
@@ -733,36 +733,19 @@ class GetVotingUserPort:
 ```
 
 За кадром мы конечно же сначала напишем тесты, а уже потом код :)
-Как и в предыдущих примерах, роль SPI-адаптеров в тестах сервиса играют
-дублёры. Но чтобы удержать сей опус в рамках статьи, позвольте
-оставить тесты в виде ссылки на исходник (TODO: [source](http://) ) [TODO] и двинуться
+При написании юнит-тестов роль SPI-адаптеров в тестах сервиса,
+как и в предыдущих примерах, играют дублёры.
+Но чтобы удержать сей опус в рамках статьи, позвольте оставить тесты
+в виде ссылки на исходник (TODO: [source](http://) ) [TODO] и двинуться
 дальше.
 
 SPI Ports and Adapters
 ======================
 
 Продолжим рассматривать SPI-порты и адаптеры на примере
-``GetVotingUserPort``. Здесь  
-
-м,,,,,,,,
+``GetVotingUserPort``.
 
 
-Стоит обратить внимание, что один адаптер может имплементировать несколько
-портов. Например, имеет смысл сгруппировать операции на определённой
-сущности базы данных в одном и т¦ом же адаптере.
-
-```python
-
-from myapp.application.adapter.db.entities.user_vote_for_post_entity import UserVoteForPostEntity
-
-class PostVoteDatabaseOperations(GetUserVoteForPostPort):
-    def get_user_vote_for_post(user_id: UUID, post_id: UUID) -> UserVoteForPost:
-        return UserVoteForPostEntity.objects.get_or_none(
-            user_id=user_id,
-            post_id=post_id
-        )
-
-```
 
 
 ## Inversion of Control Containers
