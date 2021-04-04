@@ -725,10 +725,10 @@ class PostRatingService(
 Давайте приведём один из интерфейсов здесь:
 
 ```python
-# src/myapp/application/ports/spi/get_voting_user_port.py
+# src/myapp/application/ports/spi/save_article_vote_port.py
 
-class GetVotingUserPort:
-    def get_voting_user(self, user_id: UUID, article_id: UUID) -> VotingUser:
+class SaveArticleVotePort(Protocol):
+    def save_article_vote(self, article_vote: ArticleVote) -> ArticleVote:
         raise NotImplementedError()
 ```
 
@@ -743,9 +743,89 @@ SPI Ports and Adapters
 ======================
 
 Продолжим рассматривать SPI-порты и адаптеры на примере
-``GetVotingUserPort``.
+``SaveArticleVotePort``. К этому моменту можно было и забыть,
+что мы всё ещё надохимдя в рамках Django. Ведь до сих
+пор не было написано того, с чего обычно начинается
+любое Django-приложение - модели данных!
+Тем не менее, не стоит торопиться. Начнём с адаптера,
+имплементирующего вышеуказанный порт:
+
+```python
+# src/myapp/application/adapter/spi/persistence/repository/article_vote_repository.py
+from myapp.application.adapter.spi.persistence.entity.article_vote_entity import (
+    ArticleVoteEntity
+)
+from myapp.application.domain.model.article_vote import ArticleVote
+from myapp.application.ports.spi.save_article_vote_port import SaveArticleVotePort
 
 
+class ArticleVoteRepository(
+    SaveArticleVotePort,
+):
+    def save_article_vote(self, article_vote: ArticleVote) -> ArticleVote:
+        article_vote_entity = ArticleVoteEntity.from_domain_model(article_vote)
+        article_vote_entity.save()
+        return article_vote_entity.to_domain_model()
+```
+
+Вспомним, что паттерн "Репозиторий" подразумевает скрытие деталей и тонкостей
+работы с источником данных. И как видно из кода, наш репозиторий справляется с этой
+задачей на ура. "Но позвольте! - скажете Вы, - a где здесь Django?".
+Чтобы избежать путаницы со словом "Model", модель данных носит гордое название
+`ArticleVoteEntity`. `Entity` в данном случае также подразумевает, что у неё
+имеется уникальный идентификатор:
+(TODO: [source](http://) )
+
+```python
+class ArticleVoteEntity(models.Model):
+    ... # здесь объявлены константы VOTE_UP, VOTE_DOWN и VOTE_CHOICES
+
+    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
+    user_id = models.UUIDField()
+    article_id = models.UUIDField()
+    vote = models.IntegerField(choices=VOTES_CHOICES)
+
+    ...
+
+    def from_domain_model(cls, article_vote: ArticleVote) -> ArticleVoteEntity:
+        ...
+
+    def to_domain_model(self) -> ArticleVote:
+        ...
+```
+
+Таким образом, всё что происходит в `save_article_vote()` - это
+создание Django-модели из доменной модели, сохранение её в БД,
+обратная конвертация и возврат доменной модели.
+Это поведение легко протестировать. (TODO: [source](http://) )
+Например юнит тест удачного исхода выглядит так:
+
+```python
+
+@pytest.mark.django_db
+def test_save_article_vote_persists_to_database(
+    article_vote_id: UUID,
+    user_id: UUID,
+    article_id: UUID
+):
+    article_vote_repository = ArticleVoteRepository()
+
+    article_vote_repository.save_article_vote(
+        ArticleVote(
+            id=article_vote_id,
+            user_id=user_id,
+            article_id=article_id,
+            vote=Vote.UP
+        )
+    )
+
+    assert ArticleVoteEntity.objects.filter(
+        id=article_vote_id,
+        user_id=user_id,
+        article_id=article_id,
+        vote=ArticleVoteEntity.VOTE_UP
+    ).exists()
+```
 
 
 ## Inversion of Control Containers
