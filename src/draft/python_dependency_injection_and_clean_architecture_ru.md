@@ -460,6 +460,7 @@ class ArticleVote:
 Первый же тест нацелен на проверку успешного выполнения сценария:
 
 ```python
+
 def test_cast_vote_returns_article_vote(user_id: UUID, article_id: UUID):
     voting_user = VotingUser(
         user_id=user_id,
@@ -691,7 +692,9 @@ class PostRatingService(
 голоса в какое-либо долговременное хранилище вроде БД.
 Для этого понадобится ещё одна SPI-зависимость `SaveArticleVotePort`:
 
-```
+```python
+# src/myapp/application/service/post_rating_service.py
+
 class PostRatingService(
     CastArticleVoteUseCase
 ):
@@ -739,8 +742,7 @@ class SaveArticleVotePort(Protocol):
 в виде ссылки на исходник (TODO: [source](http://) ) [TODO] и двинуться
 дальше.
 
-SPI Ports and Adapters
-======================
+## SPI Ports and Adapters
 
 Продолжим рассматривать SPI-порты и адаптеры на примере
 ``SaveArticleVotePort``. К этому моменту можно было и забыть,
@@ -752,6 +754,7 @@ SPI Ports and Adapters
 
 ```python
 # src/myapp/application/adapter/spi/persistence/repository/article_vote_repository.py
+
 from myapp.application.adapter.spi.persistence.entity.article_vote_entity import (
     ArticleVoteEntity
 )
@@ -801,6 +804,7 @@ class ArticleVoteEntity(models.Model):
 Например юнит тест удачного исхода выглядит так:
 
 ```python
+# tests/test_myapp/application/adapter/spi/persistence/repository/test_article_vote_repository.py
 
 @pytest.mark.django_db
 def test_save_article_vote_persists_to_database(
@@ -826,6 +830,91 @@ def test_save_article_vote_persists_to_database(
         vote=ArticleVoteEntity.VOTE_UP
     ).exists()
 ```
+
+Одним из требований Django является декларация моделей в `models.py`.
+Это решается простым импортированием:
+
+```
+# src/myapp/models.py
+
+from myapp.application.adapter.spi.persistence.entity.article_vote_entity import ArticleVoteEntity
+from myapp.application.adapter.spi.persistence.entity.voting_user_entity import VotingUserEntity
+```
+
+Приложение почти готово! Осталось соединить все компоненты
+и связать точки входа. 
+
+## Dependencies and application entry point
+
+Традиционно точки входа и маршрутизация HTTP-запросов в Django-приложениях
+декларируется в `urls.py`. Всё что нам нужно сделать - это добавить запись
+в urlpatterns:
+
+```python
+urlpatterns = [
+    path('article_vote', ArticleVoteView(...).as_view())
+]
+```
+
+Погодите рваться в бой! Ведь `ArticleVoteView` требует
+зависимость имплементирующую `CastArticleVoteUseCase`.
+Это конечно же `PostRatingService`... которому 
+в свою очередь требуются `GetVotingUserPort` и `SaveArticleVotePort`.
+Всей этой цепочкой зависимостей удобно управлять
+из одного места - контейнера зависимостей:
+
+```python
+# src/myapp/dependencies_container.py
+
+...
+
+def build_production_dependencies_container() -> Dict[str, Any]:
+    save_article_vote_adapter = ArticleVoteRepository()
+
+    get_vote_casting_user_adapter = VotingUserRepository()
+
+    cast_article_vote_use_case = PostRatingService(
+        get_vote_casting_user_adapter,
+        save_article_vote_adapter
+    )
+
+    article_vote_django_view = ArticleVoteView.as_view(
+        cast_article_vote_use_case=cast_article_vote_use_case
+    )
+
+    return {
+        'article_vote_django_view': article_vote_django_view
+    }
+```
+
+Этот контейнер инициализируется на старте приложения в
+`AppConfig.ready()`:
+
+```python
+# myapp/apps.py
+
+class MyAppConfig(AppConfig):
+    name = 'myapp'
+    container: Dict[str, Any]
+
+    def ready(self) -> None:
+        from myapp.dependencies_container import build_production_dependencies_container
+        self.container = build_production_dependencies_container()
+
+```
+
+И наконец `urls.py`:
+
+```python
+
+app_config = django_apps.get_containing_app_config('myapp')
+article_vote_django_view = app_config.container['article_vote_django_view']
+
+urlpatterns = [
+    path('article_vote', article_vote_django_view)
+]
+```
+
 
 
 ## Inversion of Control Containers
