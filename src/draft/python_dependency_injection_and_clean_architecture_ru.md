@@ -842,13 +842,13 @@ from myapp.application.adapter.spi.persistence.entity.voting_user_entity import 
 ```
 
 Приложение почти готово! Осталось соединить все компоненты
-и связать точки входа. 
+и точки входа.
 
 ## Dependencies and application entry point
 
 Традиционно точки входа и маршрутизация HTTP-запросов в Django-приложениях
 декларируется в `urls.py`. Всё что нам нужно сделать - это добавить запись
-в urlpatterns:
+в `urlpatterns`:
 
 ```python
 urlpatterns = [
@@ -856,7 +856,7 @@ urlpatterns = [
 ]
 ```
 
-Погодите рваться в бой! Ведь `ArticleVoteView` требует
+Но погодите! Ведь `ArticleVoteView` требует
 зависимость имплементирующую `CastArticleVoteUseCase`.
 Это конечно же `PostRatingService`... которому 
 в свою очередь требуются `GetVotingUserPort` и `SaveArticleVotePort`.
@@ -877,7 +877,6 @@ def build_production_dependencies_container() -> Dict[str, Any]:
         get_vote_casting_user_adapter,
         save_article_vote_adapter
     )
-
     article_vote_django_view = ArticleVoteView.as_view(
         cast_article_vote_use_case=cast_article_vote_use_case
     )
@@ -915,6 +914,7 @@ urlpatterns = [
 ]
 ```
 
+Вот теперь - действительно всё готово. 
 
 
 ## Inversion of Control Containers
