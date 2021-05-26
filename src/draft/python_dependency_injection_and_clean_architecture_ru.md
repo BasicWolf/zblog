@@ -330,7 +330,7 @@ TODO
 Команды и запросы которые отдаёт приложение поступают в **ведомые** порты (driven port).
 Их также называют портами интерфейса поставщика услуг (Service Provider Interface, SPI).
 
-Mежду портами и доменом сидят дирижёры - **серсивы приложения** (Application services).
+Между портами и доменом сидят дирижёры - **серсивы приложения** (Application services).
 Они являются *связующим звеном* между сценариями использования,
 доменом и ведомыми портами неободимыми для выполнения сценария.
 Также стоит упомянуть, что именно сервис приложения определяет,
@@ -710,7 +710,7 @@ class PostRatingService(
 ```
 
 Вы наверняка представили как выглядят интерфейсы этих SPI-зависимостей
-Приведём один из интерфейсов здесь ([source](https://github.com/BasicWolf/hexagonal-architecture-django/blob/568e0ab7fa3c5ec879444572a41ad5a3395bbbf8/src/myapp/application/ports/spi/get_voting_user_port.py)):
+Приведём один из интерфейсов здесь ([source](https://github.com/BasicWolf/hexagonal-architecture-django/blob/568e0ab7fa3c5ec879444572a41ad5a3395bbbf8/src/myapp/application/ports/spi/save_article_vote_port.py)):
 
 ```python
 # src/myapp/application/ports/spi/save_article_vote_port.py
@@ -724,8 +724,9 @@ class SaveArticleVotePort(Protocol):
 При написании юнит-тестов роль SPI-адаптеров в тестах сервиса,
 как и в предыдущих примерах, играют дублёры.
 Но чтобы удержать сей опус в рамках статьи, позвольте оставить тесты
-в виде ссылки на исходник (TODO: [source](http://) ) [TODO] и двинуться
-дальше.
+в виде ссылки на исходник
+([source](https://github.com/BasicWolf/hexagonal-architecture-django/blob/main/tests/test_myapp/application/service/test_post_rating_service.py))
+и двинуться дальше.
 
 ## SPI Ports and Adapters
 
@@ -733,9 +734,9 @@ class SaveArticleVotePort(Protocol):
 ``SaveArticleVotePort``. К этому моменту можно было и забыть,
 что мы всё ещё надохимдя в рамках Django. Ведь до сих
 пор не было написано того, с чего обычно начинается
-любое Django-приложение - модели данных!
+любое Django-приложение - модель данных!
 Тем не менее, не стоит торопиться. Начнём с адаптера,
-имплементирующего вышеуказанный порт:
+который можно подключить в вышеуказанный порт:
 
 ```python
 # src/myapp/application/adapter/spi/persistence/repository/article_vote_repository.py
@@ -760,10 +761,11 @@ class ArticleVoteRepository(
 работы с источником данных. "Но позвольте! - скажете Вы, - a где здесь Django?".
 Чтобы избежать путаницы со словом "Model", модель данных носит гордое название
 `ArticleVoteEntity`. `Entity` также подразумевает, что у неё
-имеется уникальный идентификатор:
-(TODO: [source](http://) )
+имеется уникальный идентификатор ([source](https://github.com/BasicWolf/hexagonal-architecture-django/blob/925defa33eb8652d23efa55db7096da2559a2da5/src/myapp/application/adapter/spi/persistence/entity/article_vote_entity.py)):
 
 ```python
+# src/myapp/application/adapter/spi/persistence/entity/article_vote_entity.py
+
 class ArticleVoteEntity(models.Model):
     ... # здесь объявлены константы VOTE_UP, VOTE_DOWN и VOTE_CHOICES
 
@@ -784,8 +786,9 @@ class ArticleVoteEntity(models.Model):
 Таким образом, всё что происходит в `save_article_vote()` - это
 создание Django-модели из доменной модели, сохранение её в БД,
 обратная конвертация и возврат доменной модели.
-Это поведение легко протестировать. (TODO: [source](http://) )
-Например юнит тест удачного исхода выглядит так:
+Это поведение легко протестировать.
+Например юнит тест удачного исхода выглядит так
+[source](https://github.com/BasicWolf/hexagonal-architecture-django/blob/925defa33eb8652d23efa55db7096da2559a2da5/tests/test_myapp/application/adapter/spi/persistence/repository/test_article_vote_repository.py):
 
 ```python
 # tests/test_myapp/application/adapter/spi/persistence/repository/test_article_vote_repository.py
@@ -836,15 +839,24 @@ from myapp.application.adapter.spi.persistence.entity.voting_user_entity import 
 
 Ответ на вопрос, "В какой момент должно быть обработано это исключение?",
 вовсе не очевиден. С архитектурной точки зрения, ни API, ни домен не волнуют
-проблемы SPI. Максимум что может сделать API - обработать исключение
-SPI в общем порядке а-ля `except Exception:`.
-Домен же может предоставить исключения-обётки, в которые SPI адаптер
-может завернуть подходящие исключения.
-Например, в данной ситуации уместным будет исключение `VotingUserNotFound`: (TODO: [source](http://) )
-в которое оборачивается `VotingUserEntity.DoesNotExist`: (TODO: [source](http://) )
+проблемы SPI-адаптеров. Максимум что может сделать API с таким исключением
+- обработать его в общем порядке, а-ля `except Exception:`.
+С другой стороны SPI-порт может предоставить исключение-обётку,
+в которую SPI-адаптер завернёт внутреннюю ошибку.
+А API может её поймать.
+
+О, я слышу вас, дорогие адепты функционального программирования!
+"Какие исключения? В топку! Даёшь `Either`!". В ваших словах
+много правды и эта тема заслуживает отдельной статьи.
+Но в одном я соглашусь с вами - **в домене не должно быть исключений!**.
+
+Например, в данной ситуации уместным будет исключение `VotingUserNotFound`
+([source](https://github.com/BasicWolf/hexagonal-architecture-django/blob/859909f20f99c4d8587725a21bace1f8b25d0fa1/src/myapp/application/adapter/spi/persistence/exceptions/voting_user_not_found.py))
+в которое оборачивается `VotingUserEntity.DoesNotExist`
+([source](https://github.com/BasicWolf/hexagonal-architecture-django/blob/859909f20f99c4d8587725a21bace1f8b25d0fa1/src/myapp/application/adapter/spi/persistence/repository/voting_user_repository.py#L26)):
 
 ```python
-# src/myapp/application/domain/model/exceptions/voting_user_not_found.py
+# src/myapp/application/adapter/spi/persistence/exceptions/voting_user_not_found.py
 class VotingUserNotFound(Exception):
     def __init__(self, user_id: UUID):
         super().__init__(user_id, f"User '{user_id}' not found")
@@ -858,7 +870,7 @@ class VotingUserRepository(GetVotingUserPort):
         try:
             # Код немного упрощён, в оригинале здесь происходит
             # аннотация флагом "голосовал ли пользователь за статью".
-            # см. исохидник
+            # см. исходник
             entity = VotingUserEntity.objects.get(id=user_id)
         except VotingUserEntity.DoesNotExist as e:
             raise VotingUserNotFound(user_id) from e
@@ -868,13 +880,14 @@ class VotingUserRepository(GetVotingUserPort):
 
 
 А вот теперь действительно, приложение почти готово! Осталось соединить все компоненты
-и точки входа.~~
+и точки входа.
 
 ## Dependencies and application entry point
 
 Традиционно точки входа и маршрутизация HTTP-запросов в Django-приложениях
 декларируется в `urls.py`. Всё что нам нужно сделать - это добавить запись
-в `urlpatterns`:
+в `urlpatterns`
+([source](https://github.com/BasicWolf/hexagonal-architecture-django/blob/859909f20f99c4d8587725a21bace1f8b25d0fa1/src/myapp/urls.py)):
 
 ```python
 urlpatterns = [
@@ -887,7 +900,8 @@ urlpatterns = [
 Это конечно же `PostRatingService`... которому
 в свою очередь требуются `GetVotingUserPort` и `SaveArticleVotePort`.
 Всю эту цепочку зависимостей удобно хранить и управлять
-из одного места - контейнера зависимостей:
+из одного места - контейнера зависимостей
+([source](https://github.com/BasicWolf/hexagonal-architecture-django/blob/859909f20f99c4d8587725a21bace1f8b25d0fa1/src/myapp/dependencies_container.py)):
 
 ```python
 # src/myapp/dependencies_container.py
@@ -913,7 +927,8 @@ def build_production_dependencies_container() -> Dict[str, Any]:
 ```
 
 Этот контейнер инициализируется на старте приложения в
-`AppConfig.ready()`:
+`AppConfig.ready()`
+([source](https://github.com/BasicWolf/hexagonal-architecture-django/blob/859909f20f99c4d8587725a21bace1f8b25d0fa1/src/myapp/apps.py)):
 
 ```python
 # myapp/apps.py
@@ -943,17 +958,18 @@ urlpatterns = [
 ## Inversion of Control Containers
 
 Для реализации одного небольшого сценария нам понадобилось создать и связать четыре компонента.
-С каждым новым сценарием, число компонентов будет расти в арифметической
-прогрессии. A как управлять этим зоопарком, когда
+С каждым новым сценарием, число компонентов будет расти и количество связей
+будет увеличиваться в арифметической прогрессии.
+Как управлять этим зоопарком, когда
 приложение начнёт разрастаться до неприличных размеров?
-И тут на помощь приходят Kонтейнеры инверсии управления
+И тут на помощь приходят Kонтейнеры Инверсии Управления.
 
 IoC-container - это фреймворк управляющий объектами и их
 зависимостями во время исполнения программы.
 
 Spring был первым _универсальным_ IoC-контейнером / фреймворком
 с которым я столкнулся на практике (для зануд: Micronaut - да!).
-Чего уж таить, я не сразу проникся заложенными него идеями.
+Чего уж таить, я не сразу проникся заложенными в него идеями.
 По-настоящему оценить всю мощь автоматического связывания
 (autowiring) и сопутствующего функционала я смог лишь
 выстраивая приложение следуя практикам гексагональной архитектуры.
@@ -1035,10 +1051,13 @@ class PostRatingService(
 действиями, связями и т.д. используется при написании программы - в
 названиях модулей, функций, методов, классов, констант и даже переменных!
 
-TODO: A Bounded Context is a defined part of software where particular terms
+
+TODO (cut out for russian text): A Bounded Context is a defined part of software where particular terms
 definitions and rules apply in a consistent way.
+
 Другой важный термин - **Ограниченный Контекст** (Bounded Context) -
-автономные части предметной области. Простой пример: в онлайн магазине,
+автономные части предметной области с устоявшимися правилами, терминами и определениями.
+Простой пример: в онлайн магазине,
 модель "товар" несёт в себе совершенно разный смысл для отделов маркетинга,
 бухгалтерии, склада и логистики. Для связи моделей товара в этих
 контекстах достаточно наличие одинакового идентификатора (например UUID).
