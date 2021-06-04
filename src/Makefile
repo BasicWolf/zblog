@@ -108,7 +108,7 @@ cf_upload: publish
 
 github: publish
 	ghp-import -m "Generate Pelican site" -b $(GITHUB_PAGES_BRANCH) $(OUTPUTDIR)
-	git push git@github.com:BasicWolf/basicwolf.github.io.git $(GITHUB_PAGES_BRANCH):master
+	git push -f git@github.com:BasicWolf/basicwolf.github.io.git $(GITHUB_PAGES_BRANCH):master
 
 travis_github: publish
 	ghp-import -m "Generate Pelican site via Travis CI" -b $(GITHUB_PAGES_BRANCH) $(OUTPUTDIR)
