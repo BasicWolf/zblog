@@ -9,7 +9,7 @@ SITENAME = "Zaur's Thoughts"
 SITEDESCRIPTION = "Zaurun Fikirləri"
 SITELOGO = '/images/logo.png'
 FAVICON = '/images/favicon.png'
-COPYRIGHT_YEAR = 2020
+COPYRIGHT_YEAR = 2021
 
 CUSTOM_CSS = '/static/css/extra.css'
 
