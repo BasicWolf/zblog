@@ -20,7 +20,7 @@ PATH = 'content'
 
 ARTICLES_PATH = ['articles']
 
-TIMEZONE = 'Europe/Paris'
+TIMEZONE = 'Europe/Helsinki'
 
 DEFAULT_LANG = 'en'
 
