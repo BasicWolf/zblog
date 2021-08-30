@@ -5,52 +5,46 @@ Domain-driven design, Hexagonal architecture of ports and adapters, Dependency i
 :categories: Articles
 :tags: programming, python, hexagonal architecture, dependency injection, DDD
 :date: 2021-06-11 12:00
+:summary: Does the article title sounds like a dark magic spell? I assure you, it is all safe, as long as you know how to treat it. Welcome to this small series of advanced articles which covers principles of Hexagonal architecture in Python and Django application design.
 :status: draft
-
-
-Does the article title sounds like a dark magic spell?
-I assure you, it is all safe, as long as you know how to treat it.
-Welcome to this small series of advanced articles.
-The series covers principles of Hexagonal architecture in Django application design.
 
 Time flies awfully fast!
 Two years ago I left the world of Django and found myself in the world of
 Kotlin, Java and Spring Boot.
 It was a genuine cultural shock.
-An extensive amount of new knowledge was bombarding my brain.
-Sometimes I felt so helpless, that I wanted to run back to
+An extensive amount of new knowledge bombarded my brains.
+Sometimes it was so furious, that I wanted to run back to
 the beloved and bytewise familiar Python ecosystem.
 Inversion of Control (IoC) was the hardest topic to digest.
 Automated Dependency Injection (DI) felt like black magic,
-compared to Django's direct approach.
-Nonetheless, that core capability of Spring Boot framework
-allowed us to design application following Hexagonal architecture rules.
-While the final challenge was getting rid of the old "implement
+compared to Django's direct approach. Spring Boot behemoth framework consumed me in nightmares. But all the effort was worth it.
+
+We designed and implemented the application following Hexagonal architecture rules. And the final challenge was getting rid of the old "implement
 a backlog of features" habit in place of Domain-Driven Design (DDD).
 
 Our project rapidly grows in size and complexity.
 Yet it is easy to maintain, support and develop
-- thanks to the great quality of its foundation and architecture.
+- thanks to the great quality of its foundation.
 The code is expressive and comprehensible.
 The components are easily interchangeable.
 By all means this application is better than anything written
-by the team members in past.
+by the team members in the past.
 
-I look behind and see all the gaps in my previous experience.
-The gaps which did not allow solving business problem as elegantly.
-Welcome, fellow Pythonista!
-This small articles series is about Hexagonal architecture and
-essential topics surrounding it.
+I look behind and see all the gaps in my previous experience
+which did not allow solving business problem as elegantly.
+Dear fellow Pythonista, I hope
+this small articles series about Hexagonal architecture
+would help you to achieve the same without going through my struggle.
 
 Dependency Injection
 ====================
 
-Do you what is Dependency Injection (DI)?
-Sure you do, even if you can't recall its explicit definition.
-Let's see what are the pros and cons of this approach (if you prefer - pattern).
+You know what Dependency Injection (DI) is, don't you?
+Sure you do, even if you can't recall the explicit definition.
+Let's see what are the pros and cons of this approach (a pattern, if you prefer).
 
 Imagine that we need a function which sends ALARM messages to a message bus.
-The first iteration could be the following:
+Our first iteration is:
 
 .. code-block:: python
 
@@ -76,9 +70,9 @@ Ladies and gentlemen, this is going south, let's take another way:
        message_bus.send(topic='alert', message=message)
 
 
-This small change for function is a big change of paradigm.
+This small change in function signature is a big change of paradigm.
 The caller sees that ``send_alert()`` function **depends** upon
-``MessageBus`` object (viva type annotations).
+``MessageBus`` object (viva type annotations!).
 All implicit mocking bells and whistles are gone in favour of
 explicit and clean code.
 Sounds too good to be true?
@@ -122,8 +116,8 @@ Let's try solving this problem by means of OOP:
    alert_dispatcher = AlertDispatcher(get_message_bus())
    alert_dispatcher.send("Oh no, yet another dependency!")
 
-Now ``AlertDispatcher`` class ``depends`` on an object of type ``MessageBus``.
-We **inject** this dependency when creating a ``AlertDispatcher`` object
+Now ``AlertDispatcher`` class **depends** on an object of type ``MessageBus``.
+We **inject** this dependency when creating an ``AlertDispatcher`` object
 by passing the dependency into constructor.
 We have **wired** (not coupled!) the object and its dependency.
 
@@ -131,8 +125,7 @@ At this point the focus switches from ``message_bus`` to ``alert_dispatcher``.
 This **component** may be required in different parts of the application.
 Which means that there should be a global context which holds and provides
 the object.
-But before building such context, let's discuss the nature of components
-and components wiring.
+Let's first discuss the nature of components and components wiring.
 
 
 Componential Architecture
@@ -161,7 +154,7 @@ It stores the incoming messages in a ``list``:
        sent_messages = []
 
        def send(topic: str, messagge: str):
-           self.sent_messages.append((str, message))
+           self.sent_messages.append(topic, message)
 
 In the same manner, an abstract use case scenario is decoupled from a
 business-driven implementation:
@@ -215,7 +208,7 @@ Finally, let's connect all the pieces together:
        http_server.start()
 
 How would a rational and clear-minded developer react to this?
-"Why are you overcomplicating this?"
+She would call it overengineered and overcomplicated, no less!
 Which is indeed true. On the first glance, everything above fits into a short
 function:
 
@@ -238,7 +231,7 @@ The worst part is that we
 **melted and buried business logic in technical details**.
 Don't get me wrong, such code has the right to exist.
 Yet its existence in a rapidly growing application will
-soon end up in maintenance hell.
+soon end up in a maintenance hell.
 
 Back to the componential architecture.
 What are the advantages?
@@ -259,11 +252,11 @@ What are the advantages?
 
 Suddenly it dawns upon you:
 "That sounds like... SOLID?"
-It sure does.
+Hell yeah!
 It is almost what Uncle Bob would call a
 `Clean Architecture
 <https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html>`_.
-I encourage you to read this article, before moving towards our end goal -
+I encourage you to read his article, before moving towards our end goal -
 Hexagonal architecture.
 
 Architecture is about intent
@@ -310,7 +303,8 @@ That is a floor plan of `Oodi Library <https://en.wikipedia.org/wiki/Helsinki_Ce
 I hope this tiny puzzle was easy to solve and you got the main idea:
 architecture should meet us at the gate, literally after ``git clone``.
 Isn't it great when the source code is organized in such a way
-that the purpose and meaning of each file lies on the surface?
+that the purpose and meaning of each file, class, function and
+any other object lies on the surface?
 
 
 Hexagonal architecture of Ports and Adapters
@@ -325,7 +319,7 @@ It follows with demonstration of a weird Cthulhu-like picture:
    :alt: Hexagonal architecture
 
 
-Alistair Cockurn the inventor of term "Hexagonal architecture" explains
+Alistair Cockurn, the inventor of "Hexagonal architecture" term explains
 that "hexagon" is not strictly necessary:
 
   The hexagon is not a hexagon because the number six is important,
@@ -338,22 +332,23 @@ that "hexagon" is not strictly necessary:
   -- `Alistair Cockburn <https://alistair.cockburn.us/hexagonal-architecture/>`_
 
 
+So if hexagon is not necessary, the what is?
 
 **Domain** is the heart of an application.
-The names of classes, methods, functions, constants and other objects
-resemble those of the problem domain.
+The business rules are defined here.
+The names of classes, methods, functions, constants and other objects resemble those of the problem domain.
 Think of StackOverflow:
 
   To vote, one must have 15 or more reputation points.
 
 That is a pure domain rule.
-And Guess what?
+But, guess what?
 HTTP, SQL, RabbitMQ, AWS and so on do not belong here.
 
-That technological feast happens in **adapters** which can are connected to the **ports**.
-Commands and queries are entering the application through **driver** or API ports.
+That technological feast happens in **adapters** which are connected to the **ports**.
+Commands and queries are entering the application through **driver** or **API** ports.
 Commands and queries from the application are directed through **driven** ports.
-They are also called Service Interface Provider or SPI ports.
+They are also called Service Interface Provider or **SPI** ports.
 
 
 **Application services** are the conductors which control domain and ports
@@ -363,9 +358,9 @@ whether scenario internals are executed in a single transaction.
 
 All this - ports, adapters, application and domain services,
 as well as domain objects - are application **layers**.
-Each layer consists of individual **components**.
+Each layer consists of multiple different **components**.
 And the grand commandment of the layers interaction is
-"*Dependencies are directed from outer layers to the inner side.*"
+"*Dependencies are directed from the outer layers to the inner center.*"
 For example, adapters can use domain objects, but domain should not refer to adapters.
 
 
