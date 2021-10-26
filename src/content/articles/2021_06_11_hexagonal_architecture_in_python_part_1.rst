@@ -60,7 +60,7 @@ is hidden from the caller.
 What if you'd like to use another message bus?
 How about the level of magic required to test this function?
 Did I just hear ``mock.patch(...)``?
-Ladies and gentlemen, this is going south, let's take another way:
+Ladies and gentlemen, this is going south, let's try a different way:
 
 .. code-block:: python
 
@@ -92,9 +92,8 @@ Have a look:
            self.sent_to_topic = topic
            self.sent_message = message
 
-A tempted reader raises a question: does this mean that we have to pass
-an instance of ``MessageBus`` to ``send_alert()`` function on each call?
-Isn't that cumbersome?
+But doesn't this mean that we have to pass an instance of ``MessageBus`` to
+``send_alert()`` function on each call? Isn't that cumbersome?
 
 .. code-block:: python
 
@@ -133,9 +132,7 @@ Componential Architecture
 
 We didn't emphasize dependencies types while speaking of dependency injection.
 But you might have guessed that ``MessageBus`` is just an abstraction,
-an interface or what
-`PEP-544 <https://www.python.org/dev/peps/pep-0544/>`_
-calls a **protocol**.
+an interface or a protocol [#]_.
 Somewhere the application defines:
 
 .. code-block:: python
@@ -374,3 +371,7 @@ like a "HTTP interface for a database".
 We are now ready to dive into building a Hexagonal architecture -based
 Django application.
 Stay tuned for part II.
+
+.. [#]  Though `PEP-544 <https://www.python.org/dev/peps/pep-0544/>`_ Protocols
+        are about structural subtying. Another option to mimic interfaces is
+        to either use abstract classes with abstract methods.
