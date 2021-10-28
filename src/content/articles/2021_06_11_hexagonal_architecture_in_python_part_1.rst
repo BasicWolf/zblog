@@ -153,10 +153,12 @@ It stores the incoming messages in a ``list``:
        def send(topic: str, messagge: str):
            self.sent_messages.append(topic, message)
 
+.. _DispatchAlertUseCase:
+
 In the same manner, an abstract use case scenario is decoupled from a
 business-driven implementation:
 
- .. code-block:: python
+.. code-block:: python
 
    # An abstract use case
    class DispatchAlertUseCase(typing.Protocol):
@@ -175,6 +177,9 @@ business-driven implementation:
 
        def dispatch_alert(message: str):
            self._message_bus.send(topic='alert', message=message)
+
+
+.. _ChatOpsController:
 
 Next, let's add a controller which accepts HTTP requests and invokes
 ``DispatchAlertUseCase``:
@@ -207,7 +212,7 @@ Finally, let's connect all the pieces together:
 How would a rational and clear-minded developer react to this?
 She would call it overengineered and overcomplicated, no less!
 Which is indeed true. On the first glance, everything above fits into a short
-function:
+HTTP handler:
 
 .. code-block:: python
 
@@ -221,7 +226,7 @@ Is it short and simple? Absolutely!
 Is it maintainable? Hardly.
 But why?
 Because the components are strongly coupled in the code.
-By blending everything in a single function we tightly coupled
+By blending everything in a single function we tightly couple
 domain workflow and message bus implementation.
 And that's half the trouble.
 The worst part is that we
@@ -299,8 +304,8 @@ That is a floor plan of `Oodi Library <https://en.wikipedia.org/wiki/Helsinki_Ce
 
 I hope this tiny puzzle was easy to solve and you got the main idea:
 architecture should meet us at the gate, literally after ``git clone``.
-Isn't it great when the source code is organized in such a way
-that the purpose and meaning of each file, class, function and
+Isn't it great when the source code is organized in such way
+that the purpose and the meaning of each file, class, function and
 any other object lies on the surface?
 
 
@@ -311,7 +316,7 @@ Hexagonal architecture of Ports and Adapters
 describing the application to new team members.
 It follows with demonstration of a weird Cthulhu-like picture:
 
-.. image:: {static}/images/2021_06_11_hexagonal_architecture_in_python_part_1/hexagon.png
+.. image:: {static}/images/articles/2021_06_11_hexagonal_architecture_in_python_part_1/hexagon.png
    :align: center
    :alt: Hexagonal architecture
 
@@ -329,7 +334,23 @@ that "hexagon" is not strictly necessary:
   -- `Alistair Cockburn <https://alistair.cockburn.us/hexagonal-architecture/>`_
 
 
-So if hexagon is not necessary, the what is?
+So if hexagon is not necessary, then what is?
+
+
+**API ports** *are interfaces through which the application is controlled and queried.*
+If this sounds too cryptic, here is an analogy from the physical world:
+Think of turning on a TV. Usually you would grab an IR remote and press the button.
+You can also push the button on the TV or go fancy and start
+casting from your phone to wake it up.
+Here "turn on the TV" is an *API port*. Its job is to accept the "turn on"
+command and pass it deeper into the TV circuits.
+The remote, the physcal button, and the app on your phone are **API adapters**.
+They interact with the outer world and transform its signals into commands and
+queries for the designated API ports of the TV.
+
+In the *Componential architecture* from above, the DispatchAlertUseCase_ is
+an *API port* and ChatOpsController_ is an `API adapter`.
+
 
 **Domain** is the heart of an application.
 The business rules are defined here.
