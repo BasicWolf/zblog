@@ -59,7 +59,7 @@ software delivery performance. Some of these capabilities are:
 **loosely coupled architecture** and **customer feedback**,
 **work-in-progress limits** and **transformational leadership**.
 
-.. image:: {static}/images/2021_06_23_accelerate/accelerate_cover.jpg
+.. image:: {static}/images/articles/2021_06_23_accelerate/accelerate_cover.jpg
    :width: 40%
    :align: center
    :alt: Accelerate book cover

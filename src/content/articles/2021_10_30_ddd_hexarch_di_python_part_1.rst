@@ -4,9 +4,10 @@ Domain-driven design, Hexagonal architecture of ports and adapters, Dependency i
 :slug: ddd_hexarch_di_python_part_1
 :categories: Articles
 :tags: architecture, DDD, dependency injection, hexagonal architecture, programming, python,
-:date: 2021-06-11 12:00
-:summary: Does the article title sounds like a dark magic spell? I assure you, it is all safe, as long as you know how to treat it. Welcome to this small series of advanced articles which covers principles of Hexagonal architecture in Python and Django application design.
-:status: draft
+:date: 2021-10-30 22:30
+:summary: Welcome to a small series of articles which cover
+          crumbs of Domain-Driven Design, principles of Hexagonal architecture,
+          talks of Dependency Injection and applies these all to Django application design.
 
 Time flies awfully fast!
 Two and a half years ago I left the world of Django and found myself in the
@@ -273,7 +274,7 @@ One of my favourite Uncle Bob quotes on software architecture is
 
 What do you see on this screenshot?
 
-.. image:: {static}/images/2021_06_11_hexagonal_architecture_in_python_part_1/django_project.png
+.. image:: {static}/images/articles/2021_10_30_ddd_hexarch_di_python_part_1/django_project.png
    :align: center
    :alt: Typical Django project
 
@@ -289,7 +290,7 @@ Robert Martin develops the idea
 `further <https://www.youtube.com/watch?v=WpkDN78P884>`_.
 Take a look at a floor architecture plan and guess what the building is intended for:
 
-.. image:: {static}/images/2021_06_11_hexagonal_architecture_in_python_part_1/library_floor_paln.jpg
+.. image:: {static}/images/articles/2021_10_30_ddd_hexarch_di_python_part_1/library_floor_paln.jpg
    :align: center
    :alt: Typical Django project
 
@@ -319,7 +320,7 @@ Hexagonal architecture of Ports and Adapters
 describing the architecture application to the new team members.
 It follows by showing a weird Cthulhu-like picture:
 
-.. image:: {static}/images/articles/2021_06_11_hexagonal_architecture_in_python_part_1/hexagon.png
+.. image:: {static}/images/articles/2021_10_30_ddd_hexarch_di_python_part_1/hexagon.png
    :align: center
    :alt: Hexagonal architecture
 
