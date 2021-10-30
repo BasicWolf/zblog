@@ -7,7 +7,8 @@ Domain-driven design, Hexagonal architecture of ports and adapters, Dependency i
 :date: 2021-10-30 22:30
 :summary: Welcome to a small series of articles which cover
           crumbs of Domain-Driven Design, principles of Hexagonal architecture,
-          talks of Dependency Injection and applies these all to Django application design.
+          talks of Dependency Injection and applies these all to Python and Django
+          application design.
 
 Time flies awfully fast!
 Two and a half years ago I left the world of Django and found myself in the
