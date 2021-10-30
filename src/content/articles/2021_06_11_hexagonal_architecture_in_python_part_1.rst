@@ -3,14 +3,14 @@ Domain-driven design, Hexagonal architecture of ports and adapters, Dependency i
 
 :slug: ddd_hexarch_di_python_part_1
 :categories: Articles
-:tags: programming, python, hexagonal architecture, dependency injection, DDD
+:tags: architecture, DDD, dependency injection, hexagonal architecture, programming, python,
 :date: 2021-06-11 12:00
 :summary: Does the article title sounds like a dark magic spell? I assure you, it is all safe, as long as you know how to treat it. Welcome to this small series of advanced articles which covers principles of Hexagonal architecture in Python and Django application design.
 :status: draft
 
 Time flies awfully fast!
-Two years ago I left the world of Django and found myself in the world of
-Kotlin, Java and Spring Boot.
+Two and a half years ago I left the world of Django and found myself in the
+world of Spring Boot, Kotlin and Java.
 It was a genuine cultural shock.
 An extensive amount of new knowledge bombarded my brains.
 Sometimes it was so furious, that I wanted to run back to
@@ -22,15 +22,15 @@ compared to Django's direct approach. Spring Boot behemoth framework consumed me
 We designed and implemented the application following Hexagonal architecture rules. And the final challenge was getting rid of the old "implement
 a backlog of features" habit in place of Domain-Driven Design (DDD).
 
-Our project rapidly grows in size and complexity.
-Yet it is easy to maintain, support and develop
-- thanks to the great quality of its foundation.
+Our project is rapidly growing in size and complexity.
+Still, it is easy to maintain, support and develop
+- thanks to the solid foundation.
 The code is expressive and comprehensible.
 The components are easily interchangeable.
-By all means this application is better than anything written
-by the team members in the past.
+By all means this product is better than anything
+previosly written by the team members.
 
-I look behind and see all the gaps in my previous experience
+I look behind and see all the gaps in my experience
 which did not allow solving business problem as elegantly.
 Dear fellow Pythonista, I hope
 this small articles series about Hexagonal architecture
@@ -44,7 +44,7 @@ Sure you do, even if you can't recall the explicit definition.
 Let's see what are the pros and cons of this approach (a pattern, if you prefer).
 
 Imagine that we need a function which sends ALARM messages to a message bus.
-Our first iteration is:
+The first iteration is:
 
 .. code-block:: python
 
@@ -130,6 +130,8 @@ Let's first discuss the nature of components and components wiring.
 Componential Architecture
 =========================
 
+.. _MessageBus:
+
 We didn't emphasize dependencies types while speaking of dependency injection.
 But you might have guessed that ``MessageBus`` is just an abstraction,
 an interface or a protocol [#]_.
@@ -141,6 +143,7 @@ Somewhere the application defines:
        def send(topic: str, message: str):
            pass
 
+.. _MemoryMessageBus:
 
 There is also a simple implementation of ``MessageBus`` in the project.
 It stores the incoming messages in a ``list``:
@@ -230,7 +233,7 @@ By blending everything in a single function we tightly couple
 domain workflow and message bus implementation.
 And that's half the trouble.
 The worst part is that we
-**melted and buried business logic in technical details**.
+*melted and buried business logic in technical details*.
 Don't get me wrong, such code has the right to exist.
 Yet its existence in a rapidly growing application will
 soon end up in a maintenance hell.
@@ -242,11 +245,11 @@ What are the advantages?
   Instead they are **wired via abstractions**.
 * Every component works in certain boundaries and **has a single responsibility**.
 * This means that components are immensely testable:
-  either in full isolation or in any combination using test doubles.
+  either in full isolation or in a combination using test doubles.
   There is no need to explain that testing  isolated parts of a program
   is easier compared to testing it as a whole.
   Your TDD approach improves from inaudible "well, we do tests..."
-  to sonorous "tests always come first".
+  to sonorous "tests-driven and test-first development".
 * It is easy to substitute components, thanks to abstract dependencies.
   In the example above ``MemoryMessageBus`` could be replaced with
   ``DbMessageBus``, ``FileMessageBus`` or anything else.
@@ -312,14 +315,13 @@ any other object lies on the surface?
 Hexagonal architecture of Ports and Adapters
 ============================================
 
-"We have a Hexagonal architecture of ports and adapters" - how we start
-describing the application to new team members.
-It follows with demonstration of a weird Cthulhu-like picture:
+"We use the Hexagonal architecture of ports and adapters" - how we start
+describing the architecture application to the new team members.
+It follows by showing a weird Cthulhu-like picture:
 
 .. image:: {static}/images/articles/2021_06_11_hexagonal_architecture_in_python_part_1/hexagon.png
    :align: center
    :alt: Hexagonal architecture
-
 
 Alistair Cockurn, the inventor of "Hexagonal architecture" term explains
 that "hexagon" is not strictly necessary:
@@ -333,66 +335,84 @@ that "hexagon" is not strictly necessary:
 
   -- `Alistair Cockburn <https://alistair.cockburn.us/hexagonal-architecture/>`_
 
+You may also recall the terms like
+"Onion architecture" or "Ports and Adapters" mentioned in Uncle Bob's
+`"Clean archcitecture" <https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html>`_
+article.
+All these terms describe a way to organize application architectecture in
+layers, with dependecies directed to the center.
+(We noticed though, that *hexagon* and *ports and adapters* are much simpler to
+imagine and explain compared to more abstract terms like "clean" or "onion").
 
-So if hexagon is not necessary, then what is?
-
-
-**API ports** *are interfaces through which the application is controlled and queried.*
-If this sounds too cryptic, here is an analogy from the physical world:
-Think of turning on a TV. Usually you would grab an IR remote and press the button.
-You can also push the button on the TV or go fancy and start
-casting from your phone to wake it up.
-Here "turn on the TV" is an *API port*. Its job is to accept the "turn on"
-command and pass it deeper into the TV circuits.
-The remote, the physcal button, and the app on your phone are **API adapters**.
-They interact with the outer world and transform its signals into commands and
-queries for the designated API ports of the TV.
-
-In the *Componential architecture* from above, the DispatchAlertUseCase_ is
-an *API port* and ChatOpsController_ is an `API adapter`.
+The outer layer of the application - *adapters* - interacts with the outer world.
+The inner layer - *domain* and *domain services* - contains the business logic.
+The connecting layer in between is *application services*.
+The components in each layer are designed to have low coupling and high cohesion [#]_.
 
 
-**Domain** is the heart of an application.
+**Domain** layer - is the heart of the application.
 The business rules are defined here.
-The names of classes, methods, functions, constants and other objects resemble those of the problem domain.
-Think of StackOverflow:
+The names of classes, methods, functions, constants and other objects resemble
+those of the problem domain.
 
-  To vote, one must have 15 or more reputation points.
+**Application Programming Iterface (API) adapters**
+are the components which convey commands and queries from the
+outer world to the application through *API ports*.
+Hence, **API ports** are interfaces through which the application is controlled
+and queried.
+In the *Componential architecture* described above, the DispatchAlertUseCase_ is
+an *API port* and ChatOpsController_ is an *API adapter*.
 
-That is a pure domain rule.
-But, guess what?
-HTTP, SQL, RabbitMQ, AWS and so on do not belong here.
+**Service Provider Interface (SPI) adapters** are the components which convey
+the application commands and queries to the outer world.
+Hence, **SPI ports** are interfaces through which commands and queries are
+passed to *SPI adapters*.
+In the *Componential architecture*, the MessageBus_ is an *SPI port* and
+its implementation MemoryMessageBus_ is an *SPI adapter*.
 
-That technological feast happens in **adapters** which are connected to the **ports**.
-Commands and queries are entering the application through **driver** or **API** ports.
-Commands and queries from the application are directed through **driven** ports.
-They are also called Service Interface Provider or **SPI** ports.
+**Application services** are the conductors which glue domain and ports
+performing use case scenarios.
+As a side note - application services control
+whether a scenario is executed in a single transaction.
 
-
-**Application services** are the conductors which control domain and ports
-performing an application use case scenario.
-As a side note - it is an application service which controls
-whether scenario internals are executed in a single transaction.
-
-All this - ports, adapters, application and domain services,
-as well as domain objects - are application **layers**.
-Each layer consists of multiple different **components**.
-And the grand commandment of the layers interaction is
+There is one important rule to remember about hexagonal architecture:
 "*Dependencies are directed from the outer layers to the inner center.*"
-For example, adapters can use domain objects, but domain should not refer to adapters.
+In practice this means that *adapters are aware of domain objects,
+but domain should not know of adapters or ports*.
+It's also important to clarify that since adapters belong to the *Adapters
+layer*, they may call each-other directly.
+The cases for this are:
 
+* *API adapter calls SPI adapter*.
+  - Think of HTTP GET requests which end up querying a database:
+  It doesn't make sense to reach database through the domain layer making tons
+  of objects mappings on the way. It's much more efficient for a controller
+  to call the specific *SPI port* directly.
+* *SPI adapter calls SPI adapter.* - Think of an database adapter which
+  calls other adapters and aggregates all the results before returning it.
+* *API adapter calls API adapter.* - Probably the least useful. Handy,
+  if you need to redirect calls from one API adapter to the other.
+* *SPI adapter calls API adapter* - AVOID. Such calls is unnecessary
+  and creates call loops in the application.
 
 And... THAT IS IT!
 The basic principles of Hexagonal architecture of ports and adapters
 are surprisingly simple.
 This kind of architecture works well in application with complex problem domain.
-But it is an overkill for solutions where good old Active Record something
-like a "HTTP interface for a database".
+But it is an overkill, if everything you need is an
+"HTTP interface for a database".
 
 We are now ready to dive into building a Hexagonal architecture -based
-Django application.
+Django applications.
 Stay tuned for part II.
+
+References
+==========
 
 .. [#]  Though `PEP-544 <https://www.python.org/dev/peps/pep-0544/>`_ Protocols
         are about structural subtying. Another option to mimic interfaces is
         to either use abstract classes with abstract methods.
+.. [#]  Cohesion and coupling:
+
+        * `Devopedia: Cohesion vs. Coupling <https://devopedia.org/cohesion-vs-coupling>`_
+        * `Cohesion and Coupling: the difference <https://enterprisecraftsmanship.com/posts/cohesion-coupling-difference/>`_
