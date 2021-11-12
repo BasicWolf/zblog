@@ -1,14 +1,13 @@
-Domain-driven design, Hexagonal architecture of ports and adapters, Dependency injection and Python - Part I
-############################################################################################################
+Hexagonal architecture of ports and adapters, Dependency injection and Python - Part I
+######################################################################################
 
-:slug: ddd_hexarch_di_python_part_1
+:slug: hexarch_di_python_part_1
 :categories: Articles
 :tags: architecture, DDD, dependency injection, hexagonal architecture, programming, python,
 :date: 2021-10-30 22:30
-:summary: Welcome to a small series of articles which cover
-          crumbs of Domain-Driven Design, principles of Hexagonal architecture,
-          talks of Dependency Injection and applies these all to Python and Django
-          application design.
+:summary: Welcome to a short series of articles which cover principles of
+          Hexagonal architecture, talks of Dependency Injection, and applies
+          these all to Python and Django application design.
 
 Time flies awfully fast!
 Two and a half years ago I left the world of Django and found myself in the
@@ -24,7 +23,7 @@ compared to Django's direct approach. Spring Boot behemoth framework consumed me
 We designed and implemented the application following Hexagonal architecture rules. And the final challenge was getting rid of the old "implement
 a backlog of features" habit in place of Domain-Driven Design (DDD).
 
-Our project is rapidly growing in size and complexity.
+Our product is rapidly growing in size and complexity.
 Still, it is easy to maintain, support and develop
 - thanks to the solid foundation.
 The code is expressive and comprehensible.
@@ -35,7 +34,7 @@ previosly written by the team members.
 I look behind and see all the gaps in my experience
 which did not allow solving business problem as elegantly.
 Dear fellow Pythonista, I hope
-this small articles series about Hexagonal architecture
+this short articles series about Hexagonal architecture
 would help you to achieve the same without going through my struggle.
 
 Dependency Injection
@@ -275,7 +274,7 @@ One of my favourite Uncle Bob quotes on software architecture is
 
 What do you see on this screenshot?
 
-.. image:: {static}/images/articles/2021_10_30_ddd_hexarch_di_python_part_1/django_project.png
+.. image:: {static}/images/articles/2021_10_30_hexarch_di_python_part_1/django_project.png
    :align: center
    :alt: Typical Django project
 
@@ -291,7 +290,7 @@ Robert Martin develops the idea
 `further <https://www.youtube.com/watch?v=WpkDN78P884>`_.
 Take a look at a floor architecture plan and guess what the building is intended for:
 
-.. image:: {static}/images/articles/2021_10_30_ddd_hexarch_di_python_part_1/library_floor_paln.jpg
+.. image:: {static}/images/articles/2021_10_30_hexarch_di_python_part_1/library_floor_paln.jpg
    :align: center
    :alt: Typical Django project
 
@@ -321,7 +320,7 @@ Hexagonal architecture of Ports and Adapters
 describing the architecture application to the new team members.
 It follows by showing a weird Cthulhu-like picture:
 
-.. image:: {static}/images/articles/2021_10_30_ddd_hexarch_di_python_part_1/hexagon.png
+.. image:: {static}/images/articles/2021_10_30_hexarch_di_python_part_1/hexagon.png
    :align: center
    :alt: Hexagonal architecture
 
@@ -373,9 +372,9 @@ In the *Componential architecture*, the MessageBus_ is an *SPI port* and
 its implementation MemoryMessageBus_ is an *SPI adapter*.
 
 **Application services** are the conductors which glue domain and ports
-performing use case scenarios.
-As a side note - application services control
-whether a scenario is executed in a single transaction.
+performing use case scenarios. They are supposed to orchestrate the whole
+transaction, e.g. load data for the domain to use, call functions
+which perform domain logic, persist the results and publish events.
 
 There is one important rule to remember about hexagonal architecture:
 "*Dependencies are directed from the outer layers to the inner center.*"

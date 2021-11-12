@@ -5,10 +5,16 @@ Accelerate: The Science of Lean Software and DevOps - Book review
 :categories: Articles
 :tags: book, software development, accelerate
 :date: 2021-06-23 12:00
-:summary: Are you familiar with the gut feeling that the software development
-          practices around you could be better? What if I told you that there
-          is a solid scientific study on practices of low and high performing
-          technology organizations?
+:summary:
+   .. image:: {static}/images/articles/2021_06_23_accelerate/accelerate_cover.jpg
+      :width: 25%
+      :align: center
+      :alt: Accelerate book cover
+
+   Are you familiar with the gut feeling that the software development
+   practices around you could be better? What if I told you that there
+   is a solid scientific study on practices of low and high performing
+   technology organizations?
 
 Longing for improvement
 -----------------------

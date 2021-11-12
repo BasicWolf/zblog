@@ -3,3 +3,13 @@ td.code {
 }
 
 .right {text-align: right;}
+
+img.align-right {
+    float:right;
+}
+
+.clearfix::after {
+  content: "";
+  clear: both;
+  display: table;
+}

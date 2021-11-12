@@ -5,10 +5,16 @@ Turn the Ship Around!: A True Story of Turning Followers into Leaders - A short 
 :categories: Articles
 :tags: book, leadership
 :date: 2021-10-22 12:00
-:summary: "Turn The Ship Around!" is an exceptional book. It narrates a story of a
-          poor-performing submarine becoming the best in a short period of time.
-          It teaches the mechanisms of such transformation which involve the
-          leader and the team alike.
+:summary:
+   .. image:: {static}/images/articles/2021_10_22_turn_the_ship_around/turn_the_ship_around_cover.jpg
+             :width: 30%
+             :align: center
+             :alt: Turn the Ship Around!: A True Story of Turning Followers into Leaders book cover
+
+   "Turn The Ship Around!" is an exceptional book. It narrates a story of a
+   poor-performing submarine becoming the best in a short period of time.
+   It teaches the mechanisms of such transformation which involve the
+   leader and the team alike.
 
 
 ..
