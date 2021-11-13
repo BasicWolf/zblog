@@ -24,6 +24,10 @@ TIMEZONE = 'Europe/Helsinki'
 
 DEFAULT_LANG = 'en'
 
+DATE_FORMATS = {
+    'en': '%d %B %Y'
+}
+
 # Feed generation is usually not desired when developing
 FEED_ALL_ATOM = None
 CATEGORY_FEED_ATOM = None
