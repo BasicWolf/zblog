@@ -2,6 +2,7 @@ Bookmarks
 #########
 
 :sortorder: B
+:status: hidden
 
 A collection of links to interesting articles, posts, videos related to
 software development.
