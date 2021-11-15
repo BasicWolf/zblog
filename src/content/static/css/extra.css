@@ -1,9 +1,7 @@
+/* make global font size a bit bigger */
+/* I simply like it that way :) */
 html, body {
     font-size: 1.05em;
-}
-
-td.code {
-    width: 100%;
 }
 
 .right {text-align: right;}
@@ -12,6 +10,17 @@ img.align-right {
     float:right;
 }
 
+img.align-left {
+    float:left;
+}
+
+/* Remove horizontal scrollbar from code snippet line numbers */
+/* It appears e.g. in Vivaldi browser. */
+.linenodiv pre {
+    overflow-x: hidden;
+}
+
+/* Clear float, used after image aligns to left or right */
 .clearfix::after {
   content: "";
   clear: both;
