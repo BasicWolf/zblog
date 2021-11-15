@@ -20,7 +20,6 @@ Using tests inputs in assertions (or rather not)
    :align: center
    :alt: beautiful [but deadly] square knot / by woodleywonderworks / https://www.flickr.com/photos/wwworks/5623339500 / License: Attribution 2.0 Generic (CC BY 2.0)
 
-
 Imagine that we have to implement a *adding a title to a document*.
 The relationship between ``Title`` and ``Document`` is straightforward
 and we begin by writing a test:
