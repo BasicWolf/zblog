@@ -5,11 +5,9 @@ About
 
 Hello, I'm Zaur. It's nice to meet you on my website.
 
-About me
---------
-
-.. image:: {static}/images/pages/about/zaur_nasibov.jpg
-   :align: right
+.. image:: {static}/images/pages/about/zaur_nasibov.png
+   :align: left
+   :width: 25%
    :alt: Zaur Nasibov
 
 I was always obsessed with electronic equipment. There is something magical
@@ -24,6 +22,10 @@ I love beautiful ideas and their implementation in code.
 
 I live in Finland and work at Abloy developing state of the art
 smart locking systems.
+
+.. class:: clearfix
+
+   \
 
 Contact me
 -----------
