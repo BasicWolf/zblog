@@ -98,9 +98,10 @@ Test-First Loop: Extended edition
 
 My colleague `Jere Teittinen <https://jereteittinen.info>`_
 taught me an amazingly simple and useful trick about writing tests.
-When you are done with the test and the routine behind it, **change the
-inputs or outputs to verify that the test fails**. This is an important
-step which **protects from tailored routine implementation**.
+When you have completed writing a test assertion and the routine behind it,
+**change the inputs or outputs to verify that the assertion fails**.
+This is an important step which **protects the test from tailored routine
+implementation**.
 Such routine is able to fulfill the test only with the original inputs
 and outputs. You shake them a bit and everything falls apart like
 a house of cards.
