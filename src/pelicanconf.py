@@ -71,10 +71,10 @@ ARTICLE_SAVE_AS = 'posts/{date:%Y}/{date:%m}/{date:%d}/{slug}.html'
 PAGE_URL = 'pages/{slug}.html'
 PAGE_SAVE_AS = 'pages/{slug}.html'
 
-# PLUGINS_PATH = os.path.abspath(os.path.join(MYDIR, '../pelican-plugins'))
-# PLUGIN_PATHS = [PLUGINS_PATH]
+PLUGINS_PATH = os.path.abspath(os.path.join(MYDIR, '../pelican-plugins'))
+PLUGIN_PATHS = [PLUGINS_PATH]
+PLUGINS = ['plantuml']
 # PLUGINS = ["tag_cloud", "assets"]
-PLUGINS = []
 
 # Blogroll
 # LINKS = (('Pelican', 'http://getpelican.com/'),
