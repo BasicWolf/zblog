@@ -26,3 +26,7 @@ img.align-left {
   clear: both;
   display: table;
 }
+
+.docutils.literal {
+    background-color: #ddd;
+}
