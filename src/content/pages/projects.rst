@@ -3,8 +3,8 @@ Projects
 
 :sortorder: A
 
-Current
-=======
+Archived
+========
 
 Concrete Settings
 -----------------
@@ -26,12 +26,6 @@ It was designed to be developer and end-user friendly.
 The settings are defined via normal Python code with few
 tricks which significantly improve readability
 and maintainability.
-
-
-
-Archived
-========
-
 
 My Master's Thesis
 ------------------
