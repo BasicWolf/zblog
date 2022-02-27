@@ -27,15 +27,8 @@ The settings are defined via normal Python code with few
 tricks which significantly improve readability
 and maintainability.
 
-My Master's Thesis
-------------------
-
-My Master's Thesis
-`"Decision fusion of voice activity detectors" <{filename}/articles/2012_07_08_i_have_graduated.rst>`_
-finalized in 2012.
-
-Projects
---------
+Older projects
+--------------
 
 `Kidomi  <{filename}/articles/2014_01_05_kidomi.rst>`_ was a HTML templating
 library which accepts JSON as input and returns a DOM node.
@@ -48,3 +41,10 @@ The latest version has been released in May 2013.
 was a Python and CoffeeScript-based framework for developing in-browser
 distributed and volunteer computing applications.
 The latest version has been released in June 2013.
+
+My Master's Thesis
+------------------
+
+My Master's Thesis
+`"Decision fusion of voice activity detectors" <{filename}/articles/2012_07_08_i_have_graduated.rst>`_
+finalized in 2012.
