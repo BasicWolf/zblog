@@ -2,9 +2,10 @@ import os
 
 AUTHOR = 'Zaur Nasibov'
 SITENAME = "Zaur's Thoughts"
-SITESUBTITLE = "Zaurun Fikirləris"
+SITESUBTITLE = "Zaurun Fikirləri"
 SITEURL = ''
 SITELOGO = '/images/logo.png'
+FAVICON = '/images/favicon.png'
 
 PATH = 'content'
 
@@ -73,5 +74,5 @@ EXTRA_PATH_METADATA = {
     'extra/CNAME': {'path': 'CNAME'},
 }
 
-
-THEME = os.path.abspath(os.path.join(MYDIR, '../Flex/'))
+THEME = '/home/zaur/projects/pelican-themes/Flex'
+#THEME = os.path.abspath(os.path.join(MYDIR, '../Flex/'))
