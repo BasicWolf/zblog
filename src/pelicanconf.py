@@ -2,6 +2,7 @@ import os
 
 AUTHOR = 'Zaur Nasibov'
 SITENAME = "Zaur's Thoughts"
+SITETITLE = "Zaur's Thoughts"
 SITESUBTITLE = "Zaurun Fikirləri"
 SITEURL = ''
 SITELOGO = '/images/logo.png'
