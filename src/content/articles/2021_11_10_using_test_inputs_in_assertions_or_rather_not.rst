@@ -6,19 +6,19 @@ Using tests inputs in assertions (or rather not)
 :tags: programming, python, testing, unit tests
 :date: 2021-11-10 12:00
 :summary:
-   .. image:: {static}/images/articles/2021_11_10_using_test_inputs_in_assertions_or_rather_not/cover_straight_knot.jpg
+   .. image:: {static}/images/articles/2021_11_10_using_test_inputs_in_assertions_or_rather_not/knot.png
       :width: 70%
       :align: center
-      :alt: beautiful [but deadly] square knot / by woodleywonderworks / https://www.flickr.com/photos/wwworks/5623339500 / License: Attribution 2.0 Generic (CC BY 2.0)
+      :alt: Figure of eight know / https://freesvg.org/figure-of-eight-knot-vector-illustration / License: Public Domain
 
    It might be very convenient to use the same fixtures in test
    setup and assertions. This practice though is not as good as it looks
    like at first glance.
 
-.. image:: {static}/images/articles/2021_11_10_using_test_inputs_in_assertions_or_rather_not/cover_straight_knot.jpg
+.. image:: {static}/images/articles/2021_11_10_using_test_inputs_in_assertions_or_rather_not/knot.png
    :width: 70%
    :align: center
-   :alt: beautiful [but deadly] square knot / by woodleywonderworks / https://www.flickr.com/photos/wwworks/5623339500 / License: Attribution 2.0 Generic (CC BY 2.0)
+   :alt: Figure of eight know / https://freesvg.org/figure-of-eight-knot-vector-illustration / License: Public Domain
 
 Imagine that we have to implement a *adding a title to a document*.
 The relationship between ``Title`` and ``Document`` is straightforward
