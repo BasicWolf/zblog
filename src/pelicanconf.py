@@ -4,9 +4,9 @@ AUTHOR = 'Zaur Nasibov'
 SITENAME = "Zaur's Thoughts"
 SITETITLE = "Zaur's Thoughts"
 SITESUBTITLE = "Zaurun Fikirləri"
-SITEURL = ''
 SITELOGO = '/images/logo.png'
 FAVICON = '/images/favicon.png'
+COPYRIGHT_YEAR = 2022
 
 PATH = 'content'
 
@@ -32,6 +32,8 @@ SOCIAL = (
     ('rss', '/feeds/atom.xml'),
 )
 
+
+MAIN_MENU = True
 
 DISPLAY_PAGES_ON_MENU = True
 DISPLAY_CATEGORIES_ON_MENU = True
@@ -75,5 +77,7 @@ EXTRA_PATH_METADATA = {
     'extra/CNAME': {'path': 'CNAME'},
 }
 
-THEME = '/home/zaur/projects/pelican-themes/Flex'
+CUSTOM_CSS = '/static/css/extra.css'
+
+THEME = '/home/zaur/projects/pelican-themes/Flex/'
 #THEME = os.path.abspath(os.path.join(MYDIR, '../Flex/'))
