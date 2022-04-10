@@ -106,7 +106,7 @@ Let's consider our options:
 
    It seems that integration points have to go first. Which ones?
 
-2. **Database**. It is important to integrate early to the services
+2. **Database**? It is important to integrate early to the services
    an application depends upon. We could use mocks and mocked interfaces
    from start, but they won't be enough in a long run.
    The invisible bottlenecks of the real systems could bring unpleasant surprises
@@ -115,7 +115,7 @@ Let's consider our options:
    That being said, could OUR application provide its public integration
    points sooner?
 
-3. **Public API**. Public API is our contract with the outer world.
+3. **Public API**? Public API is our contract with the outer world.
    We would collaborate with the API consumers and **design it together**.
    Once the API is defined, consumers and producer (our service) can
    implement their part of the contract independently.
@@ -165,7 +165,7 @@ Let's use OpenAPI 3.0 specification to make a sketch of the new endpoint:
 Django Rest Framework is the obvious choice to facilitate a RESTful endpoint
 implementation with Django.
 Beside the request and response processing, the logic fits into few lines
-of code: TODO-source
+of code: TODO:source
 
 .. code-block:: python
 
@@ -193,7 +193,7 @@ The intentions here are:
 I should emphasize that in real life, the tests should always come first.
 How easy is to test this view?
 The only dependency here is an object which implements ``VoteForArticleUseCase``
-protocol:
+protocol TODO:source:
 
 .. code-block:: python
 
@@ -207,11 +207,11 @@ This is times more lightweight compared to traditional Django apps testing,
 when we have to connect to a database, even if it is only in memory.
 
 For example, how would we test a scenario, where a user tries to vote twice?
-TODO-source:
+TODO:source:
 
 .. code-block:: python
 
-   def test_post_article_vote_with_same_user_and_article_id_twice_returns_conflict(
+   def test_user_votes_for_the_same_article_returns_conflict(
        arf: APIRequestFactory
    ):
        ## This is *the* view we are testing
@@ -255,44 +255,86 @@ And here is the ``VoteForArticleUseCaseAlreadyVotedStub``:
                article_id=command.article_id
            )
 
-I'm asking you to pause for a moment and read the test code thoroughly.
-Do you understand it? Do you see that the view is being tested without
-the rest of the application?
-Have you noticed that it takes only five lines of code (three, if you put the
+Please pause for a moment and read the test code thoroughly once again.
+Is it easy or hard to grock it?
+Notice how we test the view without touching the rest of the application?
+Have you also noticed that it takes only five lines of code (three, if you put the
 ``return`` on a single line!) to mock "the rest of the application"?
-And there is no need to patch anything.
+There is no need to patch anything.
 Suddenly the responsibilities in an application are decoupled.
-Suddenly, we don't have to set up *everything*, including a DB to test how an
-HTTP endpoint works.
+Suddenly, we don't have to set up *everything*, including a database
+to test how an HTTP endpoint works.
 
 
+The application service: a skeleton
+===================================
+
+Application services are the conductors orchestrating processes and data flow in the application.
+An application service implements one or more related use cases and invokes
+all the necessary dependencies required to perform these use cases.
+The service implementation can start with a single return statement only:
+
+.. code-block:: python
+
+   class ArticleRatingService(
+       VoteForArticleUseCase
+   ):
+       def vote_for_article(self, command: VoteForArticleCommand) -> VoteForArticleResult:
+           return SuccessfullyVotedResult(
+               command.article_id,
+               command.user_id,
+               command.vote
+           )
+
+You may have started wondering what are ``VoteForArticleResult`` and ``SuccessfullyVotedResult``.
+Recall the basics of Hexagonal architecture from Part I:
+
+..
+
+   Dependencies are directed from the outer layers to the inner center.
+
+``VoteForArticleResult`` (TODO:source) is a domain data transfer object model.
+It carries the voting result from the innermost application layer - the Domain
+to the outermost API adapter layer.
+Alternatively, we could have used specialized data transfer objects per layer,
+which is, in my opinion, an overengineering.
+Not only do they repeat one another, they also have to be cast all the way through the layers.
+
+The service skeleton is ready.
+But we can't continue developing it without the bits and pieces which convey the business logic.
 
 The domain
 ==========
 
-We start with the domain layer.
-The domain layer encapsulates the business logic and processes
-and detaches them from all technical mumbo-jumbo that has nothing to do with the business.
-Following Domain-Driven Design (DDD)\ [#]_ principles, we would match the business language while reflecting the business domain in the code.
-DDD advocates that developers should perform domain modelling together with domain experts.
-Together, we would also produce a ubiquitous language understood by developers and domain experts alike.
-The software pieces' names (modules, classes, functions, methods, even variables) would stick to the terms of ubiquitous language and enrich it back.
-This time, I had put on both hats of a developer and a domain expert.
+The domain layer encapsulates the business logic and processes.
+Developers and business experts greatly benefit when they share understanding and call a spade a spade.
+On the code side, the language used in the names of classes, methods
+and other code units should resemble the terms from the problem domain.
 
-How would you model this use case?
-To count an article rating, the system should be certain of who and how voted for each article.
-This already requires three domain concepts: *User Identity*, *Article Identity* and *Vote Value*.
-What about constraints?
-To vote, a user should have enough *karma*.
-There should also be a mechanism to prevent a user to vote multiple times.
+We would greatly benefit if the language used in names of classes, methods and
+other code units resembles the terms from the problem domain.
+For example, a vote can be represented via an enumeration (TODO:source):
+
+.. code-block:: python
+
+   class Vote(Enum):
+       UP = 'up'
+       DOWN = 'down'
+
+Karma is an explicit type alias (todo:source):
+
+.. code-block:: python
+
+   Karma = NewType('Karma', int)
 
 
-A ``VotingUser`` class is a read-only entity.
+The most complex class of our domain is ``VotingUser``.
 It represents a user that is voting or has already voted for a certain article.
+``VotingUser`` also puts together the business logic required for making
+a vote for an article.
 We use ``Karma`` value to decide whether the user can vote.
 We also need to know whether the user has already ``voted``.
-Voting for an article produces a ``result`` and might emit some ``domain events``.
-Here is the model structure:
+Voting for an article produces a ``result`` and might emit some ``domain events``:
 
 .. uml::
 
@@ -310,7 +352,116 @@ Here is the model structure:
 
 .. code-block:: python
 
-   pass
+   @dataclass(frozen=True)
+   class VotingUser:
+       id: UserId
+       karma: Karma
+       voted: bool
+
+       def vote_for_article(
+           self,
+           article_id: ArticleId,
+           vote: Vote
+       ) -> Tuple[VoteForArticleResult, List[Event]]:
+           if self.voted:
+               return AlreadyVotedResult(article_id, self.id), []
+
+           if not KarmaEnoughForVotingSpecification().is_satisfied_by(self.karma):
+               return InsufficientKarmaResult(user_id=self.id), []
+
+           return (
+               SuccessfullyVotedResult(article_id, self.id, vote),
+               [
+                   UserVotedEvent(article_id, self.id, vote)
+               ]
+           )
+
+Some parts of this might look
+
+Some parts of this might look overcomplicated.
+For example, why not put down the "karma should be greater than 5" constraint
+directly in the ``if`` condition?
+We could, but then the constraint (or specification) becomes the part of ``VotingUser``.
+Should the user know whether they can vote?
+If that logic piece is separate, it can be changed without affecting the ``VotingUser`` code at all!
+What about the ``UserVotedEvent``?
+It is easier to explain if we get back to the application service level.
+
+The application service: invoking the domain and handling events
+================================================================
+
+Let's continue with ``VoteForArticleUseCase`` implementation.
+We need to construct (or rather fetch) the ``VotingUser`` based on the data
+from the ``VoteForArticleCommand``.
+For now, let's hard code that user and see how domain events are handled.
+
+.. code-block:: python
+
+   class ArticleRatingService(VoteForArticleUseCase):
+       _domain_event_dispatcher: EventDispatcher
+
+       def vote_for_article(self, command: VoteForArticleCommand) -> VoteForArticleResult:
+           voting_user = VotingUser(command.user_id, Karma(10), voted=False)
+
+           voting_result, events = voting_user.vote_for_article(
+               command.article_id,
+               command.vote
+           )
+
+           for event in events:
+               self._domain_event_dispatcher.dispatch(event)
+
+           return voting_result
+
+
+Note how lean is the body of ``vote_for_article()``.
+It carries no logic about what to do with the voting results
+Whatever has happened during ``voting_user.vote_for_article()`` can be handled
+by whoever is interested in these events.
+What if we want to handle ``UserVotedEvent`` right here?
+What if we want to persist the vote?
+Easy!
+We register a method of ``ArticleRatingService`` as the event handler:
+
+.. code-block:: python
+
+   class ArticleRatingService(VoteForArticleUseCase):
+       _domain_event_dispatcher: EventDispatcher
+
+       def __init__(...)
+           ...
+           self._domain_event_dispatcher.register_handler(
+               UserVotedEvent,
+               self._on_user_voted
+           )
+
+       def _on_user_voted(self, event: UserVotedEvent):
+           save_article_vote(...)
+
+Allright, but WHY? Can't we NOT use domain events here.
+Certainly.
+But this means we need another way of figuring out, whether the vote should
+be saved or not. For example:
+
+.. code-block::python
+
+   voting_result = voting_user.vote_for_article(
+      command.article_id,
+      command.vote
+   )
+
+   if isinstance(voting_result, SuccessfullyVotedResult):
+       save_article_vote(...)
+
+
+Besides being ugly, this code also violates the basic principle of our architecture:
+the application service should only orchestrate the flow.
+By adding this ``if`` we force the application service to make decisions.
+Instead, we should let the service to dispatche the domain events without
+caring where, when and how they are handled.
+
+
+
 
 References
 ==========
