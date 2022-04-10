@@ -1,5 +1,5 @@
-Hexagonal architecture of ports and adapters, Dependency injection and Python - Part I
-######################################################################################
+Hexagonal architecture and Python - Part I: Dependency Injection and componential architecture
+##############################################################################################
 
 :slug: hexarch_di_python_part_1
 :categories: Articles
