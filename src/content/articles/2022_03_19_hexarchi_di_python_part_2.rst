@@ -1,5 +1,5 @@
-Hexagonal architecture and Python - Part II: Domain, Ports and Application Services
-###################################################################################
+Hexagonal architecture and Python - Part II: Domain,  Application Services, Ports and Adapters
+##############################################################################################
 
 :slug: hexarch_di_python_part_2
 :categories: Articles
@@ -266,8 +266,8 @@ Suddenly, we don't have to set up *everything*, including a database
 to test how an HTTP endpoint works.
 
 
-The application service: a skeleton
-===================================
+Application service: a skeleton
+===============================
 
 Application services are the conductors orchestrating processes and data flow in the application.
 An application service implements one or more related use cases and invokes
@@ -376,8 +376,6 @@ Voting for an article produces a ``result`` and might emit some ``domain events`
                ]
            )
 
-Some parts of this might look
-
 Some parts of this might look overcomplicated.
 For example, why not put down the "karma should be greater than 5" constraint
 directly in the ``if`` condition?
@@ -387,21 +385,66 @@ If that logic piece is separate, it can be changed without affecting the ``Votin
 What about the ``UserVotedEvent``?
 It is easier to explain if we get back to the application service level.
 
-The application service: invoking the domain and handling events
-================================================================
+SPI Ports
+=========
 
 Let's continue with ``VoteForArticleUseCase`` implementation.
-We need to construct (or rather fetch) the ``VotingUser`` based on the data
-from the ``VoteForArticleCommand``.
-For now, let's hard code that user and see how domain events are handled.
+In Hexagonal Architecture, an application service "talks" defines its
+dependencies as Service Interface Provider (SPI) ports.
+
+For example, we need to fetch the ``VotingUser``
+based on the data from the ``VoteForArticleCommand`` (TODO:source):
+
+.. code-block:: python
+
+   class FindVotingUserPort(Protocol):
+       def find_voting_user(self, article_id: ArticleId, user_id: UserId) -> VotingUser:
+           raise NotImplementedError()
+
+The SPI adapters are injected into the service during its initialization:
+
+.. code-block:: python
+
+   class ArticleRatingService(
+       VoteForArticleUseCase
+   ):
+       _find_voting_user_port: FindVotingUserPort
+       ...
+
+       def __init__(
+           self,
+           find_voting_user_port: FindVotingUserPort,
+           ...
+       )
+
+And the service does not (nor should it) have any idea, what
+kind of implementation is behind
+the port.
+An HTTP service, a database, a file from the local file system,
+it could even be a pure Python collection!
+At this point, it's enough to have a stub which returns a hard-coded user:
+
+.. code-block:: python
+
+   class FindVotingUserAdapterStub(FindVotingUserPort):
+       def find_voting_user(self, article_id: ArticleId, user_id: UserId) -> VotingUser:
+           return VotingUser(user_id, Karma(10), voted=False)
+
+
+Invoking the domain and handling events
+=======================================
+
+We can now join and orchestrate the ``FindVotingUserPort`` and the domain
+to run the use case:
 
 .. code-block:: python
 
    class ArticleRatingService(VoteForArticleUseCase):
        _domain_event_dispatcher: EventDispatcher
+       _find_voting_user_port: FindVotingUserPort
 
        def vote_for_article(self, command: VoteForArticleCommand) -> VoteForArticleResult:
-           voting_user = VotingUser(command.user_id, Karma(10), voted=False)
+           voting_user = self._find_voting_user_port(command.article_id, command.user_id)
 
            voting_result, events = voting_user.vote_for_article(
                command.article_id,
@@ -413,7 +456,6 @@ For now, let's hard code that user and see how domain events are handled.
 
            return voting_result
 
-
 Note how lean is the body of ``vote_for_article()``.
 It carries no logic about what to do with the voting results
 Whatever has happened during ``voting_user.vote_for_article()`` can be handled
@@ -421,12 +463,15 @@ by whoever is interested in these events.
 What if we want to handle ``UserVotedEvent`` right here?
 What if we want to persist the vote?
 Easy!
-We register a method of ``ArticleRatingService`` as the event handler:
+We register a method of ``ArticleRatingService`` as the event handler
+and invoke an SPI port which saves the vote:
 
 .. code-block:: python
 
    class ArticleRatingService(VoteForArticleUseCase):
+       ...
        _domain_event_dispatcher: EventDispatcher
+       _save_article_vote_port: SaveArticleVotePort
 
        def __init__(...)
            ...
@@ -436,14 +481,20 @@ We register a method of ``ArticleRatingService`` as the event handler:
            )
 
        def _on_user_voted(self, event: UserVotedEvent):
-           save_article_vote(...)
+           self._save_article_vote_port.save_article_vote(
+               ArticleVote(
+                   event.article_id,
+                   event.user_id,
+                   event.vote
+               )
+           )
 
-Allright, but WHY? Can't we NOT use domain events here.
-Certainly.
-But this means we need another way of figuring out, whether the vote should
-be saved or not. For example:
 
-.. code-block::python
+How about an alternative to domain events handler?
+We need another way of figuring out, whether the vote should be saved or not.
+For example:
+
+.. code-block:: python
 
    voting_result = voting_user.vote_for_article(
       command.article_id,
@@ -451,15 +502,76 @@ be saved or not. For example:
    )
 
    if isinstance(voting_result, SuccessfullyVotedResult):
-       save_article_vote(...)
+       self._save_article_vote_port.save_article_vote(...)
 
 
 Besides being ugly, this code also violates the basic principle of our architecture:
-the application service should only orchestrate the flow.
+Separation of concerns.
+Remember, that an application service are meant to orchestrate the flow.
 By adding this ``if`` we force the application service to make decisions.
-Instead, we should let the service to dispatche the domain events without
+Instead, we should let the service to dispatch the domain events without
 caring where, when and how they are handled.
 
+Application service: test-driven development
+============================================
+
+Once again, I would like to stress that we use test-driven approach,
+though I didn't mention the tests explicitly.
+For example, this unit test verifies the "user can vote only once" domain behavior:
+(TODO:source)
+
+.. code-block:: python
+
+   def test_vote_for_article_twice_returns_already_voted_result():
+       voting_user = build_voting_user(
+           UserId(UUID('7ebd50e7-0000-0000-0000-000000000000')),
+           voted=True
+       )
+       result, *_ = voting_user.vote_for_article(
+           ArticleId(UUID('2f868ceb-0000-0000-0000-000000000000')),
+           Vote.UP
+       )
+       assert isinstance(result, AlreadyVotedResult)
+
+Think of the corresponding application service tests.
+Is there a need to test the same behavior there?
+Is there a need to have a unit test which verifies that
+``article_rating_service.vote_for_article()`` returns ``AlreadyVotedResult``?
+Remember that service doesn't care about the data.
+The service is about the data flow.
+So, there is only a need to check that the services invokes the domain model as expected:
+(TODO:source)
+
+.. code-block:: python
+
+   def test_arguments_passed_to_vote_for_article(self):
+       found_voting_user_mock = build_voting_user_mock()
+
+       article_rating_service = build_article_rating_service(
+           FindVotingUserPortStub(found_voting_user_mock)
+       )
+       article_rating_service.vote_for_article(
+           build_vote_for_article_command(
+               article_id=ArticleId(UUID('ef70ade4-0000-0000-0000-000000000000')),
+               vote=Vote.UP
+           )
+       )
+
+       found_voting_user_mock.vote_for_article.assert_called_with(
+           ArticleId(UUID('ef70ade4-0000-0000-0000-000000000000')),
+           Vote.UP
+       )
+
+In other words, we test that ``VotingUser.vote_for_article(...)`` was called with
+the expected arguments.
+In order to do that, we hand-craft a ``FindVotingUserPortStub`` test double,
+which returns a mocked ``VotingUser``.
+We then instantiate ``ArticleRatingService`` and inject this stub into it.
+Finally we call ``.vote_for_article()`` and assert our expectation.
+
+
+I am a proponent of `solitary tests <https://martinfowler.com/bliki/UnitTest.html>`_
+when it comes to flow testing.
 
 
 
