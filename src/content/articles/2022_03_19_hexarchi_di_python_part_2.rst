@@ -10,7 +10,8 @@ Hexagonal architecture and Python - Part II: Domain,  Application Services, Port
           these all to Python and Django application design.
 :status: draft
 
-Now that you are familiar with the basic principles of Hexagonal architecture,
+Now that you are familiar with the basic principles of Hexagonal architecture
+(see Part I of the series TODO),
 let's try implementing a Django-based application following these principles.
 I've chosen Django for this exercise to demonstrate that even an opinionated framework is not an obstacle for Hexagonal architecture.
 What about the other web frameworks, like FastAPI, Flask, AIOHTTP with SQLAchemy or a NoSQL data store?
@@ -537,8 +538,7 @@ Think of the corresponding application service tests.
 Is there a need to test the same behavior there?
 Is there a need to have a unit test which verifies that
 ``article_rating_service.vote_for_article()`` returns ``AlreadyVotedResult``?
-Remember that service doesn't care about the data.
-The service is about the data flow.
+Remember that the service doesn't care about the data, orchestrates the flow.
 So, there is only a need to check that the services invokes the domain model as expected:
 (TODO:source)
 
@@ -569,9 +569,19 @@ which returns a mocked ``VotingUser``.
 We then instantiate ``ArticleRatingService`` and inject this stub into it.
 Finally we call ``.vote_for_article()`` and assert our expectation.
 
+You have probably noticed a heavy use of mocking here.
+Indeed, this test, as well as the other tests for the application service
+are so-called `solitary tests <https://martinfowler.com/bliki/UnitTest.html>`_.
+It's not easy to find a balance between using the real implementation and mocks.
+SPI mocks hide he complexity of the systems behind the ports.
+And since we are testing the execution flow, there is no need to additionally test
+the domain. Hence domain model (``VotingUser``) mock.
 
-I am a proponent of `solitary tests <https://martinfowler.com/bliki/UnitTest.html>`_
-when it comes to flow testing.
+
+SPI adapters: Repositories
+==========================
+
+todo
 
 
 
