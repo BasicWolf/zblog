@@ -30,20 +30,19 @@ The full source of the example is available at `github repository <https://githu
 Project structure
 =================
 
-On the surface, the project structure looks like the following:
+A Django project can be easily recognized by the top-level structure:
 
 .. code-block:: text
 
    src/
-     hexarch_project/
+     hexarch_project/             # Django application essentials: wsgi.py, urls.py, settings.py
      myapp/
        migrations/                # Django migrations
        apps.py                    # Django app configuration (creates dependencies container instance)
        dependencies_container.py  # Dependencies container
        models.py                  # Django DB models (imports models from SPI adapters)
        urls.py                    # Django urls mappings
-
-       eventlib/                  # minimalistic domain events dispatcher
+       ⋮
        application/               # application code; structure follows hexagonal architecture
 
 The application *directory* structure though goes way deeper.
@@ -58,17 +57,22 @@ The core of a Django application designed by hexagonal architecture principles c
    domain/            # Business domain models, events and services
      event/
      model/
+     service/
    ports/             # API and SPI ports (interfaces)
      api/
      spi/
    adapter/           # API and SPI ports implementation
      api/
        http/          # Django views and serializers
+       messaging/
+       ⋮
      spi/
        persistence/
          entity/      # Django models
          exceptions/  # Generic (django-independent) persistence exceptions
          repository/  # High-level persistence abstraction
+       messaging/
+       ⋮
    service/           # Application services
 
 Notice that Django is present only in adapters.
@@ -88,8 +92,8 @@ Our initial plan is fairly simple:
 1. Every article has a rating.
 2. The rating can be changed by the users.
 3. To change the rating, a user either "upvotes" or "downvotes" the article.
-4. A user can vote for an article only if "karma" (i.e. user rating) value is high enough, greater than 5.
-5. A user can vote for each article only once.
+4. Users can vote for an article only if their "karma" (i.e. user rating) value is high enough, greater than 5.
+5. A user can vote once per article.
 
 Where do we start?
 ==================
@@ -192,7 +196,7 @@ The intentions here are:
 3. Serialize the result and render the response.
 
 I should emphasize that in real life, the tests should always come first.
-How easy is to test this view?
+Actually this view is pretty simple to test.
 The only dependency here is an object which implements ``VoteForArticleUseCase``
 protocol TODO:source:
 
@@ -204,8 +208,7 @@ protocol TODO:source:
 
 
 We can test all the possible scenarios by injecting a tailored test double.
-This is times more lightweight compared to traditional Django apps testing,
-when we have to connect to a database, even if it is only in memory.
+This is times more lightweight compared to traditional Django app testing.
 
 For example, how would we test a scenario, where a user tries to vote twice?
 TODO:source:
@@ -257,20 +260,20 @@ And here is the ``VoteForArticleUseCaseAlreadyVotedStub``:
            )
 
 Please pause for a moment and read the test code thoroughly once again.
-Is it easy or hard to grock it?
-Notice how we test the view without touching the rest of the application?
+Does it take much effort to grok it?
+Did you notice how we test the view without touching the rest of the application?
 Have you also noticed that it takes only five lines of code (three, if you put the
 ``return`` on a single line!) to mock "the rest of the application"?
 There is no need to patch anything.
 Suddenly the responsibilities in an application are decoupled.
-Suddenly, we don't have to set up *everything*, including a database
+Suddenly, we don't have to set up a database or *any* other part of the application
 to test how an HTTP endpoint works.
 
 
 Application service: a skeleton
 ===============================
 
-Application services are the conductors orchestrating processes and data flow in the application.
+Application services are the conductors that orchestrate processes and data flow in the application.
 An application service implements one or more related use cases and invokes
 all the necessary dependencies required to perform these use cases.
 The service implementation can start with a single return statement only:
@@ -287,7 +290,7 @@ The service implementation can start with a single return statement only:
                command.vote
            )
 
-You may have started wondering what are ``VoteForArticleResult`` and ``SuccessfullyVotedResult``.
+You may have started wondering what ``VoteForArticleResult`` and ``SuccessfullyVotedResult`` are.
 Recall the basics of Hexagonal architecture from Part I:
 
 ..
@@ -307,14 +310,14 @@ But we can't continue developing it without the bits and pieces which convey the
 The domain
 ==========
 
-The domain layer encapsulates the business logic and processes.
+The domain layer encapsulates business logic and business processes.
 Developers and business experts greatly benefit when they share understanding and call a spade a spade.
 On the code side, the language used in the names of classes, methods
 and other code units should resemble the terms from the problem domain.
+By looking at such code you can always tell its relation to the problem domain.
 
-We would greatly benefit if the language used in names of classes, methods and
-other code units resembles the terms from the problem domain.
-For example, a vote can be represented via an enumeration (TODO:source):
+Back to the voting for an article, a vote can be represented via an enumeration
+(TODO:source):
 
 .. code-block:: python
 
@@ -330,12 +333,12 @@ Karma is an explicit type alias (todo:source):
 
 
 The most complex class of our domain is ``VotingUser``.
-It represents a user that is voting or has already voted for a certain article.
-``VotingUser`` also puts together the business logic required for making
-a vote for an article.
+It represents a user that is voting or has already voted for an article.
+``VotingUser`` also puts together the business logic required for casting a
+vote.
 We use ``Karma`` value to decide whether the user can vote.
 We also need to know whether the user has already ``voted``.
-Voting for an article produces a ``result`` and might emit some ``domain events``:
+Voting for an article produces a ``result``: (TODO:source)
 
 .. uml::
 
@@ -343,58 +346,59 @@ Voting for an article produces a ``result`` and might emit some ``domain events`
    class VotingUser {
        id: UserId
        karma: Karma
-       voted: Boolean
+       votes_for_articles: List[ArticleVote]
 
-       +vote_for_article (article_id: ArticleId, vote: Vote) -> (VoteForArticleResult, List[Events])
+       +vote_for_article (article_id: ArticleId, vote: Vote) -> VoteForArticleResult
    }
 
    @enduml
 
 
+It is imperative to use domain language in the implementation.
+Even the private methods ``_user_voted_for_article()`` and ``_karma_enough_for_voting``
+follow the domain language. A fellow developer could easily map the code back
+to the domain model and business rules.
+
 .. code-block:: python
 
-   @dataclass(frozen=True)
+   @dataclass
    class VotingUser:
        id: UserId
        karma: Karma
-       voted: bool
+       votes_for_articles: list[ArticleVote] = field(default_factory=list)
 
        def vote_for_article(
            self,
            article_id: ArticleId,
            vote: Vote
-       ) -> Tuple[VoteForArticleResult, List[Event]]:
-           if self.voted:
-               return AlreadyVotedResult(article_id, self.id), []
+       ) -> VoteForArticleResult:
+           if self._user_voted_for_article(article_id):
+               return AlreadyVotedResult(article_id, self.id)
 
-           if not KarmaEnoughForVotingSpecification().is_satisfied_by(self.karma):
-               return InsufficientKarmaResult(user_id=self.id), []
+           if not self._karma_enough_for_voting():
+               return InsufficientKarmaResult(user_id=self.id)
 
-           return (
-               SuccessfullyVotedResult(article_id, self.id, vote),
-               [
-                   UserVotedEvent(article_id, self.id, vote)
-               ]
+           ## IMPORTANT! The model state changes! ##
+           self.votes_for_articles.append(
+               ArticleVote(article_id, self.id, vote)
            )
 
-Some parts of this might look overcomplicated.
-For example, why not put down the "karma should be greater than 5" constraint
-directly in the ``if`` condition?
-We could, but then the constraint (or specification) becomes the part of ``VotingUser``.
-Should the user know whether they can vote?
-If that logic piece is separate, it can be changed without affecting the ``VotingUser`` code at all!
-What about the ``UserVotedEvent``?
-It is easier to explain if we get back to the application service level.
+           return SuccessfullyVotedResult(article_id, self.id, vote)
+
+       ...
+
+So far we have implemented the domain model behavior. What's missing is how the
+model is constructed. Where does the application service gets the model instance?
+It's time to define our first SPI port.
+
 
 SPI Ports
 =========
 
-Let's continue with ``VoteForArticleUseCase`` implementation.
-In Hexagonal Architecture, an application service "talks" defines its
-dependencies as Service Interface Provider (SPI) ports.
-
-For example, we need to fetch the ``VotingUser``
-based on the data from the ``VoteForArticleCommand`` (TODO:source):
+In Hexagonal Architecture, an application service communicates with the outer world
+via Service Interface Provider (SPI) ports. We usually call them "Interfaces" :)
+In our example, the application service fetches the users by ``user_id`` and ``article_id``.
+That can be expressed as a ``FindVotingUserPort`` (TODO:source):
 
 .. code-block:: python
 
@@ -402,7 +406,9 @@ based on the data from the ``VoteForArticleCommand`` (TODO:source):
        def find_voting_user(self, article_id: ArticleId, user_id: UserId) -> VotingUser:
            raise NotImplementedError()
 
-The SPI adapters are injected into the service during its initialization:
+The article service takes ``FindVotingUserPort`` into use as a dependency.
+In practice, we add a respective field and a way to initialize it, e.g. through
+service constructor:
 
 .. code-block:: python
 
@@ -417,45 +423,83 @@ The SPI adapters are injected into the service during its initialization:
            find_voting_user_port: FindVotingUserPort,
            ...
        )
+           self._find_voting_user_port = find_voting_user_port
 
-And the service does not (nor should it) have any idea, what
-kind of implementation is behind
-the port.
-An HTTP service, a database, a file from the local file system,
-it could even be a pure Python collection!
-At this point, it's enough to have a stub which returns a hard-coded user:
+Can you tell, what actual implementation is behind that interface?
+Is ``VotingUser`` found from a file? A database? Perhaps another HTTP endpoint?
+Or a hard-coded value?
+The application service does not care. It just makes a call:
 
 .. code-block:: python
 
-   class FindVotingUserAdapterStub(FindVotingUserPort):
-       def find_voting_user(self, article_id: ArticleId, user_id: UserId) -> VotingUser:
-           return VotingUser(user_id, Karma(10), voted=False)
+   class ArticleRatingService(...):
+       def vote_for_article(self, command: VoteForArticleCommand) -> VoteForArticleResult:
+           voting_user = self._find_voting_user_port.find_voting_user(
+               command.article_id,
+               command.user_id
+           )
+           ...
+
+Our service still needs one more port. That is to persist voting results.
+We would persist those results a bit indirectly.
+Remember how ``VotingUser`` updated its state?
+Hence the port would save the voting user, not a voting result :).
+We'll call the port ``SaveVotingUserPort`` (todo:source):
+
+.. code-block:: python
+
+   class SaveVotingUserPort(Protocol):
+       def save_voting_user(self, voting_user: VotingUser) -> VotingUser:
+           raise NotImplementedError()
 
 
-Invoking the domain and handling events
+Invoking the domain
 =======================================
 
-We can now join and orchestrate the ``FindVotingUserPort`` and the domain
-to run the use case:
+Finally, ``ArticleRatingService`` has all the bits and pieces required to orchestrate
+the use case:
 
 .. code-block:: python
 
-   class ArticleRatingService(VoteForArticleUseCase):
-       _domain_event_dispatcher: EventDispatcher
+   class ArticleRatingService(
+       VoteForArticleUseCase
+   ):
        _find_voting_user_port: FindVotingUserPort
+       _save_voting_user_port: SaveVotingUserPort
+
+       ...
 
        def vote_for_article(self, command: VoteForArticleCommand) -> VoteForArticleResult:
-           voting_user = self._find_voting_user_port(command.article_id, command.user_id)
+           voting_user = self._find_voting_user_port.find_voting_user(
+               command.article_id,
+               command.user_id
+           )
 
-           voting_result, events = voting_user.vote_for_article(
+           voting_result = voting_user.vote_for_article(
                command.article_id,
                command.vote
            )
 
-           for event in events:
-               self._domain_event_dispatcher.dispatch(event)
+           match voting_result:
+               case SuccessfullyVotedResult():
+                   self._save_voting_user_port.save_voting_user(voting_user)
 
            return voting_result
+
+First the service gets the ``VotingUser`` which is supposed to vote for the article.
+Next, the user votes for the article.
+In the end, the service checks whether user has successfully vote and persist the user state.
+
+.. note::
+
+   Do you remember that an application service is supposed to orchestrate
+   the flow without any knowledge of its content?
+   You may have noticed, that our application service does not fulfill this
+   requirement. The service makes controls the flow in ``match voting_result:`` block.
+   I had to cheat here to make the code easier to follow and comprehend.
+   One of the purer alternatives is domain events mechanism.
+   (TODO:link-to-some-article) It is a separate topic which falls out of the scope of this article.
+
 
 Note how lean is the body of ``vote_for_article()``.
 It carries no logic about what to do with the voting results
