@@ -333,9 +333,8 @@ Karma is an explicit type alias (todo:source):
 
 
 The most complex class of our domain is ``VotingUser``.
-It represents a user that is voting or has already voted for an article.
-``VotingUser`` also puts together the business logic required for casting a
-vote.
+It represents a user that is voting or has already voted for an article
+and implements vote casting for an article routine.
 We use ``Karma`` value to decide whether the user can vote.
 We also need to know whether the user has already ``voted``.
 Voting for an article produces a ``result``: (TODO:source)
@@ -352,7 +351,6 @@ Voting for an article produces a ``result``: (TODO:source)
    }
 
    @enduml
-
 
 It is imperative to use domain language in the implementation.
 Even the private methods ``_user_voted_for_article()`` and ``_karma_enough_for_voting``
@@ -440,11 +438,11 @@ The application service does not care. It just makes a call:
            )
            ...
 
-Our service still needs one more port. That is to persist voting results.
-We would persist those results a bit indirectly.
-Remember how ``VotingUser`` updated its state?
-Hence the port would save the voting user, not a voting result :).
-We'll call the port ``SaveVotingUserPort`` (todo:source):
+The service still has one more thing to do. It has to persist the voting results.
+
+It terms of DDD, ``VotingUser`` is an `aggregate root <https://martinfowler.com/bliki/DDD_Aggregate.html>`.
+To update an article rating we have to persist a ``VotingUser`` as a whole.
+``SaveVotingUserPort`` takes care of that (todo:source):
 
 .. code-block:: python
 
@@ -453,8 +451,8 @@ We'll call the port ``SaveVotingUserPort`` (todo:source):
            raise NotImplementedError()
 
 
-Invoking the domain
-=======================================
+Putting the service pieces together
+===================================
 
 Finally, ``ArticleRatingService`` has all the bits and pieces required to orchestrate
 the use case:
@@ -488,7 +486,7 @@ the use case:
 
 First the service gets the ``VotingUser`` which is supposed to vote for the article.
 Next, the user votes for the article.
-In the end, the service checks whether user has successfully vote and persist the user state.
+Last, the service checks whether user has successfully voted and persist the user state.
 
 .. note::
 
@@ -501,132 +499,47 @@ In the end, the service checks whether user has successfully vote and persist th
    (TODO:link-to-some-article) It is a separate topic which falls out of the scope of this article.
 
 
-Note how lean is the body of ``vote_for_article()``.
-It carries no logic about what to do with the voting results
-Whatever has happened during ``voting_user.vote_for_article()`` can be handled
-by whoever is interested in these events.
-What if we want to handle ``UserVotedEvent`` right here?
-What if we want to persist the vote?
-Easy!
-We register a method of ``ArticleRatingService`` as the event handler
-and invoke an SPI port which saves the vote:
-
-.. code-block:: python
-
-   class ArticleRatingService(VoteForArticleUseCase):
-       ...
-       _domain_event_dispatcher: EventDispatcher
-       _save_article_vote_port: SaveArticleVotePort
-
-       def __init__(...)
-           ...
-           self._domain_event_dispatcher.register_handler(
-               UserVotedEvent,
-               self._on_user_voted
-           )
-
-       def _on_user_voted(self, event: UserVotedEvent):
-           self._save_article_vote_port.save_article_vote(
-               ArticleVote(
-                   event.article_id,
-                   event.user_id,
-                   event.vote
-               )
-           )
-
-
-How about an alternative to domain events handler?
-We need another way of figuring out, whether the vote should be saved or not.
-For example:
-
-.. code-block:: python
-
-   voting_result = voting_user.vote_for_article(
-      command.article_id,
-      command.vote
-   )
-
-   if isinstance(voting_result, SuccessfullyVotedResult):
-       self._save_article_vote_port.save_article_vote(...)
-
-
-Besides being ugly, this code also violates the basic principle of our architecture:
-Separation of concerns.
-Remember, that an application service are meant to orchestrate the flow.
-By adding this ``if`` we force the application service to make decisions.
-Instead, we should let the service to dispatch the domain events without
-caring where, when and how they are handled.
-
-Application service: test-driven development
+Test-driven application services development
 ============================================
 
-Once again, I would like to stress that we use test-driven approach,
-though I didn't mention the tests explicitly.
-For example, this unit test verifies the "user can vote only once" domain behavior:
-(TODO:source)
+I bet you know what's been happening behind the scenes of writing every bit
+of the example code. For every written piece, I've been first asking myself
+"How can this be tested?". And tests always came first.
+
+There is a catch with application service testing. It requires quite a few
+test doubles - one per each dependency.
+That doesn't make testing hard.
+If we hide all the required data fixtures behind meaningful names, the
+tests become quite obvious. Here, we test that the service persists the
+voting user (TODO:source).
+
 
 .. code-block:: python
 
-   def test_vote_for_article_twice_returns_already_voted_result():
-       voting_user = build_voting_user(
-           UserId(UUID('7ebd50e7-0000-0000-0000-000000000000')),
-           voted=True
-       )
-       result, *_ = voting_user.vote_for_article(
-           ArticleId(UUID('2f868ceb-0000-0000-0000-000000000000')),
-           Vote.UP
-       )
-       assert isinstance(result, AlreadyVotedResult)
-
-Think of the corresponding application service tests.
-Is there a need to test the same behavior there?
-Is there a need to have a unit test which verifies that
-``article_rating_service.vote_for_article()`` returns ``AlreadyVotedResult``?
-Remember that the service doesn't care about the data, orchestrates the flow.
-So, there is only a need to check that the services invokes the domain model as expected:
-(TODO:source)
-
-.. code-block:: python
-
-   def test_arguments_passed_to_vote_for_article(self):
-       found_voting_user_mock = build_voting_user_mock()
-
+   def test_voting_user_saved(
+       self,
+       vote_for_article_command: VoteForArticleCommand,
+       saved_voting_user: VotingUser
+   ):
+       save_voting_user_port_mock = SaveVotingUserPortMock()
        article_rating_service = build_article_rating_service(
-           FindVotingUserPortStub(found_voting_user_mock)
-       )
-       article_rating_service.vote_for_article(
-           build_vote_for_article_command(
-               article_id=ArticleId(UUID('ef70ade4-0000-0000-0000-000000000000')),
-               vote=Vote.UP
-           )
+           save_voting_user_port=save_voting_user_port_mock
        )
 
-       found_voting_user_mock.vote_for_article.assert_called_with(
-           ArticleId(UUID('ef70ade4-0000-0000-0000-000000000000')),
-           Vote.UP
-       )
+       article_rating_service.vote_for_article(vote_for_article_command)
 
-In other words, we test that ``VotingUser.vote_for_article(...)`` was called with
-the expected arguments.
-In order to do that, we hand-craft a ``FindVotingUserPortStub`` test double,
-which returns a mocked ``VotingUser``.
-We then instantiate ``ArticleRatingService`` and inject this stub into it.
-Finally we call ``.vote_for_article()`` and assert our expectation.
-
-You have probably noticed a heavy use of mocking here.
-Indeed, this test, as well as the other tests for the application service
-are so-called `solitary tests <https://martinfowler.com/bliki/UnitTest.html>`_.
-It's not easy to find a balance between using the real implementation and mocks.
-SPI mocks hide he complexity of the systems behind the ports.
-And since we are testing the execution flow, there is no need to additionally test
-the domain. Hence domain model (``VotingUser``) mock.
+       assert save_voting_user_port_mock.saved_voting_user == saved_voting_user
 
 
-SPI adapters: Repositories
-==========================
 
-todo
 
+What's next
+===========
+
+This concludes the Part II of the article series about Hexagonal Architecture
+and Python and Django.
+Part III will discuss how to use Django Models in SPIs, manage database
+transactions and put all the application pieces together. Stay tuned!
 
 
 References
