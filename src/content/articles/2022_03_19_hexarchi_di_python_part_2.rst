@@ -11,7 +11,7 @@ Hexagonal architecture and Python - Part II: Domain,  Application Services, Port
 :status: draft
 
 Now that you are familiar with the basic principles of Hexagonal architecture
-(see Part I of the series TODO),
+(`see part I <https://znasibov.info/posts/2021/10/30/hexarch_di_python_part_1.html>`_)
 let's try implementing a Django-based application following these principles.
 I've chosen Django for this exercise to demonstrate that even an opinionated framework is not an obstacle for Hexagonal architecture.
 What about the other web frameworks, like FastAPI, Flask, AIOHTTP with SQLAchemy or a NoSQL data store?
@@ -20,9 +20,10 @@ Hexagonal architecture painlessly decouples the business logic from the technica
 HTTP communication, file system and database access, messaging and so on.
 You can swap Django WSGI application with FastAPI,
 get rid of Django ORM and go with SQLAlchemy,
-yet the business logic remains the same.
+yet the business logic needs not to be touched at all.
 
-The source code of the example is available at `github repository <https://github.com/BasicWolf/hexagonal-architecture-django>`_.
+The source code of the example is available at
+`github repository <https://github.com/BasicWolf/hexagonal-architecture-django/tree/blog>`_.
 
 .. tip:: Clone the repository before reading further. The layered hexagonal architecture
          means deeply nested python packages. It's more comfortable to navigate when the code is available locally.
@@ -45,12 +46,12 @@ A Django project is easily recognized by the top-level structure:
        ⋮
        application/               # application code; the structure follows the principles of hexagonal architecture
 
-The application *directory* structure though goes way deeper.
+Under the surface, the application *directory* structure is much deeper.
 From Python's perspective, all directories under ``application/`` are **namespace-packages**
 i.e. there is no ``__init__.py`` in them.
 The namespace packages allow **the tests packages structure to reflect the application packages structure**.
 
-The application in the enclosed example is structured as follows:
+The example application is structured as follows:
 
 .. code-block:: text
 
@@ -83,16 +84,29 @@ Use case: Upvote an Article
 ===========================
 
 Now, let's take a look at an example use case.
-Imagine that we are developing a web blogging platform.
-The next big thing is the ability of the platform users to vote for articles.
-We have discussed the use case with the end-users, platform experts, and other stakeholders and agreed on a minimally viable solution.
-Our initial plan is quite simple:
+Imagine a web blogging platform in development.
+We want to add a rating to articles and allow users to affect that rating.
+
+We gathered with the end-users, platform experts, QA, and other stakeholders,
+and drew some ideas:
 
 1. Every article has a rating.
 2. A user can change an article rating.
 3. To change the rating, a user either "upvotes" or "downvotes" the article.
-4. Users can vote for an article only if their "karma" (i.e. user rating) value is high enough, greater than 5.
+4. Users can vote for the article only if their "karma" (i.e. user rating) value is high enough, greater than 5.
 5. A user can vote once per article.
+
+A user story is born:
+
+.. code-block:: gherkin
+
+   Given a user of the blogging platform,
+     who likes or dislikes the article,
+     and would like to express their opinion about an article by voting for it,
+     and their karma is enough for voting
+   When a user votes for an article for the first time
+   Then the article rating changes
+
 
 Where do we start?
 ==================
@@ -117,8 +131,8 @@ Let's consider our options:
    That being said, could OUR application provide its public integration
    points sooner?
 
-3. **Public API**. Public API is our contract with the outer world.
-   We would collaborate with the API consumers and **design it together**.
+3. **Public API**. Public API is the contract with the outer world.
+   We collaborate with the API consumers and **design it together**.
    Once the API is defined, consumers and the producer (our service) can
    implement their part of the contract independently.
    There is no need to postpone the application release either!
@@ -156,15 +170,18 @@ Let's start with the specification skeleton:
 
 .. note::
 
-   We are deliberately omitting the complete specification since
+   I deliberately omit the complete specification since
    the topic is out of this article's scope.
 
 Django Rest Framework is the obvious choice to facilitate a RESTful endpoint
 implementation with Django.
 Beside the request and response processing, the logic fits into few lines
-of code: TODO:source
+of code
+[`source <https://github.com/BasicWolf/hexagonal-architecture-django/blob/blog/src/myapp/application/adapter/api/http/article_vote_view.py#L29>`__]:
 
 .. code-block:: python
+
+   # /src/myapp/application/adapter/api/http/article_vote_view.py
 
    class ArticleVoteView(APIView):
 
@@ -187,24 +204,30 @@ The intentions here are:
 2. **Invoke the use case**.
 3. Serialize the result and render the response.
 
-There is only one dependency here: an object which implements ``VoteForArticleUseCase``
-protocol TODO:source:
+The view has one dependency: an object which implements ``VoteForArticleUseCase``
+protocol
+[`source <https://github.com/BasicWolf/hexagonal-architecture-django/blob/blog/src/myapp/application/port/api/vote_for_article_use_case.py#L9>`__]:
 
 .. code-block:: python
+
+   # /src/myapp/application/port/api/vote_for_article_use_case.py
 
    class VoteForArticleUseCase(Protocol):
       def vote_for_article(self, command: VoteForArticleCommand) -> VoteForArticleResult:
           pass
 
-Of course, in real life, test always come first.
-We can play all possible scenarios by injecting a tailored test double of
-the ``VoteForArticleUseCase`` dependency.
-This makes it times more lightweight compared to the traditional, spin-it-all-up Django app testing.
+Of course, in real life, tests should always come first.
+We can inject a double of the ``VoteForArticleUseCase`` dependency
+in every test and tune in accordingly.
+This makes the view testing times more lightweight compared to the traditional, spin-it-all-up Django app testing.
 
-For example, how to test a scenario, where a user tries to vote two times?
-TODO:source:
+For example, how to test a scenario, where a user tries to vote twice in a row?
+[`source <https://github.com/BasicWolf/hexagonal-architecture-django/blob/blog/tests/test_myapp/application/adapter/api/http/test_article_vote_view.py#L25>`__]
+
 
 .. code-block:: python
+
+   # /tests/test_myapp/application/adapter/api/http/test_article_vote_view.py
 
    def test_user_votes_for_the_same_article_returns_conflict(
        arf: APIRequestFactory
@@ -238,10 +261,14 @@ TODO:source:
            'title': "Cannot vote for an article"
        }
 
-And here is the ``VoteForArticleUseCaseAlreadyVotedStub``:
+And here is the ``VoteForArticleUseCaseAlreadyVotedStub``
+[`source <https://github.com/BasicWolf/hexagonal-architecture-django/blob/blog/tests/test_myapp/application/adapter/api/http/test_article_vote_view.py#L148>`__]
+:
 
 
 .. code-block:: python
+
+   # /tests/test_myapp/application/adapter/api/http/test_article_vote_view.py
 
    class VoteForArticleUseCaseAlreadyVotedStub(VoteForArticleUseCase):
        def vote_for_article(self, command: VoteForArticleCommand) -> VoteForArticleResult:
@@ -252,7 +279,7 @@ And here is the ``VoteForArticleUseCaseAlreadyVotedStub``:
 
 Please pause for a moment.
 Does it take much effort to grok the test?
-Did you notice how we test the view without touching the rest of the application?
+Did you notice that the test does not interact with rest of the application?
 Did you also notice that it takes only five lines of code (three, if you put the
 ``return`` on a single line!) to mock "the rest of the application"?
 The responsibilities are clearly decoupled, and
@@ -268,6 +295,8 @@ all the necessary dependencies required to perform these use cases.
 The service implementation can start with a single return statement only:
 
 .. code-block:: python
+
+   # /src/myapp/application/service/article_rating_service.py
 
    class ArticleRatingService(
        VoteForArticleUseCase
@@ -286,45 +315,54 @@ Recall the basics of Hexagonal architecture from Part I:
 
    Dependencies are directed from the outer layers to the inner centre.
 
-``VoteForArticleResult`` (TODO:source) is a domain data transfer object model.
+``VoteForArticleResult``
+[`source <https://github.com/BasicWolf/hexagonal-architecture-django/blob/blog/src/myapp/application/domain/model/vote_for_article_result.py#L10>`__]
+is a domain data transfer object model.
 It carries the voting result from the innermost application layer - the Domain
 - to the outermost API adapter layer.
 If we inject this service skeleton into the HTTP adapter, it will echo the
 incoming vote commands with "Successfully Voted" results.
-That's a good start! Next, we can add some business logic.
+That's a good start! Now, let's add some business logic.
 
 The domain
 ==========
 
 A discussion between the developers, users and domain experts gives a birth to
 a domain-specific language, where each term has a particular meaning.
-We call this language - `Ubiquitous language (UL) <https://www.martinfowler.com/bliki/UbiquitousLanguage.html>`_.
+We call this language - `Ubiquitous language <https://www.martinfowler.com/bliki/UbiquitousLanguage.html>`_ (UL).
 
 In Hexagonal architecture, the domain layer encapsulates the business logic and business processes.
 On the code side, the UL terms are used in the names of classes, methods, and other code units.
 Thus, by looking at the code, you can always tell how it is related to the problem domain.
 
 For example, a vote can be represented via the following enumeration
-(TODO:source):
+[`source <https://github.com/BasicWolf/hexagonal-architecture-django/blob/blog/src/myapp/application/domain/model/vote.py#L4>`__]
+:
 
 .. code-block:: python
+
+   # /src/myapp/application/domain/model/vote.py
 
    class Vote(Enum):
        UP = 'up'
        DOWN = 'down'
 
-Karma is an explicit type alias (todo:source):
+Karma is an explicit type alias
+[`source <https://github.com/BasicWolf/hexagonal-architecture-django/blob/blog/src/myapp/application/domain/model/karma.py>`__]
+:
 
 .. code-block:: python
+
+   # /src/myapp/application/domain/model/karma.py
 
    Karma = NewType('Karma', int)
 
 
-The most complex class of our domain is ``VotingUser``.
-It represents a user that can vote for an article.
-We use the karma value to decide whether the user can vote.
-We also need to know whether the user has already voted.
-Voting for an article produces a result: (TODO:source)
+The most complex class of the domain is ``VotingUser``,
+which represents a user that votes for an article.
+The ``karma`` value determines whether the user can vote.
+We also need to know whether the user has already voted to prevent repeat voting.
+Voting for an article produces a result:
 
 .. uml::
 
@@ -338,10 +376,6 @@ Voting for an article produces a result: (TODO:source)
    }
 
    @enduml
-
-Notice that even the private methods ``_user_voted_for_article()`` and ``_karma_enough_for_voting``
-follow the domain language. A fellow developer could easily map the cod
-to the domain model and business rules.
 
 .. code-block:: python
 
@@ -371,8 +405,14 @@ to the domain model and business rules.
 
        ...
 
-So far we have implemented the domain model behavior. What's missing is how the
-model is constructed. How does the application service get the ``VotingUser`` instance?
+
+Notice that even the private methods ``_user_voted_for_article()`` and ``_karma_enough_for_voting``
+follow the domain language. A fellow developer can easily map the code
+to the domain model and business rules.
+
+So far we have implemented the domain model behavior.
+But the code which builds the model instance is still missing.
+How does the application service get a ``VotingUser``?
 
 
 SPI Ports
@@ -381,9 +421,13 @@ SPI Ports
 In Hexagonal Architecture, an application service communicates with the outer world
 via Service Interface Provider (SPI) ports.
 The application service fetches the users by ``user_id`` and ``article_id``.
-That can be expressed in a ``FindVotingUserPort`` interface as follows (TODO:source):
+That can be expressed in a ``FindVotingUserPort`` interface as follows
+[`source <https://github.com/BasicWolf/hexagonal-architecture-django/blob/blog/src/myapp/application/port/spi/find_voting_user_port.py#L8>`__]
+:
 
 .. code-block:: python
+
+   # /src/myapp/application/port/spi/find_voting_user_port.py
 
    class FindVotingUserPort(Protocol):
        def find_voting_user(self, article_id: ArticleId, user_id: UserId) -> VotingUser:
@@ -393,6 +437,8 @@ We add ``FindVotingUserPort`` as a dependency to the application service.
 In practice, we add a respective field and a way to initialize via constructor:
 
 .. code-block:: python
+
+   # /src/myapp/application/service/article_rating_service.py
 
    class ArticleRatingService(
        VoteForArticleUseCase
@@ -414,6 +460,8 @@ The application service does not care. It just makes a call:
 
 .. code-block:: python
 
+   # /src/myapp/application/service/article_rating_service.py
+
    class ArticleRatingService(...):
        def vote_for_article(self, command: VoteForArticleCommand) -> VoteForArticleResult:
            voting_user = self._find_voting_user_port.find_voting_user(
@@ -424,11 +472,16 @@ The application service does not care. It just makes a call:
 
 Another responsibility of the service is to persist the voting results.
 
-It terms of DDD, ``VotingUser`` is an `Aggregate root <https://martinfowler.com/bliki/DDD_Aggregate.html>`_.
+It terms of `Domain-Driven Design <https://en.wikipedia.org/wiki/Domain-driven_design>`_,
+``VotingUser`` is an `Aggregate root <https://martinfowler.com/bliki/DDD_Aggregate.html>`_.
 To update an article rating we have to persist a ``VotingUser`` as a whole.
-``SaveVotingUserPort`` takes care of that (TODO:SOURCE):
+``SaveVotingUserPort`` takes care of that
+[`source <https://github.com/BasicWolf/hexagonal-architecture-django/blob/blog/src/myapp/application/port/spi/save_voting_user_port.py#L6>`__]
+:
 
 .. code-block:: python
+
+   # /src/myapp/application/port/spi/save_voting_user_port.py
 
    class SaveVotingUserPort(Protocol):
        def save_voting_user(self, voting_user: VotingUser) -> VotingUser:
@@ -439,9 +492,13 @@ Putting the service pieces together
 ===================================
 
 Finally, ``ArticleRatingService`` has all the bits and pieces required to execute
-the use case:
+the use case
+[`source <https://github.com/BasicWolf/hexagonal-architecture-django/blob/blog/src/myapp/application/service/article_rating_service.py#L16>`_]
+:
 
 .. code-block:: python
+
+   # /src/myapp/application/service/article_rating_service.py
 
    class ArticleRatingService(
        VoteForArticleUseCase
@@ -468,7 +525,7 @@ the use case:
 
            return voting_result
 
-First, the service gets the ``VotingUser`` which is supposed to vote for the article.
+First, the service gets the required ``VotingUser``.
 Next, the user votes for the article.
 Last, the service checks whether the user has successfully voted and persists the user state.
 
@@ -479,28 +536,32 @@ Last, the service checks whether the user has successfully voted and persists th
    You may have noticed, that our application service does not fulfil this
    promise. The service controls the flow in ``match voting_result:`` block.
    I had to cheat here to make the code easier to follow and comprehend.
-   One of the purer alternatives is the *Domain Events* mechanism.
-   (TODO:link-to-some-article)
-   It is a huge topic which falls out of the scope of this article.
+   One of the purer alternatives is the
+   `Domain events <https://docs.microsoft.com/en-us/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/domain-events-design-implementation>`_
+   mechanism.
+   It is a very interesting, but a huge topic, and unfortunately it falls out of the scope of this article.
 
 
 Test-driven application services development
 ============================================
 
-Remember how we designed a test for the HTTP controller?
+Do you remember the HTTP controller test from the above?
 Testing application service is no different, but there is a catch:
 it requires quite a few test doubles - one per each dependency.
 That fact should not complicate the tests, though.
 We should be explicit about the dependencies needed in the test case
 and rely on default values for the rest of them.
 
-For example, we test that the service persists the voting user (TODO:source).
+For example, we test that the service persists the voting user
+[`source <https://github.com/BasicWolf/hexagonal-architecture-django/blob/blog/tests/test_myapp/application/service/test_article_rating_service.py#L42>`__]
+.
 The only dependency explicitly declared and passed to the service builder
 is ``SaveVotingUserPortMock`` test double.
 All other dependencies are provided by the ``build_article_rating_service()`` builder function:
 
-
 .. code-block:: python
+
+   # /tests/test_myapp/application/service/test_article_rating_service.py
 
    def test_voting_user_saved(
        self,
@@ -517,8 +578,6 @@ All other dependencies are provided by the ``build_article_rating_service()`` bu
        assert save_voting_user_port_mock.saved_voting_user == saved_voting_user
 
 
-
-
 What's next
 ===========
 
@@ -526,9 +585,3 @@ This concludes Part II of the article series about Hexagonal Architecture
 and Python and Django.
 Part III will discuss how to use Django Models in SPIs, manage database
 transactions and put all the application pieces together. Stay tuned!
-
-
-References
-==========
-
-.. [#] `Domain-Driven Design <https://en.wikipedia.org/wiki/Domain-driven_design>`_
