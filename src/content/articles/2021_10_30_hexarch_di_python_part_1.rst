@@ -5,9 +5,18 @@ Hexagonal architecture and Python - Part I: Dependency Injection and componentia
 :categories: Articles
 :tags: architecture, DDD, dependency injection, hexagonal architecture, programming, python,
 :date: 2021-10-30 22:30
-:summary: Welcome to a short series of articles which cover principles of
-          Hexagonal architecture, talks of Dependency Injection, and applies
-          these all to Python and Django application design.
+:summary: .. image:: {static}/images/articles/2021_10_30_hexarch_di_python_part_1/hexagonal-python.svg
+             :align: center
+             :alt: Typical Django project
+
+          Welcome to articles series which cover the principles of
+          Hexagonal architecture, talks of Dependency Injection, and its usage in
+          these to Python and Django application design.
+
+
+.. image:: {static}/images/articles/2021_10_30_hexarch_di_python_part_1/hexagonal-python.svg
+             :align: center
+             :alt: Typical Django project
 
 Time flies awfully fast!
 Two and a half years ago I left the world of Django and found myself in the
