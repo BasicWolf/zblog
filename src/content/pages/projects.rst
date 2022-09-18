@@ -3,32 +3,14 @@ Projects
 
 :sortorder: A
 
-Archived
-========
+Archived hobby projects
+=======================
 
 Concrete Settings
 -----------------
 
 `Concrete Settings <https://github.com/basicwolf/concrete-settings>`_
-is a Python library which facilitates
-configuration management in big and small programs.
-
-It was born out of necessity to manage a huge
-decade-old Django-based SaaS solution with more than two hundred
-different application settings scattered around ``settings.py``.
-*What does this setting do?*
-*What type is it?*
-*Why does it have such a weird format?*
-*Is this the final value, or it changes somewhere on the way?*
-
-Concrete Settigns tackles these problems altogether.
-It was designed to be developer and end-user friendly.
-The settings are defined via normal Python code with few
-tricks which significantly improve readability
-and maintainability.
-
-Older projects
---------------
+was a configuration management library for Python applications.
 
 `Kidomi  <{filename}/articles/2014_01_05_kidomi.rst>`_ was a HTML templating
 library which accepts JSON as input and returns a DOM node.
