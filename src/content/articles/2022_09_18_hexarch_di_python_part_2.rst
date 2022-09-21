@@ -4,7 +4,7 @@ Hexagonal architecture and Python - Part II: Domain,  Application Services, Port
 :slug: hexarch_di_python_part_2
 :categories: Articles
 :tags: architecture, DDD, dependency injection, hexagonal architecture, programming, python,
-:date: 2022-03-19 12:00
+:date: 2022-03-18 12:00
 :summary: Welcome to the second part of the article series, which cover principles of
           Hexagonal architecture, Dependency Injection, Domain-Driven Design and applies
           these all to Python and Django application design.
@@ -100,12 +100,9 @@ A user story is born:
 
 .. code-block:: gherkin
 
-   Given a user of the blogging platform,
-     who likes or dislikes the article,
-     and would like to express their opinion about an article by voting for it,
-     and their karma is enough for voting
-   When a user votes for an article for the first time
-   Then the article rating changes
+   As a user of a blogging platform
+   I want to to give my vote,
+   So that the article's rating changes
 
 
 Where do we start?
@@ -114,15 +111,7 @@ Where do we start?
 That's a simple question, isn't it?
 Let's consider our options:
 
-1. **Domain**. By developing the domain model we could quickly find out how well the
-   mental domain model is expressed in code.
-
-   The problem is that the end-users cannot try whatever we are building here.
-   Since it's domain layer development only, there is no interaction with the outer world yet.
-
-   It appears that integration points have to go first.
-
-2. **Database**. It is important to integrate early with the services
+1. **Database**. It is important to integrate early with the services
    on which the application depends. We can start with database mocks,
    but they won't be enough in a long run.
    The invisible bottlenecks of the real systems would bring unpleasant surprises
@@ -131,198 +120,28 @@ Let's consider our options:
    That being said, could OUR application provide its public integration
    points sooner?
 
-3. **Public API**. Public API is the contract with the outer world.
-   We collaborate with the API consumers and **design it together**.
-   Once the API is defined, consumers and the producer (our service) can
-   implement their part of the contract independently.
-   There is no need to postpone the application release either!
-   Spinning up the bare bones application with active API endpoints
-   allows the consumers to integrate immediately.
-   The application can first respond with stubbed data and switch to live data once fully implemented.
+2. **Public API**. Public API is the contract with the outer world.
+   We collaborate with the API consumers and design it together.
+   After that, the consumers and the producer (our service) can
+   implement their part of the contract independently, and
+   start integration as soon as both parties are ready.
+
+   Sounds fantastic, but there is a catch!
+   It is likely that the API details will influence the implementation
+   of the other parts of the application.
+   What we need is opposite - the domain model should
+   serve as the foundation of the API.
+   Which brings to concusion, that it's the domain model that should be implemented
+   before the API is set in stone.
 
 
-HTTP API
-========
+3. **Domain**. Starting with the domain model gives us a superior advantage:
+   we can test our **understanding** of the domain model, by expressing it
+   in the code. Behavior-driven development is essential at this stage.
+   BDD brings techniques and tools to test the domain model code against
+   the previously defined user stories. A domain model, which fulfils all the
+   user stories is a solid foundation for the API and the database layers.
 
-Let's start with the specification skeleton:
-
-.. code-block:: yaml
-
-   paths:
-     /article_vote:
-       post:
-         summary: Vote for an article.
-
-         requestBody:
-           required: true
-           content:
-             application/json:
-               schema:
-                 $ref: '#/components/schemas/Vote'
-
-         responses:
-           '201':
-             summary: Voted successfully.
-           '400':
-             summary: Bad request. There was a domain constraint violation.
-           '409':
-             summary: Conflict. User has already voted.
-
-.. note::
-
-   I deliberately omit the complete specification since
-   the topic is out of this article's scope.
-
-Django Rest Framework is the obvious choice to facilitate a RESTful endpoint
-implementation with Django.
-Beside the request and response processing, the logic fits into few lines
-of code
-[`source <https://github.com/BasicWolf/hexagonal-architecture-django/blob/blog/src/myapp/application/adapter/api/http/article_vote_view.py#L29>`__]:
-
-.. code-block:: python
-
-   # /src/myapp/application/adapter/api/http/article_vote_view.py
-
-   class ArticleVoteView(APIView):
-
-       def __init__(self, vote_for_article_use_case: VoteForArticleUseCase):
-           self.vote_for_article_use_case = vote_for_article_use_case
-           super().__init__()
-
-       def post(self, request: Request) -> Response:
-           vote_for_article_command = self._read_command(request)
-           result = self.vote_for_article_use_case.vote_for_article(
-               vote_for_article_command
-           )
-           return self._build_response(result)
-
-       ...
-
-The intentions here are:
-
-1. Accept the HTTP request, deserialize and validate the request data.
-2. **Invoke the use case**.
-3. Serialize the result and render the response.
-
-The view has one dependency: an object which implements ``VoteForArticleUseCase``
-protocol
-[`source <https://github.com/BasicWolf/hexagonal-architecture-django/blob/blog/src/myapp/application/port/api/vote_for_article_use_case.py#L9>`__]:
-
-.. code-block:: python
-
-   # /src/myapp/application/port/api/vote_for_article_use_case.py
-
-   class VoteForArticleUseCase(Protocol):
-      def vote_for_article(self, command: VoteForArticleCommand) -> VoteForArticleResult:
-          pass
-
-Of course, in real life, tests should always come first.
-We can inject a double of the ``VoteForArticleUseCase`` dependency
-in every test and tune in accordingly.
-This makes the view testing times more lightweight compared to the traditional, spin-it-all-up Django app testing.
-
-For example, how to test a scenario, where a user tries to vote twice in a row?
-[`source <https://github.com/BasicWolf/hexagonal-architecture-django/blob/blog/tests/test_myapp/application/adapter/api/http/test_article_vote_view.py#L25>`__]
-
-
-.. code-block:: python
-
-   # /tests/test_myapp/application/adapter/api/http/test_article_vote_view.py
-
-   def test_user_votes_for_the_same_article_returns_conflict(
-       arf: APIRequestFactory
-   ):
-       ## This is *the* view we are testing
-       article_vote_view = ArticleVoteView.as_view(
-           ## we are injecting a stub which always
-           ## returns AlreadyVotedResult (see below)
-           vote_for_article_use_case=VoteForArticleUseCaseAlreadyVotedStub()
-       )
-
-       ## A valid article vote is POSTed
-       response: Response = article_vote_view(
-           arf.post(
-               '/article_vote',
-               {
-                   'user_id': UserId(UUID('a3854820-0000-0000-0000-000000000000')),
-                   'article_id': ArticleId(UUID('dd494bd6-0000-0000-0000-000000000000')),
-                   'vote': Vote.UP.value
-               },
-               format='json'
-           )
-       )
-
-       ## But the result is HTTP 409, as defined in the specification
-       assert response.status_code == HTTPStatus.CONFLICT
-       assert response.data == {
-           'status': 409,
-           'detail': "User \"a3854820-0000-0000-0000-000000000000\" has already voted"
-                     " for article \"dd494bd6-0000-0000-0000-000000000000\"",
-           'title': "Cannot vote for an article"
-       }
-
-And here is the ``VoteForArticleUseCaseAlreadyVotedStub``
-[`source <https://github.com/BasicWolf/hexagonal-architecture-django/blob/blog/tests/test_myapp/application/adapter/api/http/test_article_vote_view.py#L148>`__]
-:
-
-
-.. code-block:: python
-
-   # /tests/test_myapp/application/adapter/api/http/test_article_vote_view.py
-
-   class VoteForArticleUseCaseAlreadyVotedStub(VoteForArticleUseCase):
-       def vote_for_article(self, command: VoteForArticleCommand) -> VoteForArticleResult:
-           return AlreadyVotedResult(
-               user_id=command.user_id,
-               article_id=command.article_id
-           )
-
-Please pause for a moment.
-Does it take much effort to grok the test?
-Did you notice that the test does not interact with rest of the application?
-Did you also notice that it takes only five lines of code (three, if you put the
-``return`` on a single line!) to mock "the rest of the application"?
-The responsibilities are clearly decoupled, and
-there is no need to set up a database or *any* other service to test an HTTP endpoint.
-
-
-Application service: a skeleton
-===============================
-
-Application services are the conductors that orchestrate processes and data flow in the application.
-An application service implements one or more related use cases and invokes
-all the necessary dependencies required to perform these use cases.
-The service implementation can start with a single return statement only:
-
-.. code-block:: python
-
-   # /src/myapp/application/service/article_rating_service.py
-
-   class ArticleRatingService(
-       VoteForArticleUseCase
-   ):
-       def vote_for_article(self, command: VoteForArticleCommand) -> VoteForArticleResult:
-           return SuccessfullyVotedResult(
-               command.article_id,
-               command.user_id,
-               command.vote
-           )
-
-You may have started wondering what ``VoteForArticleResult`` and ``SuccessfullyVotedResult`` are.
-Recall the basics of Hexagonal architecture from Part I:
-
-..
-
-   Dependencies are directed from the outer layers to the inner centre.
-
-``VoteForArticleResult``
-[`source <https://github.com/BasicWolf/hexagonal-architecture-django/blob/blog/src/myapp/application/domain/model/vote_for_article_result.py#L10>`__]
-is a domain data transfer object model.
-It carries the voting result from the innermost application layer - the Domain
-- to the outermost API adapter layer.
-If we inject this service skeleton into the HTTP adapter, it will echo the
-incoming vote commands with "Successfully Voted" results.
-That's a good start! Now, let's add some business logic.
 
 The domain
 ==========
@@ -410,16 +229,72 @@ Notice that even the private methods ``_user_voted_for_article()`` and ``_karma_
 follow the domain language. A fellow developer can easily map the code
 to the domain model and business rules.
 
-So far we have implemented the domain model behavior.
-But the code which builds the model instance is still missing.
-How does the application service get a ``VotingUser``?
+You may wonder what ``VoteForArticleResult`` and ``SuccessfullyVotedResult`` are.
+Recall the basics of Hexagonal architecture from Part I:
+
+..
+
+   Dependencies are directed from the outer layers to the inner centre.
+
+``VoteForArticleResult``
+[`source <https://github.com/BasicWolf/hexagonal-architecture-django/blob/blog/src/myapp/application/domain/model/vote_for_article_result.py#L10>`__]
+is a domain data transfer object model.
+It carries the voting result from the innermost application layer - the Domain
+- to the outermost API adapter layer.
+
+Writing tests for a domain model is straigtforward since ``VotingUser.vote_for_article(...)``
+is a pure function - its return value is determined only by the input values.
+Giving meaningful names to fixtures values, easily turns them into simple
+screnarios. For example
+[`source <https://github.com/BasicWolf/hexagonal-architecture-django/blob/blog/tests/test_myapp/application/domain/model/test_voting_user.py#L16>`__]
+:
+
+.. code-block:: python
+
+   def test_vote_for_article_twice_returns_already_voted_result(
+       voting_user_who_has_voted: VotingUser,
+       article_id_for_which_user_has_voted: ArticleId,
+       a_vote: Vote,
+       expected_already_voted_result: AlreadyVotedResult
+   ):
+       voting_result = voting_user_who_has_voted.vote_for_article(
+           article_id_for_which_user_has_voted,
+           a_vote
+       )
+       assert voting_result == expected_already_voted_result
+
+Application service: a skeleton
+===============================
+
+Application services are the conductors that orchestrate processes and data flow in the application.
+An application service implements one or more related use cases and invokes
+all the necessary dependencies required to perform these use cases.
+The service implementation can start with a single return statement only:
+
+.. code-block:: python
+
+   # /src/myapp/application/service/article_rating_service.py
+
+   class ArticleRatingService(
+       VoteForArticleUseCase
+   ):
+       def vote_for_article(self, command: VoteForArticleCommand) -> VoteForArticleResult:
+           return SuccessfullyVotedResult(
+               command.article_id,
+               command.user_id,
+               command.vote
+           )
+
+This dummy implementation is good enough to echo the commands back,
+but much more needed to execute the use case.
+For example, where does the application service get a ``VotingUser``?
 
 
 SPI Ports
 =========
 
 In Hexagonal Architecture, an application service communicates with the outer world
-via Service Interface Provider (SPI) ports.
+via Service Provider Interface (SPI) ports.
 The application service fetches the users by ``user_id`` and ``article_id``.
 That can be expressed in a ``FindVotingUserPort`` interface as follows
 [`source <https://github.com/BasicWolf/hexagonal-architecture-django/blob/blog/src/myapp/application/port/spi/find_voting_user_port.py#L8>`__]
@@ -434,7 +309,7 @@ That can be expressed in a ``FindVotingUserPort`` interface as follows
            pass
 
 We add ``FindVotingUserPort`` as a dependency to the application service.
-In practice, we add a respective field and a way to initialize via constructor:
+In practice, we add a respective field and a way to initialize it via constructor:
 
 .. code-block:: python
 
@@ -545,11 +420,11 @@ Last, the service checks whether the user has successfully voted and persists th
 Test-driven application services development
 ============================================
 
-Do you remember the HTTP controller test from the above?
-Testing application service is no different, but there is a catch:
-it requires quite a few test doubles - one per each dependency.
+Testing application service differs from testing a domain model.
+Unlike a domain model, an application service has SPI dependencies, which should
+be replaced with test doubles in each test.
 That fact should not complicate the tests, though.
-We should be explicit about the dependencies needed in the test case
+It is possible to construct and explicitly pass a dependency test double
 and rely on default values for the rest of them.
 
 For example, we test that the service persists the voting user
@@ -578,6 +453,152 @@ All other dependencies are provided by the ``build_article_rating_service()`` bu
        assert save_voting_user_port_mock.saved_voting_user == saved_voting_user
 
 
+
+HTTP API
+========
+
+Let's start with the specification skeleton:
+
+.. code-block:: yaml
+
+   paths:
+     /article_vote:
+       post:
+         summary: Vote for an article.
+
+         requestBody:
+           required: true
+           content:
+             application/json:
+               schema:
+                 $ref: '#/components/schemas/Vote'
+
+         responses:
+           '201':
+             summary: Voted successfully.
+           '400':
+             summary: Bad request. There was a domain constraint violation.
+           '409':
+             summary: Conflict. User has already voted.
+
+.. note::
+
+   I deliberately omit the complete specification since
+   the topic is out of this article's scope.
+
+Django Rest Framework is the obvious choice to facilitate a RESTful endpoint
+implementation with Django.
+Beside the request and response processing, the logic fits into few lines
+of code
+[`source <https://github.com/BasicWolf/hexagonal-architecture-django/blob/blog/src/myapp/application/adapter/api/http/article_vote_view.py#L29>`__]:
+
+.. code-block:: python
+
+   # /src/myapp/application/adapter/api/http/article_vote_view.py
+
+   class ArticleVoteView(APIView):
+
+       def __init__(self, vote_for_article_use_case: VoteForArticleUseCase):
+           self.vote_for_article_use_case = vote_for_article_use_case
+           super().__init__()
+
+       def post(self, request: Request) -> Response:
+           vote_for_article_command = self._read_command(request)
+           result = self.vote_for_article_use_case.vote_for_article(
+               vote_for_article_command
+           )
+           return self._build_response(result)
+
+       ...
+
+The intentions here are:
+
+1. Accept the HTTP request, deserialize and validate the request data.
+2. **Invoke the use case**.
+3. Serialize the result and render the response.
+
+The view has one dependency: an object which implements ``VoteForArticleUseCase``
+protocol
+[`source <https://github.com/BasicWolf/hexagonal-architecture-django/blob/blog/src/myapp/application/port/api/vote_for_article_use_case.py#L9>`__]:
+
+.. code-block:: python
+
+   # /src/myapp/application/port/api/vote_for_article_use_case.py
+
+   class VoteForArticleUseCase(Protocol):
+      def vote_for_article(self, command: VoteForArticleCommand) -> VoteForArticleResult:
+          pass
+
+Testing a HTTP controller is no different from testing an application service.
+Every test injects a tuned double of the ``VoteForArticleUseCase`` dependency
+and asserts the expected state or behavior.
+This makes the view testing times more lightweight compared to the traditional, spin-it-all-up Django app testing.
+
+For example, how to test a scenario, where a user tries to vote twice in a row?
+[`source <https://github.com/BasicWolf/hexagonal-architecture-django/blob/blog/tests/test_myapp/application/adapter/api/http/test_article_vote_view.py#L25>`__]
+
+
+.. code-block:: python
+
+   # /tests/test_myapp/application/adapter/api/http/test_article_vote_view.py
+
+   def test_user_votes_for_the_same_article_returns_conflict(
+       arf: APIRequestFactory
+   ):
+       ## This is *the* view we are testing
+       article_vote_view = ArticleVoteView.as_view(
+           ## we are injecting a stub which always
+           ## returns AlreadyVotedResult (see below)
+           vote_for_article_use_case=VoteForArticleUseCaseAlreadyVotedStub()
+       )
+
+       ## A valid article vote is POSTed
+       response: Response = article_vote_view(
+           arf.post(
+               '/article_vote',
+               {
+                   'user_id': UserId(UUID('a3854820-0000-0000-0000-000000000000')),
+                   'article_id': ArticleId(UUID('dd494bd6-0000-0000-0000-000000000000')),
+                   'vote': Vote.UP.value
+               },
+               format='json'
+           )
+       )
+
+       ## But the result is HTTP 409, as defined in the specification
+       assert response.status_code == HTTPStatus.CONFLICT
+       assert response.data == {
+           'status': 409,
+           'detail': "User \"a3854820-0000-0000-0000-000000000000\" has already voted"
+                     " for article \"dd494bd6-0000-0000-0000-000000000000\"",
+           'title': "Cannot vote for an article"
+       }
+
+And here is the ``VoteForArticleUseCaseAlreadyVotedStub``
+[`source <https://github.com/BasicWolf/hexagonal-architecture-django/blob/blog/tests/test_myapp/application/adapter/api/http/test_article_vote_view.py#L148>`__]
+:
+
+
+.. code-block:: python
+
+   # /tests/test_myapp/application/adapter/api/http/test_article_vote_view.py
+
+   class VoteForArticleUseCaseAlreadyVotedStub(VoteForArticleUseCase):
+       def vote_for_article(self, command: VoteForArticleCommand) -> VoteForArticleResult:
+           return AlreadyVotedResult(
+               user_id=command.user_id,
+               article_id=command.article_id
+           )
+
+Please pause for a moment.
+Does it take much effort to grok the test?
+Did you notice that the test does not interact with rest of the application?
+Did you also notice that it takes only five lines of code (three, if you put the
+``return`` on a single line!) to mock "the rest of the application"?
+The responsibilities are clearly decoupled, and
+there is no need to set up a database or *any* other service to test an HTTP endpoint.
+
+
 What's next
 ===========
 
@@ -585,3 +606,5 @@ This concludes Part II of the article series about Hexagonal Architecture
 and Python and Django.
 Part III will discuss how to use Django Models in SPIs, manage database
 transactions and put all the application pieces together. Stay tuned!
+
+TODO: Jere & Jarkko,
