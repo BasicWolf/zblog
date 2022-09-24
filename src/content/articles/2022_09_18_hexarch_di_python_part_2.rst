@@ -85,14 +85,14 @@ Use case: Upvote an Article
 
 Now, let's take a look at an example use case.
 Imagine a web blogging platform in development.
-We want to add a rating to articles and allow users to affect that rating.
+We want to add articles rating and let the users influence them.
 
-We gathered with the end-users, platform experts, QA, and other stakeholders,
+We gathered with the end-users, platform experts, QA, and other stakeholders
 and drew some ideas:
 
 1. Every article has a rating.
 2. A user can change an article rating.
-3. To change the rating, a user either "upvotes" or "downvotes" the article.
+3. To change the article rating, a user either "upvotes" or "downvotes".
 4. Users can vote for the article only if their "karma" (i.e. user rating) value is high enough, greater than 5.
 5. A user can vote once per article.
 
@@ -101,43 +101,42 @@ A user story is born:
 .. code-block:: gherkin
 
    As a user of a blogging platform
-   I want to to give my vote,
-   So that the article's rating changes
+   I want to give my vote,
+   So that the article's rating changes.
 
 
 Where do we start?
 ==================
 
 That's a simple question, isn't it?
-Let's consider our options:
+Let's consider the options:
 
-1. **Database**. It is important to integrate early with the services
-   on which the application depends. We can start with database mocks,
-   but they won't be enough in a long run.
-   The invisible bottlenecks of the real systems would bring unpleasant surprises
+1. **Database**.
+   It is important to integrate early with the downstream dependencies.
+   The invisible bottlenecks could bring unpleasant surprises
    if integration is postponed till the last moment.
-
-   That being said, could OUR application provide its public integration
-   points sooner?
+   Yet, a database is just storage and is usually located at
+   the bottom layer of the application infrastructure.
+   Do we really want the database storage to influence the application
+   implementation?
 
 2. **Public API**. Public API is the contract with the outer world.
-   We collaborate with the API consumers and design it together.
-   After that, the consumers and the producer (our service) can
+   Its best design emerges when API consumers and producers collaborate.
+   After the API specification is ready, the consumers and the producer (our service) can
    implement their part of the contract independently, and
    start integration as soon as both parties are ready.
 
    Sounds fantastic, but there is a catch!
-   It is likely that the API details will influence the implementation
+   The API details will likely influence the implementation
    of the other parts of the application.
-   What we need is opposite - the domain model should
+   We need the opposite - the domain model should
    serve as the foundation of the API.
-   Which brings to concusion, that it's the domain model that should be implemented
+   We can conclude that the domain model should be implemented
    before the API is set in stone.
 
-
-3. **Domain**. Starting with the domain model gives us a superior advantage:
+3. **Domain**. Starting with the domain model gives a superior advantage:
    we can test our **understanding** of the domain model, by expressing it
-   in the code. Behavior-driven development is essential at this stage.
+   in the code. Behaviour-driven development is essential at this stage.
    BDD brings techniques and tools to test the domain model code against
    the previously defined user stories. A domain model, which fulfils all the
    user stories is a solid foundation for the API and the database layers.
@@ -155,8 +154,7 @@ On the code side, the UL terms are used in the names of classes, methods, and ot
 Thus, by looking at the code, you can always tell how it is related to the problem domain.
 
 For example, a vote can be represented via the following enumeration
-[`source <https://github.com/BasicWolf/hexagonal-architecture-django/blob/blog/src/myapp/application/domain/model/vote.py#L4>`__]
-:
+[`source <https://github.com/BasicWolf/hexagonal-architecture-django/blob/blog/src/myapp/application/domain/model/vote.py#L4>`__]:
 
 .. code-block:: python
 
@@ -167,8 +165,7 @@ For example, a vote can be represented via the following enumeration
        DOWN = 'down'
 
 Karma is an explicit type alias
-[`source <https://github.com/BasicWolf/hexagonal-architecture-django/blob/blog/src/myapp/application/domain/model/karma.py>`__]
-:
+[`source <https://github.com/BasicWolf/hexagonal-architecture-django/blob/blog/src/myapp/application/domain/model/karma.py>`__]:
 
 .. code-block:: python
 
@@ -230,7 +227,8 @@ follow the domain language. A fellow developer can easily map the code
 to the domain model and business rules.
 
 You may wonder what ``VoteForArticleResult`` and ``SuccessfullyVotedResult`` are.
-Recall the basics of Hexagonal architecture from Part I:
+Recall the basics of Hexagonal architecture from
+`Part I <https://znasibov.info/posts/2021/10/30/hexarch_di_python_part_1.html>`__:
 
 ..
 
@@ -242,12 +240,11 @@ is a domain data transfer object model.
 It carries the voting result from the innermost application layer - the Domain
 - to the outermost API adapter layer.
 
-Writing tests for a domain model is straigtforward since ``VotingUser.vote_for_article(...)``
+Writing tests for a domain model is straightforward since ``VotingUser.vote_for_article(...)``
 is a pure function - its return value is determined only by the input values.
-Giving meaningful names to fixtures values, easily turns them into simple
-screnarios. For example
-[`source <https://github.com/BasicWolf/hexagonal-architecture-django/blob/blog/tests/test_myapp/application/domain/model/test_voting_user.py#L16>`__]
-:
+Giving meaningful names to fixtures' values, easily turns them into simple scenarios.
+For example
+[`source <https://github.com/BasicWolf/hexagonal-architecture-django/blob/blog/tests/test_myapp/application/domain/model/test_voting_user.py#L16>`__]:
 
 .. code-block:: python
 
@@ -262,6 +259,9 @@ screnarios. For example
            a_vote
        )
        assert voting_result == expected_already_voted_result
+
+Once the domain model is fully implemented, we switch our focus to its
+primary users - application services.
 
 Application service: a skeleton
 ===============================
@@ -297,8 +297,7 @@ In Hexagonal Architecture, an application service communicates with the outer wo
 via Service Provider Interface (SPI) ports.
 The application service fetches the users by ``user_id`` and ``article_id``.
 That can be expressed in a ``FindVotingUserPort`` interface as follows
-[`source <https://github.com/BasicWolf/hexagonal-architecture-django/blob/blog/src/myapp/application/port/spi/find_voting_user_port.py#L8>`__]
-:
+[`source <https://github.com/BasicWolf/hexagonal-architecture-django/blob/blog/src/myapp/application/port/spi/find_voting_user_port.py#L8>`__]:
 
 .. code-block:: python
 
@@ -351,8 +350,7 @@ It terms of `Domain-Driven Design <https://en.wikipedia.org/wiki/Domain-driven_d
 ``VotingUser`` is an `Aggregate root <https://martinfowler.com/bliki/DDD_Aggregate.html>`_.
 To update an article rating we have to persist a ``VotingUser`` as a whole.
 ``SaveVotingUserPort`` takes care of that
-[`source <https://github.com/BasicWolf/hexagonal-architecture-django/blob/blog/src/myapp/application/port/spi/save_voting_user_port.py#L6>`__]
-:
+[`source <https://github.com/BasicWolf/hexagonal-architecture-django/blob/blog/src/myapp/application/port/spi/save_voting_user_port.py#L6>`__]:
 
 .. code-block:: python
 
@@ -368,8 +366,7 @@ Putting the service pieces together
 
 Finally, ``ArticleRatingService`` has all the bits and pieces required to execute
 the use case
-[`source <https://github.com/BasicWolf/hexagonal-architecture-django/blob/blog/src/myapp/application/service/article_rating_service.py#L16>`_]
-:
+[`source <https://github.com/BasicWolf/hexagonal-architecture-django/blob/blog/src/myapp/application/service/article_rating_service.py#L16>`_]:
 
 .. code-block:: python
 
@@ -428,8 +425,7 @@ It is possible to construct and explicitly pass a dependency test double
 and rely on default values for the rest of them.
 
 For example, we test that the service persists the voting user
-[`source <https://github.com/BasicWolf/hexagonal-architecture-django/blob/blog/tests/test_myapp/application/service/test_article_rating_service.py#L42>`__]
-.
+[`source <https://github.com/BasicWolf/hexagonal-architecture-django/blob/blog/tests/test_myapp/application/service/test_article_rating_service.py#L42>`__].
 The only dependency explicitly declared and passed to the service builder
 is ``SaveVotingUserPortMock`` test double.
 All other dependencies are provided by the ``build_article_rating_service()`` builder function:
@@ -452,7 +448,7 @@ All other dependencies are provided by the ``build_article_rating_service()`` bu
 
        assert save_voting_user_port_mock.saved_voting_user == saved_voting_user
 
-
+TODO:
 
 HTTP API
 ========
@@ -575,8 +571,7 @@ For example, how to test a scenario, where a user tries to vote twice in a row?
        }
 
 And here is the ``VoteForArticleUseCaseAlreadyVotedStub``
-[`source <https://github.com/BasicWolf/hexagonal-architecture-django/blob/blog/tests/test_myapp/application/adapter/api/http/test_article_vote_view.py#L148>`__]
-:
+[`source <https://github.com/BasicWolf/hexagonal-architecture-django/blob/blog/tests/test_myapp/application/adapter/api/http/test_article_vote_view.py#L148>`__]:
 
 
 .. code-block:: python
