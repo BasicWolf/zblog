@@ -448,7 +448,8 @@ All other dependencies are provided by the ``build_article_rating_service()`` bu
 
        assert save_voting_user_port_mock.saved_voting_user == saved_voting_user
 
-TODO:
+The application service which implements ``VoteForArticleUseCase`` is ready.
+Next, we implement the adapter that invokes the use case.
 
 HTTP API
 ========
@@ -602,4 +603,10 @@ and Python and Django.
 Part III will discuss how to use Django Models in SPIs, manage database
 transactions and put all the application pieces together. Stay tuned!
 
-TODO: Jere & Jarkko,
+Acknowledgments
+===============
+
+I would like to express my very great appreciation to
+`Jere "Urokhtor" Teittinen <https://jereteittinen.info>`__
+and `Jarkko "jmp" Piiroinen <https://jarkko.org>`__
+for reviewing the article and helping to improve it!
