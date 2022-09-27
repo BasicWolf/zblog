@@ -12,7 +12,6 @@ Hexagonal architecture and Python - Part II: Domain,  Application Services, Port
           Welcome to the second part of the article series, which cover principles of
           Hexagonal architecture, Dependency Injection, Domain-Driven Design and applies
           these all to Python and Django application design.
-:status: draft
 
 .. image:: {static}/images/articles/2022_09_18_hexarch_di_python_part_2/hexagonal-python-2.svg
    :align: center
@@ -26,15 +25,16 @@ What about the other web frameworks, like FastAPI, Flask, AIOHTTP with SQLAchemy
 
 Hexagonal architecture painlessly decouples the business logic from the technical details of
 HTTP communication, file system and database access, messaging and so on.
-You can swap Django WSGI application with FastAPI,
+You can swap Django with FastAPI,
 get rid of Django ORM and go with SQLAlchemy,
-yet the business logic needs not to be touched at all.
+and the business logic implementation remains the same!
 
 The source code of the example is available at
-`github repository <https://github.com/BasicWolf/hexagonal-architecture-django/tree/blog>`_.
+`BasicWolf/hexagonal-architecture-django <https://github.com/BasicWolf/hexagonal-architecture-django/tree/blog>`_
+Github repository.
 
 .. tip:: Clone the repository before reading further. The layered hexagonal architecture
-         means deeply nested python packages. It's more comfortable to navigate when the code is available locally.
+         means deeply nested python packages. It's much easier to follow the article when the example code is available locally.
 
 Project structure
 =================
@@ -125,8 +125,8 @@ Let's consider the options:
    if integration is postponed till the last moment.
    Yet, a database is just storage and is usually located at
    the bottom layer of the application infrastructure.
-   Do we really want the database storage to influence the application
-   implementation?
+   Do we really want to implement the database first and
+   let it influence the application implementation?
 
 2. **Public API**. Public API is the contract with the outer world.
    Its best design emerges when API consumers and producers collaborate.
@@ -248,10 +248,10 @@ is a domain data transfer object model.
 It carries the voting result from the innermost application layer - the Domain
 - to the outermost API adapter layer.
 
-Writing tests for a domain model is straightforward since ``VotingUser.vote_for_article(...)``
-is a pure function - its return value is determined only by the input values.
-Giving meaningful names to fixtures' values, easily turns them into simple scenarios.
-For example
+Writing tests for a domain model is straightforward since ``VotingUser.vote_for_article(...)`` return value
+is determined only by the ``VotingUser`` instance state and the method input values.
+With meaningful fixtures names, tests turn into simple scenarios,
+for example
 [`source <https://github.com/BasicWolf/hexagonal-architecture-django/blob/blog/tests/test_myapp/application/domain/model/test_voting_user.py#L16>`__]:
 
 .. code-block:: python
@@ -462,7 +462,8 @@ Next, we implement the adapter that invokes the use case.
 HTTP API
 ========
 
-Let's start with the specification skeleton:
+Let's start with the specification skeleton.
+Notice how the request and responses are derived from the domain model:
 
 .. code-block:: yaml
 
@@ -516,7 +517,7 @@ of code
 
        ...
 
-The intentions here are:
+The intentions are:
 
 1. Accept the HTTP request, deserialize and validate the request data.
 2. **Invoke the use case**.
@@ -533,6 +534,9 @@ protocol
    class VoteForArticleUseCase(Protocol):
       def vote_for_article(self, command: VoteForArticleCommand) -> VoteForArticleResult:
           pass
+
+As we already know, the ``ArticleRatingService`` has implemented this protocol
+as is ready to be wired with the controller.
 
 Testing a HTTP controller is no different from testing an application service.
 Every test injects a tuned double of the ``VoteForArticleUseCase`` dependency
@@ -610,6 +614,7 @@ This concludes Part II of the article series about Hexagonal Architecture
 and Python and Django.
 Part III will discuss how to use Django Models in SPIs, manage database
 transactions and put all the application pieces together. Stay tuned!
+
 
 Acknowledgments
 ===============
