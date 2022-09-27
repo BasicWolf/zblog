@@ -7,7 +7,7 @@ Hexagonal architecture and Python - Part I: Dependency Injection and componentia
 :date: 2021-10-30 22:30
 :summary: .. image:: {static}/images/articles/2021_10_30_hexarch_di_python_part_1/hexagonal-python.svg
              :align: center
-             :alt: Typical Django project
+             :alt: Python logo in a hexagon
 
           Welcome to articles series which cover the principles of
           Hexagonal architecture, talks of Dependency Injection, and its usage in
@@ -15,8 +15,8 @@ Hexagonal architecture and Python - Part I: Dependency Injection and componentia
 
 
 .. image:: {static}/images/articles/2021_10_30_hexarch_di_python_part_1/hexagonal-python.svg
-             :align: center
-             :alt: Typical Django project
+   :align: center
+   :alt: Python logo in a hexagon
 
 Time flies awfully fast!
 Two and a half years ago I left the world of Django and found myself in the
