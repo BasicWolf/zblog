@@ -4,11 +4,19 @@ Hexagonal architecture and Python - Part II: Domain,  Application Services, Port
 :slug: hexarch_di_python_part_2
 :categories: Articles
 :tags: architecture, DDD, dependency injection, hexagonal architecture, programming, python,
-:date: 2022-03-18 12:00
-:summary: Welcome to the second part of the article series, which cover principles of
+:date: 2022-09-18 12:00
+:summary: .. image:: {static}/images/articles/2022_09_18_hexarch_di_python_part_2/hexagonal-python-2.svg
+             :align: center
+             :alt: Python logo in a hexagon with Roman II literal
+
+          Welcome to the second part of the article series, which cover principles of
           Hexagonal architecture, Dependency Injection, Domain-Driven Design and applies
           these all to Python and Django application design.
 :status: draft
+
+.. image:: {static}/images/articles/2022_09_18_hexarch_di_python_part_2/hexagonal-python-2.svg
+   :align: center
+   :alt: Python logo in a hexagon with Roman II literal
 
 Now that you are familiar with the basic principles of Hexagonal architecture
 (`see part I <https://znasibov.info/posts/2021/10/30/hexarch_di_python_part_1.html>`_)
