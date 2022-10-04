@@ -6,9 +6,6 @@ Projects
 Archived hobby projects
 =======================
 
-Concrete Settings
------------------
-
 `Concrete Settings <https://github.com/basicwolf/concrete-settings>`_
 was a configuration management library for Python applications.
 
@@ -25,7 +22,7 @@ distributed and volunteer computing applications.
 The latest version has been released in June 2013.
 
 My Master's Thesis
-------------------
+==================
 
 My Master's Thesis
 `"Decision fusion of voice activity detectors" <{filename}/articles/2012_07_08_i_have_graduated.rst>`_
