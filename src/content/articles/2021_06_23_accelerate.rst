@@ -10,6 +10,7 @@ Accelerate: The Science of Lean Software and DevOps - Book review
       :width: 25%
       :align: center
       :alt: Accelerate book cover
+      :target: {filename}2021_06_23_accelerate.rst
 
    Are you familiar with the gut feeling that the software development
    practices around you could be better? What if I told you that there

@@ -10,6 +10,7 @@ Using tests inputs in assertions (or rather not)
       :width: 70%
       :align: center
       :alt: Figure of eight know / https://freesvg.org/figure-of-eight-knot-vector-illustration / License: Public Domain
+      :target: {filename}2021_11_10_using_test_inputs_in_assertions_or_rather_not.rst
 
    It might be very convenient to use the same fixtures in test
    setup and assertions. This practice though is not as good as it looks
