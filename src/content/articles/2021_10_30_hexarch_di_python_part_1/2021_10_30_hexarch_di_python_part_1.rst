@@ -2,10 +2,10 @@ Hexagonal architecture and Python - Part I: Dependency Injection and componentia
 ##############################################################################################
 
 :slug: hexarch_di_python_part_1
-:categories: Articles
+:category: Articles
 :tags: architecture, DDD, dependency injection, hexagonal architecture, programming, python,
 :date: 2021-10-30 22:30
-:summary: .. image:: {static}/images/articles/2021_10_30_hexarch_di_python_part_1/hexagonal-python.png
+:summary: .. image:: {static}hexagonal-python.png
              :align: center
              :alt: Python logo in a hexagon
              :target: {filename}2021_10_30_hexarch_di_python_part_1.rst
@@ -15,7 +15,7 @@ Hexagonal architecture and Python - Part I: Dependency Injection and componentia
           these to Python and Django application design.
 
 
-.. image:: {static}/images/articles/2021_10_30_hexarch_di_python_part_1/hexagonal-python.png
+.. image:: {static}hexagonal-python.png
    :align: center
    :alt: Python logo in a hexagon
 
@@ -284,7 +284,7 @@ One of my favourite Uncle Bob quotes on software architecture is
 
 What do you see on this screenshot?
 
-.. image:: {static}/images/articles/2021_10_30_hexarch_di_python_part_1/django_project.png
+.. image:: {static}django_project.png
    :align: center
    :alt: Typical Django project
 
@@ -300,7 +300,7 @@ Robert Martin develops the idea
 `further <https://www.youtube.com/watch?v=WpkDN78P884>`_.
 Take a look at a floor architecture plan and guess what the building is intended for:
 
-.. image:: {static}/images/articles/2021_10_30_hexarch_di_python_part_1/library_floor_paln.jpg
+.. image:: {static}library_floor_paln.jpg
    :align: center
    :alt: Typical Django project
 
@@ -330,7 +330,7 @@ Hexagonal architecture of Ports and Adapters
 describing the architecture application to the new team members.
 It follows by showing a weird Cthulhu-like picture:
 
-.. image:: {static}/images/articles/2021_10_30_hexarch_di_python_part_1/hexagon.png
+.. image:: {static}hexagon.png
    :align: center
    :alt: Hexagonal architecture
 

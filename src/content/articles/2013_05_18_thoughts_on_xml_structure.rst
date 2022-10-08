@@ -2,7 +2,7 @@ Thoughts about XML structure: elements vs. attributes
 =====================================================
 
 :slug: thoughts_on_xml_structure
-:categories: Articles
+:category: Articles
 :tags: programming, XML
 :date: 2013-05-18 12:00
 

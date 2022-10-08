@@ -3,7 +3,7 @@ Beginner's guide to creating a GNOME 2 applet with Python (Part II)
 
 :slug: gnome_applet_with_python_part_2
 :date: 2009-08-19 12:00
-:categories: Articles
+:category: Articles
 :tags: programming, Python, Gnome
 :summary: It's been a while since I wrote the first part of this guide. I'm happy to introduce you the second part of the tutorial. This part continues the story about applet-only techniques. Even if you're skilled in PyGTK, you are adviced to read this part.
 
@@ -43,7 +43,7 @@ will be added to a panel during all test-runs.
 Every applet has a basic context popup-menu with three (at least in GNOME
 v2.26) items:
 
-.. image:: {static}/images/articles/2009_08_19_gnome_applet_with_python_part_2/gnomeapplet_2_applet_sample.png
+.. image:: {static}gnomeapplet_2_applet_sample.png
    :alt: applet sample
    :align: center
 
@@ -84,7 +84,7 @@ The required xml string is in a very easy-to-understand XML format:
 The example above creates a menu of two items, a separator between them
 and a single sub-item:
 
-.. image:: {static}/images/articles/2009_08_19_gnome_applet_with_python_part_2/gnomeapplet_2_menu.png
+.. image:: {static}gnomeapplet_2_menu.png
    :alt: applet menu
    :align: center
 
@@ -235,14 +235,14 @@ The code below demonstrates how change-orient signal could be used:
 
 The applet was added to a vertical panel:
 
-.. image:: {static}/images/articles/2009_08_19_gnome_applet_with_python_part_2/gnomeapplet_2_vertical.png
+.. image:: {static}gnomeapplet_2_vertical.png
    :align: center
    :alt: vertical applet
 
 
 Then, dragged to a auto-hidden horizontal one:
 
-.. image:: {static}/images/articles/2009_08_19_gnome_applet_with_python_part_2/gnomeapplet_2_horizontal.png
+.. image:: {static}gnomeapplet_2_horizontal.png
    :align: center
    :alt: horizontal applet
 
@@ -251,7 +251,7 @@ Then, dragged to a auto-hidden horizontal one:
 
 The GNOME panel has three background options:
 
-.. image:: {static}/images/articles/2009_08_19_gnome_applet_with_python_part_2/gnomeapplet_2_panel.png
+.. image:: {static}gnomeapplet_2_panel.png
    :align: center
    :alt: applet on a panel
 
@@ -273,7 +273,7 @@ In Python it is:
 
 Now, the applet should look like this:
 
-.. image:: {static}/images/articles/2009_08_19_gnome_applet_with_python_part_2/gnomeapplet_2_transparency.png
+.. image:: {static}gnomeapplet_2_transparency.png
    :align: center
    :alt: transparent applet
 

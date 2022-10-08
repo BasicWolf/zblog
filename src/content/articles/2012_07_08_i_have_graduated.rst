@@ -4,7 +4,7 @@ I have graduated
 ================
 
 :slug: i_have_graduated
-:categories: Articles
+:category: Articles
 :tags: projects, life, science
 :date: 2012-07-08 12:00
 

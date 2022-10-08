@@ -3,7 +3,7 @@ A very long nightmare
 
 :slug: a_very_long_nightmare
 :date: 2010-04-01 12:00
-:categories: Articles
+:category: Articles
 :tags: Linux, Ubuntu, Debian, disk, fail
 :summary: The worst thing has happened: I have an unexpected drive failure. That's how my Easter has started :(
 

@@ -2,11 +2,11 @@ Accelerate: The Science of Lean Software and DevOps - Book review
 =================================================================
 
 :slug: accelerate_book_review
-:categories: Articles
+:category: Books
 :tags: book, software development, accelerate
 :date: 2021-06-23 12:00
 :summary:
-   .. image:: {static}/images/articles/2021_06_23_accelerate/accelerate_cover.jpg
+   .. image:: {static}accelerate_cover.jpg
       :width: 25%
       :align: center
       :alt: Accelerate book cover
@@ -66,7 +66,7 @@ software delivery performance. Some of these capabilities are:
 **loosely coupled architecture** and **customer feedback**,
 **work-in-progress limits** and **transformational leadership**.
 
-.. image:: {static}/images/articles/2021_06_23_accelerate/accelerate_cover.jpg
+.. image:: {static}accelerate_cover.jpg
    :width: 40%
    :align: center
    :alt: Accelerate book cover

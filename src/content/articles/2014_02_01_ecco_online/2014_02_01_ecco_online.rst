@@ -2,7 +2,7 @@ ECCO online
 ===========
 
 :slug: ecco_online
-:categories: Articles
+:category: Articles
 :tags: life, shoes, ECCO
 :date: 2014-02-01 12:00
 
@@ -54,7 +54,7 @@ may seem quite a price, but hey, if you expect at least 3-4 years of
 service, it drops to ~39 EUR/year. Isn't that a bargain?! Hell, my *monthly*
 Internet bill is about that amount of money. So, here it is ECCO Roxton:
 
-.. image:: {static}/images/articles/2014_02_01_ecco_online/roxton.jpg
+.. image:: {static}roxton.jpg
    :align: center
    :alt: ecco roxton
 

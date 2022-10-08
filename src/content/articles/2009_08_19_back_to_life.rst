@@ -2,7 +2,7 @@ Back to life
 ============
 
 :date: 2009-08-19 12:00
-:categories: Articles
+:category: Articles
 :tags: life
 :summary: There were no blog updates during 8 month! But I am finally back to life!
 

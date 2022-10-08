@@ -2,11 +2,11 @@ Using tests inputs in assertions (or rather not)
 ################################################
 
 :slug: using_tests_inputs_in_assertions_or_rather_not
-:categories: Articles
+:category: Articles
 :tags: programming, python, testing, unit tests
 :date: 2021-11-10 12:00
 :summary:
-   .. image:: {static}/images/articles/2021_11_10_using_test_inputs_in_assertions_or_rather_not/knot.png
+   .. image:: {static}knot.png
       :width: 70%
       :align: center
       :alt: Figure of eight know / https://freesvg.org/figure-of-eight-knot-vector-illustration / License: Public Domain
@@ -16,7 +16,7 @@ Using tests inputs in assertions (or rather not)
    setup and assertions. This practice though is not as good as it looks
    like at first glance.
 
-.. image:: {static}/images/articles/2021_11_10_using_test_inputs_in_assertions_or_rather_not/knot.png
+.. image:: {static}knot.png
    :width: 70%
    :align: center
    :alt: Figure of eight know / https://freesvg.org/figure-of-eight-knot-vector-illustration / License: Public Domain

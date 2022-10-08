@@ -87,7 +87,7 @@ of an executable file (our file is a python script):
       </oaf_attribute>
       <oaf_attribute name="name" type="string" value="Sample Applet"/>
       <oaf_attribute name="description" type="string" value="description"/>
-      <oaf_attribute name="panel:category" type="string" value="Utility"/>
+      <oaf_attribute name="panel:category:" type="string" value="Utility"/>
       <oaf_attribute name="panel:icon" type="string" value="no-picture-yet.png"/>
     </oaf_server>
   </oaf_info>
@@ -107,7 +107,7 @@ After that, the GNOME session could be restarted (restarting X-server via
 Ctrl+Alt+Backspace will do). Try adding the new applet to a panel. The dialog
 should look like this:
 
-.. image:: {static}/images/articles/2009_02_25_gnome_applet_with_python_part_1/gnomeapplet_1_select_applet_1.png
+.. image:: {static}gnomeapplet_1_select_applet_1.png
    :alt: Add to Panel dialog
    :align: center
 
@@ -123,7 +123,7 @@ The **value="no-picture-yet.png"** string should be changed to
 **value="gnome-laptop.png"**. After restarting GNOME session the
 "Add to panel" dialog should look like this:
 
-.. image:: {static}/images/articles/2009_02_25_gnome_applet_with_python_part_1/gnomeapplet_1_select_applet_2.png
+.. image:: {static}gnomeapplet_1_select_applet_2.png
    :alt: Add to Panel dialog
    :align: center
 
@@ -131,7 +131,7 @@ If by accident the gnome-laptop.png is absent, it could be saved to
 **/usr/share/pixmaps** from here:
 
 
-.. image:: {static}/images/articles/2009_02_25_gnome_applet_with_python_part_1/gnomeapplet_1_gnome-laptop.png
+.. image:: {static}gnomeapplet_1_gnome-laptop.png
    :alt: laptop
    :align: center
 
@@ -203,7 +203,7 @@ The bonobo_factory(IID,Type,Description,Version,Callback) arguments are:
 
 "It works!" label should appear on a panel:
 
-.. image:: {static}/images/articles/2009_02_25_gnome_applet_with_python_part_1/gnomeapplet_1_applet_sample.png
+.. image:: {static}gnomeapplet_1_applet_sample.png
    :alt: Applet window
    :align: center
 
@@ -254,7 +254,7 @@ Now the applet can be launched from a console with the ``-d`` key, e.g.
 ``./applet.py -d``. The applet should appear in a window. It's a common
 GNOME window:
 
-.. image:: {static}/images/articles/2009_02_25_gnome_applet_with_python_part_1/gnomeapplet_1_applet_debug.png
+.. image:: {static}gnomeapplet_1_applet_debug.png
    :alt: Applet window
    :align: center
 

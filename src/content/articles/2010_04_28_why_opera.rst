@@ -2,7 +2,7 @@ Why Opera?
 ==========
 
 :slug: why_opera
-:categories: Articles
+:category: Articles
 :tags: Opera
 :date: 2010-04-28 12:00
 

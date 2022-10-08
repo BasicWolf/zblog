@@ -2,7 +2,7 @@ Concrete Settings: a new way to manage configurations in Python projects
 ========================================================================
 
 :slug: concrete_settings
-:categories: Articles
+:category: Articles
 :tags: programming, library, python, concrete settings
 :date: 2020-07-11 13:06
 

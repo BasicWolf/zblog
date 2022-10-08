@@ -2,7 +2,7 @@ Assembler for beginners
 =======================
 
 :slug: assembler_for_beginners
-:categories: Articles
+:category: Articles
 :tags: programming, Assembler
 :date: 2010-08-08 12:00
 

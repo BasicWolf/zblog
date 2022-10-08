@@ -2,10 +2,10 @@ Hexagonal architecture and Python - Part II: Domain,  Application Services, Port
 ##############################################################################################
 
 :slug: hexarch_di_python_part_2
-:categories: Articles
+:category: Articles
 :tags: architecture, DDD, dependency injection, hexagonal architecture, programming, python,
 :date: 2022-09-18 12:00
-:summary: .. image:: {static}/images/articles/2022_09_18_hexarch_di_python_part_2/hexagonal-python-2.png
+:summary: .. image:: {static}hexagonal-python-2.png
              :align: center
              :alt: Python logo in a hexagon with Roman II literal
              :target: {filename}2022_09_18_hexarch_di_python_part_2.rst
@@ -16,12 +16,12 @@ Hexagonal architecture and Python - Part II: Domain,  Application Services, Port
 
 .. _hexarch_di_python_part_2:
 
-.. image:: {static}/images/articles/2022_09_18_hexarch_di_python_part_2/hexagonal-python-2.png
+.. image:: {static}hexagonal-python-2.png
    :align: center
    :alt: Python logo in a hexagon with Roman II literal
 
 Now that you are familiar with the basic principles of Hexagonal architecture
-(`see part I <{filename}2021_10_30_hexarch_di_python_part_1.rst>`_)
+(`see part I <{filename}../2021_10_30_hexarch_di_python_part_1/2021_10_30_hexarch_di_python_part_1.rst>`_)
 let's try implementing a Django-based application following these principles.
 I've chosen Django for this exercise to demonstrate that even an opinionated framework is not an obstacle for Hexagonal architecture.
 What about the other web frameworks, like FastAPI, Flask, AIOHTTP with SQLAchemy or a NoSQL data store?

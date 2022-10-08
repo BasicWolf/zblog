@@ -2,7 +2,7 @@ Kidomi - a JSON-based templating library
 ========================================
 
 :slug: kidomi
-:categories: Articles
+:category: Articles
 :tags: CoffeeScript, JavaScript, programming
 :date: 2014-01-05 12:00
 

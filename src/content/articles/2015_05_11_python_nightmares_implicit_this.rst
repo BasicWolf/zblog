@@ -2,7 +2,7 @@ Python nightmares: Implicit `this`
 ==================================
 
 :slug: python_nightmares_implicit_this
-:categories: Articles
+:category: Articles
 :tags: Python, programming
 :date: 2015-05-11 22:00
 

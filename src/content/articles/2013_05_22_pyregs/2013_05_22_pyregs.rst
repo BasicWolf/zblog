@@ -4,7 +4,7 @@ PyRegs: The Python Regex Debugger
 =================================
 
 :slug: pyregs
-:categories: Articles
+:category: Articles
 :tags: programming, Python
 :date: 2013-05-22 12:00
 
@@ -43,13 +43,13 @@ Screenshots
 
 Match tab:
 
-.. image:: {static}/images/articles/2013_05_22_pyregs/pyregs_v0.1_0.png
+.. image:: {static}pyregs_v0.1_0.png
    :align: center
    :alt: pyregs v0.1
 
 Grouping by name:
 
-.. image:: {static}/images/articles/2013_05_22_pyregs/pyregs_v0.1_1.png
+.. image:: {static}pyregs_v0.1_1.png
    :align: center
    :alt: pyregs grouping
 

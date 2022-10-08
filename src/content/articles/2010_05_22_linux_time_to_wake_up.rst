@@ -2,7 +2,7 @@ Linux, it's time to wake up!
 ============================
 
 :slug: linux_time_to_wake_up
-:categories: Articles
+:category: Articles
 :tags: Linux, ACPI
 :date: 2010-05-22 12:00
 

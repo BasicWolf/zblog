@@ -2,7 +2,7 @@ Kaylee
 ======
 
 :slug: kaylee
-:categories: Articles
+:category: Articles
 :tags: programming, projects, Python, CoffeeScript, Kaylee
 :date: 2012-08-28 12:00
 

@@ -3,7 +3,7 @@ Alarms and dashboards
 =====================
 
 :slug: alarms_and_dashboards
-:categories: Articles
+:category: Articles
 :tags: rants, alarm, dashboard, DevOps, errors
 :date: 2021-06-04 12:00
 :summary: Ranting about alarms and dashboards
@@ -44,7 +44,7 @@ Remember the CO2 alarm indicator lighting up and the crew checking
 the CO2 levels on the gauge?
 
 
-.. image:: {static}/images/articles/2021_06_04_alarms_and_dashboards/apollo_13_co2_indicator.jpg
+.. image:: {static}apollo_13_co2_indicator.jpg
    :align: center
    :width: 50%
    :alt: CO2 Indicator | Apollo 13 (2005)
@@ -54,7 +54,7 @@ to make sure that CO2 levels are acceptable instead?
 What about other critical indicators?
 Of course not.
 
-.. image:: {static}/images/articles/2021_06_04_alarms_and_dashboards/apollo_13_co2_gauge.jpg
+.. image:: {static}apollo_13_co2_gauge.jpg
    :align: center
    :width: 50%
    :alt: CO2 Gauge | Apollo 13 (2005)

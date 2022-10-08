@@ -3,7 +3,7 @@ My story of caffeine withdrawal
 
 :slug: caffeine_withdrawal
 :date: 2015-05-31 12:00
-:categories: Articles
+:category: Articles
 :tags: Life, Caffeine
 
 :summary: After getting hooked on coffee, I decided to stop drinking
@@ -22,7 +22,7 @@ It is a properly brewed tea almost at a boiling point of water.
 The taste is great and is fully-flavoured.
 
 
-.. image:: {static}/images/articles/2015_05_31_caffeine_withdrawal/caffeine_withdrawal_azeri_tea.jpg
+.. image:: {static}caffeine_withdrawal_azeri_tea.jpg
    :align: center
    :alt: Tea set, Lahic, Azerbaijan | photographer: Orkhan Gurbanzada | from photodom.com
 
@@ -44,7 +44,7 @@ I had a cup of coffee in the morning right after logging in.
 I had another cup right after lunch and usually the third cup
 just before leaving home.
 
-.. image:: {static}/images/articles/2015_05_31_caffeine_withdrawal/caffeine_withdrawal_coffee.jpg
+.. image:: {static}caffeine_withdrawal_coffee.jpg
    :align: center
    :alt: A cup of coffee
 
@@ -82,7 +82,7 @@ naughty move. The detox process went as follows:
   itch.
 
 
-.. image:: {static}/images/articles/2015_05_31_caffeine_withdrawal/caffeine_withdrawal_inside.jpg
+.. image:: {static}caffeine_withdrawal_inside.jpg
    :align: center
    :alt: Inside caffeine withdrawal
 

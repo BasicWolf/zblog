@@ -2,7 +2,7 @@ A micro Lisp interpreter experiment
 ===================================
 
 :slug: a_micro_lisp_interpreter_experiment
-:categories: Articles
+:category: Articles
 :tags: Python, Lisp, programming
 :date: 2014-06-21 12:00
 

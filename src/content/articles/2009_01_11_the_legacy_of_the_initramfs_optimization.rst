@@ -3,7 +3,7 @@ The legacy of the initramfs optimization
 
 :slug: the_legacy_of_the_initramfs_optimization
 :date: 2009-01-11 12:00
-:categories: Articles
+:category: Articles
 :tags: initramfs, Linux
 :summary: An adventure of dealing with ``Target filesystem doesn't have /sbin/init``
 

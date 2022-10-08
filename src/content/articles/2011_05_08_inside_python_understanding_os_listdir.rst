@@ -2,7 +2,7 @@ Inside Python: understanding os.listdir()
 =========================================
 
 :slug: inside_python_understanding_os_listdir
-:categories: Articles
+:category: Articles
 :tags: programming, Linux, Python, C
 :date: 2011-05-08 12:00
 

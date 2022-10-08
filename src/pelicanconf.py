@@ -43,6 +43,9 @@ MENUITEMS = (
     ('Tags', '/tags.html'),
 )
 
+LINKS = (
+    ('Books', '/category/books.html'),
+)
 
 DEFAULT_PAGINATION = 10
 
@@ -67,6 +70,7 @@ PAGE_SAVE_AS = 'pages/{slug}.html'
 PYGMENTS_RST_OPTIONS = {'linenos': 'table'}
 
 STATIC_PATHS = [
+    'articles',
     'images',
     'attachments',
     'static',

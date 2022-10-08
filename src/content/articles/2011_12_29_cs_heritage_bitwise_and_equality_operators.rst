@@ -2,7 +2,7 @@ C's heritage: bitwise and equality operators
 ============================================
 
 :slug: cs_heritage_bitwise_and_equality_operators
-:categories: Articles
+:category: Articles
 :tags: programming, C, JavaScript
 :date: 2011-12-29 12:00
 

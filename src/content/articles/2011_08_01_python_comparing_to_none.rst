@@ -2,7 +2,7 @@ Python: comparing to None
 =========================
 
 :slug: python_comparing_to_none
-:categories: Articles
+:category: Articles
 :tags: programming, Python
 :date: 2011-08-01 12:00
 

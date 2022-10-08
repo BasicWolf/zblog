@@ -3,7 +3,7 @@ Python classes: Dynamic properties
 
 :slug: python_classes_dynamic_properties
 :date: 2010-03-10 12:00
-:categories: Articles
+:category: Articles
 :tags: programming, Python
 
 :summary: Python never stops surprising me. While doing my master IT project, I was looking for a way to add dynamic properties to classes (we're speaking of new-style classes of course!). I did a little research and here are the results...

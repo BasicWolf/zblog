@@ -2,11 +2,11 @@ Turn the Ship Around!: A True Story of Turning Followers into Leaders - A short 
 ###########################################################################################
 
 :slug: turn_the_ship_around_short_review
-:categories: Articles
+:category: Books
 :tags: book, leadership
 :date: 2021-10-22 12:00
 :summary:
-   .. image:: {static}/images/articles/2021_10_22_turn_the_ship_around/turn_the_ship_around_cover.jpg
+   .. image:: {static}turn_the_ship_around_cover.jpg
              :width: 30%
              :align: center
              :alt: Turn the Ship Around!: A True Story of Turning Followers into Leaders book cover
@@ -29,7 +29,7 @@ Turn the Ship Around!: A True Story of Turning Followers into Leaders - A short 
 
 \
 
-.. image:: {static}/images/articles/2021_10_22_turn_the_ship_around/turn_the_ship_around_cover.jpg
+.. image:: {static}turn_the_ship_around_cover.jpg
    :width: 40%
    :align: center
    :alt: Turn the Ship Around!: A True Story of Turning Followers into Leaders book cover

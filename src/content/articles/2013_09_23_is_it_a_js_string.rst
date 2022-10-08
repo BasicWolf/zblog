@@ -2,7 +2,7 @@ Is it a string?
 ===============
 
 :slug: is_it_a_js_string
-:categories: Articles
+:category: Articles
 :tags: JavaScript, programming
 :date: 2013-09-23 12:00
 

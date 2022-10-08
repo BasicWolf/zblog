@@ -4,7 +4,7 @@ Kaylee v0.3
 ===========
 
 :slug: kaylee_0_3_released
-:categories: Articles
+:category: Articles
 :tags: Kaylee, Python, programming
 :date: 2013-06-20 12:00
 

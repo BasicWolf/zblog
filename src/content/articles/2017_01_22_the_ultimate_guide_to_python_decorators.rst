@@ -2,7 +2,7 @@ The ultimate guide to Python decorators
 #######################################
 
 :slug: the_ultimate_guide_to_python_decorators
-:categories: Articles
+:category: Articles
 :tags: Python, programming
 :date: 2017-01-22 23:00
 

@@ -2,7 +2,7 @@ Inside Python subprocess communication
 ======================================
 
 :slug: inside_python_subprocess_communication
-:categories: Articles
+:category: Articles
 :tags: programming, Python
 :date: 2010-04-24 12:00
 
