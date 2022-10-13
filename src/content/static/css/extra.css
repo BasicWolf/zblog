@@ -1,7 +1,11 @@
 /* make global font size a bit bigger */
 /* I simply like it that way :) */
 html, body {
-    font-size: 1.0em;
+    font-size: 1.1em;
+}
+
+main article pre {
+    font-size: 0.8em;
 }
 
 .right {text-align: right;}
