@@ -1,4 +1,4 @@
-Accelerate: The Science of Lean Software and DevOps - Book review
+Accelerate: The Science of Lean Software and DevOps - book review
 =================================================================
 
 :slug: accelerate_book_review

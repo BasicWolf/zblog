@@ -1,5 +1,5 @@
-Turn the Ship Around!: A True Story of Turning Followers into Leaders - A short book review
-###########################################################################################
+Turn the Ship Around!: A True Story of Turning Followers into Leaders - book review
+###################################################################################
 
 :slug: turn_the_ship_around_short_review
 :category: Books
