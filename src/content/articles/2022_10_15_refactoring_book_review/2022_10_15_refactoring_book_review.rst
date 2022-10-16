@@ -17,7 +17,7 @@ Refactoring - book review
    I highly recommend this book to software professionals who want to improve and formalise their refactoring skills.
 
 
-.. image:: {filename}refactoring_book_cover_small.jpg
+.. image:: {static}refactoring_book_cover_small.jpg
    :align: center
    :alt: "Refactoring" book front cover
    :width: 50%
