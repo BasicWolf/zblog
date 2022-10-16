@@ -25,5 +25,5 @@ My Master's Thesis
 ==================
 
 My Master's Thesis
-`"Decision fusion of voice activity detectors" <{filename}/articles/2012_07_08_i_have_graduated.rst>`_
+`"Decision fusion of voice activity detectors" <{filename}../articles/2012_07_08_i_have_graduated/2012_07_08_i_have_graduated.rst>`_
 finalized in 2012.
