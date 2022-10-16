@@ -71,6 +71,7 @@ PYGMENTS_RST_OPTIONS = {'linenos': 'table'}
 
 STATIC_PATHS = [
     'articles',
+    'pages',
     'images',
     'static',
     'extra/CNAME'
