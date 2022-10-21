@@ -20,7 +20,7 @@ Petersburg State Polytechnical University and master's degree at University
 of Eastern Finland. I still love programming and think of it as an art.
 I love beautiful ideas and their implementation in code.
 
-I live in Joensuu, Finland and craft software at Nordea.
+I live in Joensuu, Finland and craft state of the art financial software at Nordea.
 
 .. class:: clearfix
 
