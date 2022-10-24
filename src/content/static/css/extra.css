@@ -18,6 +18,12 @@ img.align-left {
     float:left;
 }
 
+img.align-center {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 /* Remove horizontal scrollbar from code snippet line numbers */
 /* It appears e.g. in Vivaldi browser. */
 .linenodiv pre {

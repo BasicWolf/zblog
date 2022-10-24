@@ -192,6 +192,7 @@ We also need to know whether the user has already voted to prevent repeat voting
 Voting for an article produces a result:
 
 .. uml::
+   :class: align-center
 
    @startuml
    class VotingUser {
