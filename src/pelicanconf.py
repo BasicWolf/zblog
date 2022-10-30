@@ -84,3 +84,6 @@ CUSTOM_CSS = '/static/css/extra.css'
 
 THEME = '/home/zaur/projects/pelican-themes/Flex/'
 #THEME = os.path.abspath(os.path.join(MYDIR, '../Flex/'))
+
+CACHE_CONTENT = True
+LOAD_CONTENT_CACHE = True
