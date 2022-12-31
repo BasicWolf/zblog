@@ -4,8 +4,8 @@ AUTHOR = 'Zaur Nasibov'
 SITENAME = "Zaur's Thoughts"
 SITETITLE = "Zaur's Thoughts"
 SITESUBTITLE = "Zaurun Fikirləri"
-SITELOGO = '/images/logo.png'
-FAVICON = '/images/favicon.png'
+SITELOGO = '/static/images/logo.png'
+FAVICON = '/static/images/favicon.png'
 COPYRIGHT_YEAR = 2022
 
 PATH = 'content'
