@@ -260,6 +260,8 @@ for example
 
 .. code-block:: python
 
+   # tests/test_myapp/application/domain/model/test_voting_user.py
+
    def test_vote_for_article_twice_returns_already_voted_result(
        voting_user_who_has_voted: VotingUser,
        article_id_for_which_user_has_voted: ArticleId,
