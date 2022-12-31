@@ -4,7 +4,7 @@ Hexagonal architecture and Python - Part III: Persistence, Transactions, Excepti
 :slug: hexarch_di_python_part_3
 :category: Articles
 :tags: architecture, DDD, dependency injection, Django, hexagonal architecture, programming, python,
-:date: 2022-10-21 12:00
+:date: 2022-12-31 17:19
 :summary: .. image:: {static}hexagonal-python-3.jpg
              :align: center
              :alt: Python logo in a hexagon with Roman III literal
