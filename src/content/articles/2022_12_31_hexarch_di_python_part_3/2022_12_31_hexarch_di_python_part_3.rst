@@ -99,7 +99,7 @@ From domain models to database entities
 
 
 The ``VotingUserRepository`` has to map the ``VotingUser`` domain model to
-data model(s) when saving to - and vice verse, when reading from the database.
+data model(s) when saving to - and vice versa, when reading from the database.
 The ``VotingUser`` model holds three pieces of information,
 which eventually influence the database design
 `[source] <https://github.com/BasicWolf/hexagonal-architecture-django/blob/blog3/src/myapp/application/domain/model/voting_user.py#L20>`__:
@@ -165,7 +165,7 @@ tables with an explicit relationship between them:
 
 .. note::
 
-   Although I drew ``article_vote.user_id`` and ``article_vote.aritcle_id`` as
+   Although I drew ``article_vote.user_id`` and ``article_vote.article_id`` as
    **foreign keys**, this is not reflected in the example project code.
    There is some hidden complexity here, like -
    if a user gets deleted, should the article votes stay? Or should they remain
@@ -359,6 +359,13 @@ With all the "batteries included", Django doesn't include one for this case.
 My version of such a battery is ``@transactional`` decorator, which
 wraps a callable in a transaction for production, but skips it when running tests
 `[source] <https://github.com/BasicWolf/hexagonal-architecture-django/blob/blog3/src/myapp/application/util/transactional.py#L11>`__.
+
+.. warning::
+
+   **Code smell detected**.
+   A routine in a production code made solely for the sake of testing is
+   a sign of a bad design. However, such hack is necessary to push a Django
+   application out of the framework box.
 
 SPI adapters exceptions
 =======================
@@ -585,7 +592,7 @@ how they fit together
    def test_build_production_ioc_container():
        build_production_dependencies_container()
 
-At the same time, a simple smoke test can make a vote by a non-existing
+At the same time, a simple **smoke test** can make a vote by a non-existing
 user and expect a response with HTTP 404 - Not Found status back:
 
 .. code-block:: shell
@@ -606,9 +613,15 @@ user and expect a response with HTTP 404 - Not Found status back:
        "status":404
    }
 
-Bear in mind that this test can also initially run against an
-application configuration with a dummy adapter.
-Replacing the dummy adapter with a "real" one should not require any
+
+Bear in mind that the job of a smoke test is to verify whether the application
+works. An ideal smoke test touches all the application layers
+without affecting its state. Voting by a non-existing user cuts through all the
+application layers, down to the database and returns the expected error result.
+
+This test can also run against an application-in-development with
+a dummy HTTP or SPI (database) adapters.
+Replacing a dummy adapter with a real one should not require any
 modifications to the test.
 
 Final thoughts
@@ -619,3 +632,9 @@ lived through two major rewrites and has been continuously evolving.
 I am satisfied with the output and the outcome of this work.
 It helped me to understand Hexagonal Architecture and dive deeper into DDD.
 I hope it makes an inspiring impact on fellow Pythonistas!
+
+Acknowledgments
+===============
+
+Traditionally, `Jere "Urokhtor" Teittinen <https://jereteittinen.info>`__
+gave priceless feedback on the draft, for which I am very grateful!
