@@ -1,2 +1,3 @@
 pelican[markdown]==4.8.0
 ghp-import==2.0.2
+minchin.pelican.plugins.post-stats==1.1.1
