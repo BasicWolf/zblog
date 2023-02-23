@@ -79,7 +79,7 @@ Gojko noticed that the "handover" journey of specifications through business peo
 product managers, developers, and QA is full of misunderstanding, ambiguity, information losses,
 errors and unnecessary work.
 "*Specification by example*" teaches how to build a shared understanding between
-everyone involved the software creation process.
+everyone involved in the software creation process.
 It then demonstrates how to translate the shared understanding into specification
 documents, leverage them for continual system testing, and produce up-to-date
 documentation that evolves with the system.
@@ -135,7 +135,7 @@ When the validation process happens frequently, the stakeholders are sure
 that the software works according to the specification.
 However, how and in which form can they access the verification results?
 Hence the team continues sharpening the executable specifications and organises
-the verification output to provide all the stakeholders with a consistent,
+the verification output to provide all stakeholders a consistent,
 easy-to-understand and up-to-date *living documentation*.
 
 
@@ -143,13 +143,13 @@ Thoughts
 ========
 
 Specification by Example is Behaviour-Driven Development. Gojko Adzic
-avoided the term since it was too ambiguous, and the meaning changed all the time.
-It's been almost fifteen years later since the book was written,
+avoided the term since it was too ambiguous, and the meaning was changing all the time.
+It's been almost fifteen years since the book was written,
 and BDD is still ambiguous and misunderstood by large and small companies alike.
 
 In one company, the team was participating in meetings with the clients, and
 together they derived scope from the business goals. They even documented
-key examples that the customer provided. But it never went further - the
+the key examples that the customer provided. But it never went further - the
 specifications were extracted to JIRA tickets hierarchy and remained there
 never to be seen again, once the tickets got closed.
 
@@ -163,11 +163,13 @@ That nicely fits into "101 ways of abusing Given, When, Then".
 
 Least to say, that none of these companies had living documentation.
 
-That is what "Specification by Example" is about. Throughout the book, Gojko
-constantly refers to companies and people who explain the key patterns in detail.
-The last six chapters of the book are the case studies which tell the story
-of real companies and their journey from  waterfall and "agile-ish" development
-processes to specification by example.
+"Specification by Example" tells the story of teams and companies that
+succeeded in BDD.
+Gojko first talks about the obstacles that the teams should go through
+to change the mindset about BDD. He continues with a detailed explanation of
+every key pattern - every pattern has a designated chapter.
+The last six chapters of the book are the case studies, which narrate the companies
+journey from  waterfall and "agile-ish" development processes to specification by example.
 
 To my shame, I have yet to build a system that incorporates all the key patterns
 described in the book. And I am eagerly looking forward to it!
