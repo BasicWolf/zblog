@@ -11,6 +11,7 @@ Specification by example - book review
    .. image:: {static}specification_by_example_book_cover.jpg
       :alt: "Specification by Example" by Gojko Adzic book cover.
       :align: center
+      :target: {filename}specification_by_example_book_review.rst
 
    Doing things right doesn't matter unless you do the right thing.
    "Specification by Example" by Gojko Adzic is about delivering the right
