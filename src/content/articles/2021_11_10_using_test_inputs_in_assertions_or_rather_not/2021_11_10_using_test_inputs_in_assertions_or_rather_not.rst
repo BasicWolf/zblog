@@ -1,9 +1,9 @@
-Using tests inputs in assertions (or rather not)
-################################################
+Good software practices: Avoiding the use of test inputs in assertions
+######################################################################
 
-:slug: using_tests_inputs_in_assertions_or_rather_not
+:slug: good-software-practices-avoiding-the-use-of-test-inputs-in-assertions
 :category: Articles
-:tags: programming, python, testing, unit tests
+:tags: good practices, programming, python, testing, unit tests
 :date: 2021-11-10 12:00
 :summary:
    .. image:: {static}knot.png
