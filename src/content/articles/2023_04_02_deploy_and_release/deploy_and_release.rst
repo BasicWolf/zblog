@@ -3,7 +3,7 @@ Good software practices: Software deployment and feature releases
 
 :slug: good-software-practices-software-deployment-and-feature-releases
 :category: Articles
-:tags: good practices, shorts, software, deployment, release
+:tags: good practices, software, deployment, release
 :date: 2023-04-03 21:52
 :status: published
 :summary: "Big Bang" software releases are hard on end users and developers.
