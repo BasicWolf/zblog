@@ -11,7 +11,7 @@ Good practices: Avoiding the use of test inputs in assertions
       :width: 70%
       :align: center
       :alt: Figure of eight know / https://freesvg.org/figure-of-eight-knot-vector-illustration / License: Public Domain
-      :target: {filename}2021_11_10_using_test_inputs_in_assertions_or_rather_not.rst
+      :target: {filename}2021-11-10-good-practices-avoiding-the-use-of-test-inputs-in-assertions.rst
 
    It might be very convenient to use the same fixtures in test
    setup and assertions. This practice though is not as good as it looks
