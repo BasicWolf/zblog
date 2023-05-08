@@ -29,24 +29,23 @@ The pieces can vary from individual variables and functions to large-scale servi
   meet the needs of the customer.
 
 It is that simple! Or is it?
-How many times have you struggled while trying to fit a new feature into an existing code base?
-How many times have you started from scratch, only to find later that
-the redesign became the same mess as before?
+How many times have you struggled trying to fit a new feature into an existing code base?
+How many times have you started from scratch, only to find later that the redesign became the same mess as before?
 
-How many times have you struggled trying to fit a new
-feature into an existing code base? How many times you started from a scratch,
-only to find later, that the redesign became the same mess as before?
+How many times have you struggled trying to fit a new feature into an existing code base?
+How many times have you started from scratch, only to find later that the redesign became the same mess as before?
 
-Here is a scary diagram from the book. It shows how the cost of line of code
-grows with every major release. This trend is not sustainable - no business
-model can make profit while letting the costs grow exponentially.
+Here is a scary diagram from the book.
+It shows how the cost of each line of code increases with every major release.
+This trend is not sustainable; no business model can make a profit while letting costs grow exponentially.
 
 .. image:: {static}market-leading-software-product-life-cycle.png
    :width: 75%
    :align: center
 
-Why does this happen? What goes wrong? Too often we, the developers, buy into
-the familiar lie: *"We can clean it up later; we just have to get to market first!"*
+Why does this happen? What goes wrong?
+Too often, we developers buy into the familiar lie:
+*"We can clean it up later; we just have to get to market first!"*
 
 ..
 
@@ -64,11 +63,10 @@ Making messes is always slower than staying clean and the only way to go fast,
 is to go well.
 
 
-We often forget that unlike firmware, software was invented to be “soft.”
+We often forget that, unlike firmware, software was invented to be "soft."
 It was intended to be a way to easily change the behavior of machines.
-Therefore software architectures should be as shape agnostic as possible.
-Uncle Bob argues that for a software system to be easy to change is more important
-than for it to work.
+Therefore, software architectures should be as shape-agnostic as possible.
+Uncle Bob argues that for a software system to be easy to change, it is more important than for it to work.
 
 ..
 
@@ -76,21 +74,18 @@ than for it to work.
   make it work, and keep it working as requirements change. Therefore the
   program will remain continually useful.
 
-One of our responsibilities if to find the balance and
+One of our responsibilities is to find the balance and
 assert the importance of architecture over the urgency of features.
-Sometimes we have to fight for it with the business side that is pushing to
-implement new features.
-If architecture comes last, then the system will become ever
-more costly to develop, and eventually change will become practically
-impossible for part or all of the system.
+Sometimes we have to fight for it with the business side that is pushing to implement new features.
+If architecture comes last, then the system will become even more costly to develop,
+and eventually, change will become practically impossible for a part or all of the system.
 
+That is the end of **Part I - Introduction**.
+The rest of the tale is for you to discover, just like in 'One Thousand and One Nights'.
 
-That is where **Part I - Introduction** leaves us. As in "One Thousand and One Nights",
-the rest of the tale comes tomorrow - or rather it is for you to discover.
-
-In **Part II - Starting with the bricks: programming paradigms**, Uncle Bob discusses
-structured, object-oriented and functional programming paradigms and the ways
-to apply them from architecture perspective.
+In **Part II - Starting with the Bricks: Programming Paradigms**, Uncle Bob discusses
+structured, object-oriented, and functional programming paradigms,
+and how to apply them from an architectural perspective.
 
 Each paradigm is about discipline telling us what NOT to do and each paradigm
 takes something away from us. Each restricts some aspect of the way we write code.
