@@ -74,12 +74,14 @@ devserver:
 devserver-global:
 	$(PELICAN) -lr $(INPUTDIR) -o $(OUTPUTDIR) -s $(CONFFILE) $(PELICANOPTS) -b 0.0.0.0
 
-publish: clean
+build: clean
 	"$(PELICAN)" "$(INPUTDIR)" -o "$(OUTPUTDIR)" -s "$(PUBLISHCONF)" $(PELICANOPTS)
 
-github: publish
+publish-from-ci: build
 	ghp-import -m "Generate Pelican site" -b $(GITHUB_PAGES_BRANCH) $(OUTPUTDIR)
-	git push -f git@github.com:BasicWolf/basicwolf.github.io.git $(GITHUB_PAGES_BRANCH):master
+	git push -f https://basicwolf:${ACCESS_TOKEN_BASICWOLF_GITHUB_IO}@github.com/BasicWolf/basicwolf.github.io.git $(GITHUB_PAGES_BRANCH):master
 
+publish-from-local: build
+	git push -f git@github.com:BasicWolf/basicwolf.github.io.git $(GITHUB_PAGES_BRANCH):master
 
 .PHONY: html help clean regenerate serve serve-global devserver publish github

@@ -1,0 +1,35 @@
+name: Build the blog
+
+on:
+  workflow_dispatch: {}
+  # push:
+  #   branches:
+  #     - master
+
+env:
+  DEBUG: 1
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, 'ci:skip')"
+    defaults:
+      run:
+        shell: bash
+        working-directory: src
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: "Setup Python"
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.10"
+
+      - name: "Install Dependencies"
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y plantuml
+          make install
+
+      - name: "Build blog for publishing"
+        run: make build
