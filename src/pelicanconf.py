@@ -6,7 +6,7 @@ SITETITLE = "Zaur's Thoughts"
 SITESUBTITLE = "Zaurun Fikirləri"
 SITELOGO = '/static/images/logo.png'
 FAVICON = '/static/images/favicon.png'
-COPYRIGHT_YEAR = 2022
+COPYRIGHT_YEAR = 2023
 
 PATH = 'content'
 
@@ -83,7 +83,7 @@ EXTRA_PATH_METADATA = {
 
 CUSTOM_CSS = '/static/css/extra.css'
 
-THEME = 'Flex'
+THEME = '../Flex'
 
 CACHE_CONTENT = True
 LOAD_CONTENT_CACHE = True

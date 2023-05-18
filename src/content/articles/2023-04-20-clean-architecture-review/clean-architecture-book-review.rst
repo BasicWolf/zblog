@@ -4,16 +4,24 @@ Clean Architecture - book review
 :slug: clean-architecture-book-review
 :category: Books
 :tags: book, review, programming, architecture, clean code, clean architecture
-:date: 2024-04-20 22:39
-:status: draft
-:summary: TODO
+:date: 2024-05-18 22:39
+:summary:
+   .. image:: {static}clean-architecture-book-cover.jpg
+      :width: 30%
+      :align: center
+      :alt: "Clean Architecture" book cover
 
+   *Clean Architecture* is the "Art of War" of the software industry. It was written by a professional who has been through many tough battles, both wins, and losses. Uncle Bob talks about timeless topics of software development that are just as applicable today as they were fifty years ago.
 
 Oh, I loved the book! A warm picture emerges in my mind: late evening,
 comfortable armchairs, a hot burning fire in a fireplace, and an engaging discussion
 with a dear friend who happens to be one of the greatest teachers in software engineering...
 
-Clean Architecture" is the "Art of War" of the software industry.
+.. image:: {static}clean-architecture-book-cover.jpg
+   :align: center
+   :alt: "Clean Architecture" book cover
+
+"Clean Architecture" is the "Art of War" of the software industry.
 It was written by a professional who has been through many tough battles, both wins, and losses.
 Uncle Bob talks about timeless topics of software development that are
 just as applicable today as they were fifty years ago.
@@ -83,11 +91,14 @@ and eventually, change will become practically impossible for a part or all of t
 That is the end of **Part I - Introduction**.
 The rest of the tale is for you to discover, just like in 'One Thousand and One Nights'.
 
+Inside the book
+---------------
+
 In **Part II - Starting with the Bricks: Programming Paradigms**, Uncle Bob discusses
 structured, object-oriented, and functional programming paradigms,
 and how to apply them from an architectural perspective.
 
-Each paradigm is about discipline telling us what NOT to do and each paradigm
+Each paradigm is about discipline, telling us what *not* to do, and each paradigm
 takes something away from us. Each restricts some aspect of the way we write code.
 
 In **Part III - Design Principles** we learn to put the well-made software
@@ -120,7 +131,8 @@ to make a sound system.
   retain the ability to be independently deployable and, therefore, independently
   developable.
 
-We learn the principles that help putting components together. We learn how
+
+We learn the principles that help in putting components together. We learn how
 to group and separate the components and how to manage dependencies between them.
 
 Finally **Part V - Architecture** and **Part VI - Details**.
@@ -133,14 +145,13 @@ So far the book has been preparing us to grok these parts.
   components, the arrangement of those components, and the ways in which those
   components communicate with each other.
 
-Uncle Bob talks about the importance of delaying decisions about details.
-Should we use a or a plain text file? Shall we use rely on TCP or UDP?
-Do we use React, Vue or Angular?
-The longer our options are open, the more information we are able to gather
-and more experiments to conduct to make a proper decision.
+Uncle Bob talks about the importance of deferring decisions about details.
+Should we use a database or a plain text file? Shall we rely on TCP or UDP?
+Do we use React, Vue, or Angular?
+He argues that the longer we keep our options open, the more information we can gather
+and the more experiments we can conduct to make an informed decision.
 
-The architecture that allows us to delay these decisions draws solid boundaries
-between its components.
+The architecture that allows us to delay these decisions establishes clear boundaries between its components.
 
 ..
 
@@ -169,6 +180,9 @@ This statement leads the way to **Clean Architectures**, which are
    :target: https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html
 
 
+The hidden gem
+--------------
+
 Book appendices are often skipped by the readers. Don't you dare to skip this one,
 because it is the hidden gem of the book. **Architecture Archaeology** is
 Uncle Bob's life-long software engineering journey. It is a story of creation and
@@ -176,11 +190,13 @@ discoveries, of fights and struggle of everything that lead to writing this book
 
 
 Thoughts
-========
+--------
 
-This is one of the "must reads" kind for all software engineers. The only question
-is "When?". This book talks of many abstract topics. Unless you are intimately
-familiar with software development, it will have a little impact on you.
-But when you start touching large systems, and you feel that something is wrong,
-you can't just formalize it - then you know that the time has come.
-The time to do the architecture right. The time to make Clean Architecture.
+
+This is one of the "must-read" for all software engineers. The only question
+is, "When?". This book discusses many abstract topics. Unless you are intimately
+familiar with software development, it may have little impact on you.
+However, when you start interacting with large systems, a time comes when you sense that something is wrong, and you can't simply formalize it.
+That's when you know the time has come.
+The time to do architecture right.
+The time to embrace Clean Architecture.
