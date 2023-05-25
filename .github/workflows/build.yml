@@ -2,9 +2,9 @@ name: Build the blog
 
 on:
   workflow_dispatch: {}
-  # push:
-  #   branches:
-  #     - master
+  push:
+    branches:
+      - master
 
 env:
   DEBUG: 1
