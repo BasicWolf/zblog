@@ -78,6 +78,7 @@ build: clean
 	"$(PELICAN)" "$(INPUTDIR)" -o "$(OUTPUTDIR)" -s "$(PUBLISHCONF)" $(PELICANOPTS)
 
 publish-from-ci: build
+	echo ${ACCESS_TOKEN_BASICWOLF_GITHUB_IO} | wc -c
 	ghp-import -m "Generate Pelican site" -b $(GITHUB_PAGES_BRANCH) $(OUTPUTDIR)
 	git push -f https://basicwolf:${ACCESS_TOKEN_BASICWOLF_GITHUB_IO}@github.com/BasicWolf/basicwolf.github.io.git $(GITHUB_PAGES_BRANCH):master
 

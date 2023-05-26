@@ -23,19 +23,16 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: test
-        run: echo ${ACCESS_TOKEN_BASICWOLF_GITHUB_IO} | wc -c
+      - name: "Setup Python"
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.10"
 
-      # - name: "Setup Python"
-      #   uses: actions/setup-python@v3
-      #   with:
-      #     python-version: "3.10"
+      - name: "Install Dependencies"
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y plantuml
+          make install
 
-      # - name: "Install Dependencies"
-      #   run: |
-      #     sudo apt-get update
-      #     sudo apt-get install -y plantuml
-      #     make install
-
-      # - name: "Publish the blog"
-      #   run: make publish-from-ci
+      - name: "Publish the blog"
+        run: make publish-from-ci
