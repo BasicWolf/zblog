@@ -24,7 +24,8 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v3
-        token: ${{secrets.ACCESS_TOKEN_BASICWOLF_GITHUB_IO}}
+        with:
+          token: ${{secrets.ACCESS_TOKEN_BASICWOLF_GITHUB_IO}}
 
       - name: "Setup Python"
         uses: actions/setup-python@v3
