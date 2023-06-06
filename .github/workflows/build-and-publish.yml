@@ -4,7 +4,16 @@ on:
   push:
     branches:
       - master
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: 'Should the blog be published?'
+        required: false
+        default: 'no'
+        type: choice
+        options:
+          - 'yes'
+          - 'no'
 
 env:
   LC_ALL: en_US.UTF8
@@ -42,6 +51,6 @@ jobs:
 
       - name: "Publish the blog"
         if: |
-          github.event_name == 'workflow_dispatch' ||
+          inputs.publish == 'yes' ||
           contains(github.event.head_commit.message, 'ci:publish')
         run: make publish-from-ci
