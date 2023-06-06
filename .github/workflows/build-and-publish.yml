@@ -1,4 +1,4 @@
-name: Build and Deploy the blog
+name: Build and Publish the blog
 
 on:
   push:
@@ -7,15 +7,12 @@ on:
   workflow_dispatch: {}
 
 env:
+  LC_ALL: en_US.UTF8
   DEBUG: 1
   ACCESS_TOKEN_BASICWOLF_GITHUB_IO: ${{ secrets.ACCESS_TOKEN_BASICWOLF_GITHUB_IO }}
 
 jobs:
   build:
-    if: |
-      github.event_name == 'workflow_dispatch' ||
-      contains(github.event.head_commit.message, 'ci:publish')
-
     runs-on: ubuntu-latest
 
     defaults:
@@ -40,5 +37,11 @@ jobs:
           sudo apt-get install -y plantuml
           make install
 
+      - name: "Build the blog"
+        run: make build
+
       - name: "Publish the blog"
+        if: |
+          github.event_name == 'workflow_dispatch' ||
+          contains(github.event.head_commit.message, 'ci:publish')
         run: make publish-from-ci
