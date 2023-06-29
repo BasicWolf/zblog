@@ -4,7 +4,7 @@ The curious case of denied repository access in Github Actions workflow
 :slug: the-curious-case-of-denied-repository-access-in-github-actions-workflow
 :category: Articles
 :tags: programming, blog, pelican, git, github, actions, ci/cd, access denied
-:date: 2024-06-01 22:59
+:date: 2023-06-01 22:59
 :status: published
 :summary:
    .. image:: {static}the-curious-case-of-denied-repository-access-in-github-action.rst.png
