@@ -4,7 +4,7 @@ Clean Architecture - book review
 :slug: clean-architecture-book-review
 :category: Books
 :tags: book, review, programming, architecture, clean code, clean architecture
-:date: 2024-05-18 22:39
+:date: 2023-05-18 22:39
 :summary:
    .. image:: {static}clean-architecture-book-cover.jpg
       :width: 30%
