@@ -21,3 +21,5 @@ Python
 ======
 
 `Python Code Design and Dependency Management <https://www.integralist.co.uk/posts/python-code-design/#interfaces-protocols-and-abstract-methods>`_
+
+`Designing Pythonic library APIs <https://benhoyt.com/writings/python-api-design/>`_
