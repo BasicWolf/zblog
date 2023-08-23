@@ -10,6 +10,7 @@ Clean Architecture - book review
       :width: 30%
       :align: center
       :alt: "Clean Architecture" book cover
+      :target: {filename}clean-architecture-book-review.rst
 
    *Clean Architecture* is the "Art of War" of the software industry. It was written by a professional who has been through many tough battles, both wins, and losses. Uncle Bob talks about timeless topics of software development that are just as applicable today as they were fifty years ago.
 
