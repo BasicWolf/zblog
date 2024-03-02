@@ -41,9 +41,6 @@ It is that simple! Or is it?
 How many times have you struggled trying to fit a new feature into an existing code base?
 How many times have you started from scratch, only to find later that the redesign became the same mess as before?
 
-How many times have you struggled trying to fit a new feature into an existing code base?
-How many times have you started from scratch, only to find later that the redesign became the same mess as before?
-
 Here is a scary diagram from the book.
 It shows how the cost of each line of code increases with every major release.
 This trend is not sustainable; no business model can make a profit while letting costs grow exponentially.
