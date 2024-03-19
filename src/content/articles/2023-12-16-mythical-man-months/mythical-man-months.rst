@@ -6,7 +6,7 @@ The Mythical Man-Months - thoughts
 :tags: book, review, software development, programming, management
 :date: 2024-03-19 21:42
 :summary:
-   .. image:: {filename}mythical-man-months-book-cover.webp
+   .. image:: {static}mythical-man-months-book-cover.webp
       :width: 30%
       :align: center
       :alt: "Then Mythical Man-Months" by Frederic Brooks book cover
@@ -27,7 +27,7 @@ The Mythical Man-Months - thoughts
    Instead of reviewing the book, I'd prefer to study these similarities,
    draw parallels, and find out whether things have changed for the better.
 
-.. image:: {filename}mythical-man-months-book-cover.webp
+.. image:: {static}mythical-man-months-book-cover.webp
    :width: 30%
    :align: center
    :alt: "Then Mythical Man-Months" by Frederic Brooks book cover
@@ -92,7 +92,7 @@ But wait a second, aren't we back to man-months again?!
 Are you playing agile poker? Consider using these accurate estimation cards for
 the next round:
 
-.. image:: {filename}lunar-logic-cards.webp
+.. image:: {static}lunar-logic-cards.webp
    :width: 30%
    :align: center
    :alt: "Lunar Logic Estimation Cards"
@@ -294,14 +294,14 @@ outdated by today's standards.
 However, we can still draw parallels, for example,the effort required
 to create and maintain a system grows exponentially with its size:
 
-.. image:: {filename}productivity-vs-size.webp
+.. image:: {static}productivity-vs-size.webp
    :width: 80%
    :align: center
    :alt: "Productivity vs. Size"
 
 compare to the "Cost per line of code" chart from `"Clean Architecture" <{filename}../2023-04-20-clean-architecture-review/clean-architecture-book-review.rst>`_:
 
-.. image:: {filename}cost-per-loc.webp
+.. image:: {static}cost-per-loc.webp
    :width: 80%
    :align: center
    :alt: "Cost of software per line of code"
@@ -658,7 +658,7 @@ launch of new features through dark launches and canary releases.
 
 This chapter could be perfectly illustrated by the following meme:
 
-.. image:: {filename}almost-done.webp
+.. image:: {static}almost-done.webp
    :width: 60%
    :align: center
    :alt: "Developer says that he is \"almost done\" and release will be in two days (sarcastic)"
@@ -788,11 +788,11 @@ Comments were just as important.
 Just have a look at this listing, which carries the unmistakable aroma
 of the "old school" days:
 
-.. image:: {filename}code-listing.webp
+.. image:: {static}code-listing.webp
    :width: 60%
    :align: center
    :alt: An old code listing with thorough comments
-   :target: {filename}code-listing.webp
+   :target: {static}code-listing.webp
 
 Brooks uses this listing as an example and explains the techniques used
 to document it.
