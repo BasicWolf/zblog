@@ -4,7 +4,7 @@ The Mythical Man-Months - thoughts
 :slug: mythical-man-months
 :category: Books
 :tags: book, review, software development, programming, management
-:date: 2024-03-19 21:22
+:date: 2024-03-19 21:42
 :summary:
    .. image:: {filename}mythical-man-months-book-cover.webp
       :width: 30%
