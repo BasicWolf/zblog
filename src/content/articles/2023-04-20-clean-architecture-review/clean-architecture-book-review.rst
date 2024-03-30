@@ -48,6 +48,7 @@ This trend is not sustainable; no business model can make a profit while letting
 .. image:: {static}market-leading-software-product-life-cycle.png
    :width: 75%
    :align: center
+   :alt: Market leading software product life cycle
 
 Why does this happen? What goes wrong?
 Too often, we developers buy into the familiar lie:
