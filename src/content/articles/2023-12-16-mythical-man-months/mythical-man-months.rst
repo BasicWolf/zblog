@@ -7,9 +7,8 @@ The Mythical Man-Months - thoughts
 :date: 2024-03-19 21:42
 :summary:
    .. image:: {static}mythical-man-months-book-cover.webp
-      :width: 30%
       :align: center
-      :alt: "Then Mythical Man-Months" by Frederic Brooks book cover
+      :alt: "Then Mythical Man-Months" by Frederic Broogks book cover
       :target: {filename}mythical-man-months.rst
 
    As the year 2023 was coming to an end, I finally had some time to recap
@@ -28,7 +27,6 @@ The Mythical Man-Months - thoughts
    draw parallels, and find out whether things have changed for the better.
 
 .. image:: {static}mythical-man-months-book-cover.webp
-   :width: 30%
    :align: center
    :alt: "Then Mythical Man-Months" by Frederic Brooks book cover
 

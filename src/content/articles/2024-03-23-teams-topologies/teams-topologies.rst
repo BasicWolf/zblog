@@ -6,7 +6,6 @@ Teams Topologies - Book Review
 :tags: book, review, architecture, teams, software development,
 :date: 2024-03-23 21:42
 :summary: .. image:: {static}teams-topologies-cover.webp
-             :width: 30%
              :align: center
              :alt: "Teams Topologies book cover"
              :target: {filename}teams-topologies.rst
@@ -26,7 +25,6 @@ This may come as a surprise, since the title clearly states otherwise.
 It's also a book about teams interactions and organizational design.
 
 .. image:: {static}teams-topologies-cover.webp
-   :width: 50%
    :align: center
    :alt: "Teams Topologies book cover"
 

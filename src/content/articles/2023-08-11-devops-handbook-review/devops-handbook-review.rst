@@ -6,8 +6,7 @@ The DevOps Handbook - review
 :tags: book, review, devops, software development, programming
 :date: 2023-08-11 17:40
 :summary:
-   .. image:: {static}devops-handbook-cover.jpg
-      :width: 30%
+   .. image:: {static}devops-handbook-cover.webp
       :align: center
       :alt: "DevOps Handbook cover"
       :target: {filename}devops-handbook-review.rst
@@ -25,8 +24,7 @@ the end of a book review, but this book is different.
 This is a short and emotional review of the
 *DevOps Handbook: How to create world-class agility, reliability, & security in technology organizations*.
 
-.. image:: {static}devops-handbook-cover.jpg
-   :width: 30%
+.. image:: {static}devops-handbook-cover.webp
    :align: center
    :alt: "DevOps Handbook cover"
 

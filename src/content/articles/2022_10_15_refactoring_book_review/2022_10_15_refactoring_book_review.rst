@@ -6,9 +6,10 @@ Refactoring - book review
 :tags: book, review, programming, refactoring, Martin Fowler, Kent Beck
 :date: 2022-10-15 12:00
 :summary:
-   .. image:: {static}refactoring_book_cover_smallest.jpg
+   .. image:: {static}refactoring_book_cover.webp
       :align: center
       :alt: "Refactoring" book front cover
+      :target: {filename}2022_10_15_refactoring_book_review.rst
 
    *Refactoring* is a book by Martin Fowler
    about what a fellow developer  might describe as
@@ -17,10 +18,9 @@ Refactoring - book review
    I highly recommend this book to software professionals who want to improve and formalise their refactoring skills.
 
 
-.. image:: {static}refactoring_book_cover_small.jpg
+.. image:: {static}refactoring_book_cover.webp
    :align: center
    :alt: "Refactoring" book front cover
-   :width: 50%
 
 *Refactoring* is a book by Martin Fowler (with contributions by Kent Beck)
 about what a fellow developer  might describe as
