@@ -103,11 +103,6 @@ All to make sure that Kaylee would be solid-stable the day it reaches
 the maturity version :)
 
 
-Are you ready to rock?
-----------------------
-
-Find more information about Kaylee at http://kaylee.znasibov.info.
-
 .. _Werkzeug: http://werkzeug.pocoo.org
 .. _Django: http://djangoproject.com
 .. _Flask: http://flask.pocoo.org

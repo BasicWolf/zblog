@@ -1,4 +1,4 @@
 Zaur's Thoughts: Source
 #######################
 
-The source of `<https://znasibov.info>`_.
+The source of `<https://zaurnasibov.com>`_.

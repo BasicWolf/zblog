@@ -43,11 +43,6 @@ All this happens via JavaScript code executed in a separate so-called
 how Kaylee does not interfere with the browser's main JavaScript loop
 and the user interface is intact.
 
-Documentation
--------------
-The documentation is available right
-`here <http://kaylee.znasibov.info/docs>`_.
-
 
 Get it!
 -------

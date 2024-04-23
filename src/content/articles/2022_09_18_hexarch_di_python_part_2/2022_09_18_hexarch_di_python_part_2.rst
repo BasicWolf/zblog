@@ -240,8 +240,7 @@ to the domain model and business rules.
 
 You may wonder what ``VoteForArticleResult`` and ``SuccessfullyVotedResult`` are.
 Recall the basics of Hexagonal architecture from
-`Part I <https://znasibov.info/posts/2021/10/30/hexarch_di_python_part_1.html>`__:
-
+`Part I <{filename}../2021_10_30_hexarch_di_python_part_1/2021_10_30_hexarch_di_python_part_1.rst>`_:
 ..
 
    Dependencies are directed from the outer layers to the inner centre.
