@@ -6,7 +6,7 @@ SITETITLE = "Zaur's Thoughts"
 SITESUBTITLE = "Zaurun Fikirləri"
 SITELOGO = '/static/images/logo.png'
 FAVICON = '/static/images/favicon.png'
-COPYRIGHT_YEAR = 2023
+COPYRIGHT_YEAR = 2024
 
 PATH = 'content'
 
