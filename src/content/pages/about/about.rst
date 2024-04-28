@@ -30,4 +30,4 @@ Contact me
 -----------
 
 I like being in touch with people, so please for any questions, comments, suggestions,
-code patches or personal, send an email to comments (at) znasibov.info.
+code patches or personal, send an email to comments (at) zaurnasibov.com.
