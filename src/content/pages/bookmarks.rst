@@ -19,6 +19,13 @@ Software development
   An interesting viewpoint on how the very basic building blocks of Python and Ruby makes them different languages.
   | #python #ruby #programming #for-loops
 
+* `Google Made Me Ruin A Perfectly Good Website: A Case Study On The AI-Generated Internet (2023)
+  <https://theluddite.org/#!post/google-ads>`_
+  by The Luddite - An Anticapitalist Tech Blog
+  |br|
+  Google Adsense doesn't let you to simply monetize a website - there are certain
+  "guidelines" you must follow. How bad can it be?
+  | #google #adsense #ads
 
 Personal development
 ====================
