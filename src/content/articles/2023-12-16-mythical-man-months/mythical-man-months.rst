@@ -559,7 +559,7 @@ in system architecture.
 He then advocates for testing the *Specification* before any implementation
 starts. Consider clients testing a platform API solely based on
 specification, prior to the platform's implementation being ready.
-This approach can revel numerous issues, such as
+This approach can reveal numerous issues, such as
 unclear or missing specification pieces,
 API inconsistencies, lack of documentation etc., all of which may arise
 during the implementation of client-to-platform communication.
