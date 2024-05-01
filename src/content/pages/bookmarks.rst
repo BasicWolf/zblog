@@ -10,7 +10,7 @@ Bookmarks
 A collection of links to articles, posts, videos etc. I find worth reading.
 
 
-Software development
+Software engineering
 ====================
 * `Ruby vs Python comes down to the for loop (2021)
   <https://softwaredoug.com/blog/2021/11/12/ruby-vs-python-for-loop.html>`_
@@ -21,11 +21,20 @@ Software development
 
 * `Google Made Me Ruin A Perfectly Good Website: A Case Study On The AI-Generated Internet (2023)
   <https://theluddite.org/#!post/google-ads>`_
-  by The Luddite - An Anticapitalist Tech Blog
+  by The Luddite - An Anticapitalist Tech Blog.
   |br|
   Google Adsense doesn't let you to simply monetize a website - there are certain
   "guidelines" you must follow. How bad can it be?
   | #google #adsense #ads
+
+* `Why Google Stores Billions of Lines of Code in a Single Repository (2016)
+  <https://dl.acm.org/doi/pdf/10.1145/2854146>`_
+  by by Rachel Potvin and Josh Levenberg.
+  |br|
+  Google's way of storing almost all of its code in a single repository is
+  full of myths rumors. This article dives inside and answers many questions,
+  including how does Google do it and most importantly - why?
+  | #google #repository #monorepo
 
 Personal development
 ====================
