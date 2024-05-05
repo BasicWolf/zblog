@@ -36,6 +36,17 @@ Software engineering
   including how does Google do it and most importantly - why?
   | #google #repository #monorepo
 
+* `Knightmare: A DevOps Cautionary Tale (2014)
+  <https://dougseven.com/2014/04/17/knightmare-a-devops-cautionary-tale/>`_
+  by Doug Seven.
+  |br|
+  It is not enough to build great software and test it;
+  you also have to ensure it is delivered to market correctly
+  so that your customers get the value you are delivering.
+  This is the story of how a company with nearly $400 million in assets
+  went bankrupt in 45-minutes because of a failed deployment.
+  | #devops #delivery #automation #failure #lessons-learned
+
 Personal development
 ====================
 * `What monks know about foucs (2024)
