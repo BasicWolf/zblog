@@ -47,6 +47,16 @@ Software engineering
   went bankrupt in 45-minutes because of a failed deployment.
   | #devops #delivery #automation #failure #lessons-learned
 
+* `Making sense of MVP (Minimum Viable Product) – and why I prefer Earliest Testable/Usable/Lovable (2016)
+  <https://blog.crisp.se/2016/01/25/henrikkniberg/making-sense-of-mvp>`_
+  by Henrik Kniberg.
+  |br|
+  What is a proper way to develop a Minimal Viable Product? 
+  What are the real-world examples of great MVPs?
+  And how can we improve on "MVP"?
+  Remember to watch the `related video <https://www.youtube.com/watch?v=0P7nCmln7PM>`_!
+  | #mvp #article #video 
+
 Personal development
 ====================
 * `What monks know about foucs (2024)
