@@ -1,7 +1,7 @@
 Projects
 ########
 
-:sortorder: A
+:slug: projects
 
 Archived hobby projects
 =======================

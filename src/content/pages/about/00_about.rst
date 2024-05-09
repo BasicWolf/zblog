@@ -1,7 +1,7 @@
 About
 =====
 
-:sortorder: X
+:slug: about
 
 Hello, I'm Zaur. It's nice to meet you on my website.
 

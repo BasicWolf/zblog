@@ -5,7 +5,7 @@
 Bookmarks
 #########
 
-:sortorder: B
+:slug: bookmarks
 
 A collection of links to articles, posts, videos etc. I find worth reading.
 
