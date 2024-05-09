@@ -6,8 +6,7 @@ Turn the Ship Around!: A True Story of Turning Followers into Leaders - book rev
 :tags: book, leadership
 :date: 2021-10-22 12:00
 :summary:
-   .. image:: {static}turn_the_ship_around_cover.jpg
-             :width: 30%
+   .. image:: {static}turn_the_ship_around_cover.webp
              :align: center
              :alt: Turn the Ship Around!: A True Story of Turning Followers into Leaders book cover
              :target: {filename}2021_10_22_turn_the_ship_around.rst
@@ -29,8 +28,7 @@ Turn the Ship Around!: A True Story of Turning Followers into Leaders - book rev
 
 \
 
-.. image:: {static}turn_the_ship_around_cover.jpg
-   :width: 40%
+.. image:: {static}turn_the_ship_around_cover.webp
    :align: center
    :alt: Turn the Ship Around!: A True Story of Turning Followers into Leaders book cover
 
