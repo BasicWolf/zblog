@@ -29,7 +29,7 @@ Software engineering
 
 * `Why Google Stores Billions of Lines of Code in a Single Repository (2016)
   <https://dl.acm.org/doi/pdf/10.1145/2854146>`_
-  by by Rachel Potvin and Josh Levenberg.
+  by Rachel Potvin and Josh Levenberg.
   |br|
   Google's way of storing almost all of its code in a single repository is
   full of myths rumors. This article dives inside and answers many questions,
@@ -57,7 +57,7 @@ Software engineering
   Remember to watch the `related video <https://www.youtube.com/watch?v=0P7nCmln7PM>`_!
   | #mvp #article #video
 
-* `You'll regret using natural keys
+* `You'll regret using natural keys (2024)
   <https://blog.ploeh.dk/2024/06/03/youll-regret-using-natural-keys/>`_
   by Mark Seemann.
   |br|
