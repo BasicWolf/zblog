@@ -51,11 +51,19 @@ Software engineering
   <https://blog.crisp.se/2016/01/25/henrikkniberg/making-sense-of-mvp>`_
   by Henrik Kniberg.
   |br|
-  What is a proper way to develop a Minimal Viable Product? 
+  What is a proper way to develop a Minimal Viable Product?
   What are the real-world examples of great MVPs?
   And how can we improve on "MVP"?
   Remember to watch the `related video <https://www.youtube.com/watch?v=0P7nCmln7PM>`_!
-  | #mvp #article #video 
+  | #mvp #article #video
+
+* `You'll regret using natural keys
+  <https://blog.ploeh.dk/2024/06/03/youll-regret-using-natural-keys/>`_
+  by Mark Seemann.
+  |br|
+  Why we should not rely on `natural keys <https://en.wikipedia.org/wiki/Natural_key>`_
+  as IDs in database design.
+  | #database #id #key #natural-key
 
 Personal development
 ====================
