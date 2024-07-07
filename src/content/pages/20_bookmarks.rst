@@ -65,6 +65,14 @@ Software engineering
   as IDs in database design.
   | #database #id #key #natural-key
 
+* `Programming is mostly thinking (2014)
+  <http://agileotter.blogspot.com/2014/09/programming-is-mostly-thinking.html>`_
+  by Tim Ottinger.
+  |br|
+  Programming is by a large margin a thinking process. Tim Ottinger explores
+  how  and what we think about while writing a program.
+  | #programming #thinking
+
 Personal development
 ====================
 * `What monks know about foucs (2024)
