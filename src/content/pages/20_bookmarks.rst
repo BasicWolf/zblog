@@ -9,6 +9,18 @@ Bookmarks
 
 A collection of links to articles, posts, videos etc. I find worth reading.
 
+Software organizations
+======================
+
+* `Total War: ROME II and Creative Assembly — My Statement Ten Years On (2024)
+  <https://medium.com/@julianmckinlay/total-war-rome-ii-and-creative-assembly-my-statement-ten-years-on-d964f65b0a8f>`_
+  by Julian McKinlay.
+  |br|
+  Lack of communication, culture of blaming and switching the arrows,
+  late decisions, making smoke and mirrors instead of real demos and
+  assembling the final product at the very late product development stages
+  - it has been and happening at Creative Assembly - the company
+  behind Total War series. | #game #total-war #mismanagement #war-stories
 
 Software engineering
 ====================
