@@ -7,7 +7,7 @@ The dark patterns of seat selection in Turkish Airlines
 :date: 2024-08-17 20:44
 :summary:
 
-   .. image:: {static}turkish-logo.webp
+   .. image:: {static}turkish-black-logo.webp
       :align: center
       :alt: Dark Turkish airlines logo
       :target: {filename}dark-patterns-of-seat-selection-in-turkish-airlines.rst
@@ -30,7 +30,7 @@ put the carry-on baggage on scales.
 
 So, what’s all the fuss about?
 
-.. image:: {static}turkish-logo.webp
+.. image:: {static}turkish-black-logo.webp
    :align: center
    :alt: Dark Turkish airlines logo
 
