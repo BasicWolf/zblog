@@ -95,8 +95,17 @@ Personal development
   | #focus #book #review
 
 
-History and Culture
-===================
+
+History, Culture and Society
+============================
+
+* `Your kid's grades are bullshit (2024)
+  <https://anandsanwal.me/grade-inflation-cancer/>`_
+  by Anand Sanwal.
+  |br|
+  The author speaks of grades inflation - why high school and collage grades
+  have been rising through years and what is the impact on students and society.
+  | #grades #school #inflation
 
 * `Cultivating Minds: The Psychological Consequences of Rice versus Wheat Farming (2024)
   <https://marginalrevolution.com/marginalrevolution/2024/04/cultivating-minds-the-psychological-consequences-of-rice-versus-wheat-farming.html>`_
