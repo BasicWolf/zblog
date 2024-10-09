@@ -9,6 +9,8 @@ Bookmarks
 
 A collection of links to articles, posts, videos etc. I find worth reading.
 
+.. contents::
+
 Software organizations
 ======================
 
@@ -84,6 +86,17 @@ Software engineering
   Programming is by a large margin a thinking process. Tim Ottinger explores
   how  and what we think about while writing a program.
   | #programming #thinking
+
+* `Good Retry, Bad Retry: An Incident Story (2024)
+  <https://medium.com/yandex/good-retry-bad-retry-an-incident-story-648072d3cee6>`_
+  by Denis Isaev.
+  |br|
+  Should a client retry web request if original request fails?
+  This is a remarkable story of an engineer
+  who learned that exponential backoff and jitter are not that simple and
+  may cause load amplification. He utilized circuit breakers, retry budgets
+  and deadline propagation to handle it.
+  | #network #requests #retry #amplification #highload #circuit-breaker #lessons-learned
 
 Personal development
 ====================
