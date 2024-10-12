@@ -40,3 +40,7 @@ img.align-center {
 .docutils.literal {
     background-color: #ddd;
 }
+
+.strike {
+    text-decoration: line-through;
+}
