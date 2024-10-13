@@ -153,7 +153,7 @@ end-to-end - all of them that run on every build of the system.
 
 Test automation tooling is widely available and is quite stable for popular
 programming platforms.
-Moreover, the test runners usually support a common
+Moreover, test runners usually support a common
 `JUnit XML <https://github.com/testmoapp/junitxml>`_ output format.
 For example, here is the formatted report of two executed smoke tests:
 
@@ -167,12 +167,17 @@ For example, here is the formatted report of two executed smoke tests:
      </testsuite>
    </testsuites>
 
-Now imagine that for every paragraph in documentation file, we could include a
-directive that checks whether certain test cases successfully passed.
+Now imagine that for every paragraph in documentation file, we include a
+directive that checks whether certain test cases passed successfully.
+The results are invisible for the end user,
+it's intended for developers and copywriters:
+if any of the required tests fails, documentation won't build.
 
-What if we also use artifacts produced by test automation in documentation?
-For example, tests could make screenshots on certain steps,
-and the documentation embeds them as example images.
+It's nothing new though:
+some products already utilize testifying artifacts produced by test automation
+in documentation.
+For example, visual tests make screenshots, and the documentation embeds them
+as example images.
 
 I quickly assembled a small PoC for `Sphinx <https://www.sphinx-doc.org/en/master/>`_
 - a tool widely used to write manuals for Python libraries and programs.
@@ -185,16 +190,14 @@ Here, I included a test name as a role
 
    Spectest starts with a simple smoke test. :spectest:`test.test_smoke.test_smoke`.
 
-The build reads the test results from XML above, passes successfully and
+The build reads test results from the XML above, passes successfully and
 outputs a Sphinx-based HTML manual.
 However, if we simulate a test failure by changing the verified name to
 ``:spectest:`test_ABCD```, the build breaks along:
 
 .. code-block:: none
 
-   reading sources... [100%] index
-   /home/zaur/projects/sphinx-spec-test/doc/source/index.rst:13: ERROR: TEST test_ABCD not found [docutils]
-   looking for now-outdated files... none found
+   /home/zaur/.../index.rst:13: ERROR: TEST test_ABCD not found [docutils]
 
 
 That's the idea in a nutshell. To me it sounds *technically* simple enough to get
@@ -202,8 +205,8 @@ implemented for any extensible documentation generator.
 
 The devil is however, in the details.
 Testified documentation won't work well unless you have thorough behavior tests.
-That doesn't imply E2E tests at all! (I always profess keeping those to bare minimum)
-Rather have a suite of fast `sociable tests <https://martinfowler.com/bliki/UnitTest.html>`_
+That doesn't imply E2E tests at all! (I profess keeping those to a bare minimum.)
+Rather, have a suite of fast `sociable tests <https://martinfowler.com/bliki/UnitTest.html>`_
 that verify system behaviour and utilize stubs and mocks for external dependencies.
 
 Feedback
@@ -222,3 +225,12 @@ Seems to be the case, when a system is small enough to fit into
 product team members heads,
 and especially when the external interfaces are already documented
 in a form of specification, like OpenAPI spec.
+
+`Arho Huttunen <https://www.arhohuttunen.com>`_ reminded that
+Cucumber is not the only tool for Specification by Example and Living Documentation.
+Uncle Bob's `FitNesse <https://fitnesse.org>`_ was there already in 2002!
+`Concordion <https://concordion.org>`_ is available since 2013.
+We also discussed that for code examples in documentation, tools like
+`Doctest <https://www.sphinx-doc.org/en/master/usage/extensions/doctest.html>`_
+which allow executing and testing their output during manual generation phase
+are even more useful.
