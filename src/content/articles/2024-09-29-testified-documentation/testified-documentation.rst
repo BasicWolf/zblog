@@ -187,13 +187,13 @@ Here, I included a test name as a role
 
 The build reads the test results from XML above, passes successfully and
 outputs a Sphinx-based HTML manual.
-However, if we simulate a test failure by changing the role to
-``:spectest:`test.test_smoke.test_smoke1```, the build breaks along:
+However, if we simulate a test failure by changing the verified name to
+``:spectest:`test_ABCD```, the build breaks along:
 
 .. code-block:: none
 
    reading sources... [100%] index
-   /home/zaur/projects/sphinx-spec-test/doc/source/index.rst:13: ERROR: TEST test.test_smoke.test_smoke1 not found [docutils]
+   /home/zaur/projects/sphinx-spec-test/doc/source/index.rst:13: ERROR: TEST test_ABCD not found [docutils]
    looking for now-outdated files... none found
 
 
@@ -201,7 +201,7 @@ That's the idea in a nutshell. To me it sounds *technically* simple enough to ge
 implemented for any extensible documentation generator.
 
 The devil is however, in the details.
-Testified documentation won't work well unless you have behavior tests.
+Testified documentation won't work well unless you have thorough behavior tests.
 That doesn't imply E2E tests at all! (I always profess keeping those to bare minimum)
 Rather have a suite of fast `sociable tests <https://martinfowler.com/bliki/UnitTest.html>`_
 that verify system behaviour and utilize stubs and mocks for external dependencies.
