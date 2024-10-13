@@ -229,7 +229,7 @@ in a form of specification, like OpenAPI spec.
 `Arho Huttunen <https://www.arhohuttunen.com>`_ reminded that
 Cucumber is not the only tool for Specification by Example and Living Documentation.
 Uncle Bob's `FitNesse <https://fitnesse.org>`_ was there already in 2002!
-`Concordion <https://concordion.org>`_ is available since 2013.
+There are also `Concordion <https://concordion.org>`_, `Serentiy <https://serenity-bdd.github.io>`_, and most likely, others.
 We also discussed that for code examples in documentation, tools like
 `Doctest <https://www.sphinx-doc.org/en/master/usage/extensions/doctest.html>`_
 which allow executing and testing their output during manual generation phase
