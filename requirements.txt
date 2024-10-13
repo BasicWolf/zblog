@@ -1,4 +1,4 @@
-pelican[markdown]==4.8.0
+pelican[markdown]==4.10.1
 pelican-redirect==1.0.2
-ghp-import==2.0.2
-minchin.pelican.plugins.post-stats==1.1.1
+ghp-import==2.1.0
+minchin.pelican.plugins.post-stats==1.2.0
