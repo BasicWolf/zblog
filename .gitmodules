@@ -1,3 +1,4 @@
 [submodule "Flex"]
 	path = Flex
 	url = https://github.com/alexandrevicenzi/Flex.git
+	branch = v3
