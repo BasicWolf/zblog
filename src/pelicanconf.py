@@ -44,8 +44,8 @@ MENUITEMS = (
 )
 
 LINKS = (
-    ('Books', '/category/books.html'),
     ('<strong>Articles</strong>', '/category/articles.html'),
+    ('Books', '/category/books.html'),
 )
 
 DEFAULT_PAGINATION = 10
