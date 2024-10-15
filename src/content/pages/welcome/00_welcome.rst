@@ -11,7 +11,7 @@ Welcome
 
    \
 
-Hello, I'm Zaur, a passionate software engineer.
+Hello, I'm Zaur, a passionate software engineer who makes impact with sustainable, reliable, elegant and timely solutions.
 
 .. image:: {static}img/zaur_nasibov.webp
    :align: left
