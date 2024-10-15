@@ -61,7 +61,12 @@ ARTICLES_PATH = ['articles']
 
 PLUGINS_PATH = os.path.abspath(os.path.join(MYDIR, '../pelican-plugins'))
 PLUGIN_PATHS = [PLUGINS_PATH]
-PLUGINS = ['plantuml', 'post_stats', 'pelican_redirect']
+PLUGINS = [
+    'plantuml',
+    'post_stats',
+    'pelican_redirect',
+    'neighbors',
+]
 
 ARTICLE_URL = 'posts/{date:%Y}/{date:%m}/{date:%d}/{slug}.html'
 ARTICLE_SAVE_AS = 'posts/{date:%Y}/{date:%m}/{date:%d}/{slug}.html'
