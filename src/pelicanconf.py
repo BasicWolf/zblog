@@ -44,7 +44,7 @@ MENUITEMS = (
 )
 
 LINKS = (
-    ('<strong>Articles</strong>', '/category/articles.html'),
+    ('<strong>Articles</strong>', '/posts.html'),
     ('Books', '/category/books.html'),
 )
 
@@ -72,6 +72,8 @@ ARTICLE_URL = 'posts/{date:%Y}/{date:%m}/{date:%d}/{slug}.html'
 ARTICLE_SAVE_AS = 'posts/{date:%Y}/{date:%m}/{date:%d}/{slug}.html'
 PAGE_URL = 'pages/{slug}.html'
 PAGE_SAVE_AS = 'pages/{slug}.html'
+
+INDEX_SAVE_AS = 'posts.html'
 
 PYGMENTS_RST_OPTIONS = {'linenos': 'table'}
 
