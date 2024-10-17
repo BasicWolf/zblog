@@ -21,6 +21,12 @@ and working as Software Engineer at Nordea.
 
 .. class:: clearfix
 
+\
+
+\
+
+.. class:: clearfix
+
 Software Engineering
 ====================
 
@@ -41,31 +47,62 @@ Practices
 ---------
 
 There are professional practices I deem necessary
-for product teams and business to succeed:
+for product teams and business for long-term and sustainable success:
 
-**Team Topologies. End-to-End responsibility. Continuous learning and improvement. \
-Tribal Leadership.**
+**Team Topologies.**
+**End-to-End responsibility.**
+**Continuous learning and improvement.**
+**Tribal Leadership.**
 
-Big goals in small steps. Constant feedback. Products over projects. Shared understanding.
-Domain-Driven Design. Lean management practices.
+Big goals in small steps.
+Constant feedback.
+Products over projects.
+Shared understanding.
+Domain-Driven Design.
+Lean management practices.
 
-User Story Mapping and Specification by Example. Clean Architecture and Clean Code.
-Test-First thinking. Continuous Delivery. Trunk-based development.
-Refactoring. Making the change easy, then making the easy change.
-Technical excellence. Mob and pair programming. Blameless post-mortems.
+User Story Mapping and Specification by Example.
+Clean Architecture and Clean Code.
+Test-First thinking.
+Continuous Delivery.
+Trunk-based development.
+Refactoring.
+Making the change easy, then making the easy change.
+Technical excellence.
+Mob and pair programming.
+Blameless post-mortems.
+
 
 Technical skills
 ----------------
 
-**Microservices. Micro front-ends. Event-driven systems. AWS. GIS.**
+**Microservices.**
+**Micro front-ends.**
+**Event-driven systems.**
+**AWS.**
+**GIS.**
 
 Kotlin/Java and Spring Boot.
-Python, Django and DRF. Typescript, JavaScript and Angular. C/C++.
-Shell scripting. SQL. Kafka. RabbitMQ. Elisp. OpenAPI. GNU/Linux.
+Python, Django and DRF.
+Typescript, JavaScript and Angular.
+C/C++.
+Shell scripting.
+SQL.
+Kafka.
+RabbitMQ.
+OpenAPI.
+Emacs.
+GNU/Linux.
 
-Contract testing (Pact.io). Feature flags (Unleash, Launch Darkly).
+Contract testing (Pact.io).
+Feature flags (Unleash, Launch Darkly).
 
-Jenkins. Gitlab CI. Github Actions. Docker. Renovate. Sphinx.
+Jenkins.
+Gitlab CI.
+Github Actions.
+Docker.
+Renovate.
+Sphinx.
 
 Contact me
 -----------
