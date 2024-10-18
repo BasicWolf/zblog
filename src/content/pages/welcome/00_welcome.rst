@@ -19,7 +19,7 @@ Hello, I'm Zaur, a passionate software engineer who makes impact with sustainabl
    :alt: Zaur Nasibov
 
 This corner of the Web hosts
-a little bit information `about me <{filename}../10_about.rst>`_
+a little bit information `about me <{filename}../90_about.rst>`_
 and some `thoughts <{index}>`_ I want to share.
 There is also an archive of my `hobby projects <{filename}../60_projects.rst>`_
 (only those that I ever mentioned publicly).
