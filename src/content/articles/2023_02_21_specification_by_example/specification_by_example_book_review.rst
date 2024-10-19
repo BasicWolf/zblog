@@ -174,3 +174,9 @@ journey from  waterfall and "agile-ish" development processes to specification b
 
 To my shame, I have yet to build a system that incorporates all the key patterns
 described in the book. And I am eagerly looking forward to it!
+
+Related
+=======
+
+`Testified Documentation (2024) <{filename}../2024-09-29-testified-documentation/testified-documentation.rst>`_
+\- my idea of maintaining documentation by live-testifying it with tests results.
