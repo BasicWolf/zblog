@@ -52,5 +52,5 @@ jobs:
       - name: "Publish the blog"
         if: |
           inputs.publish == 'yes' ||
-          contains(github.event.head_commit.message, 'ci:publish')
+          !contains(github.event.head_commit.message, 'ci:skip')
         run: make publish-from-ci
