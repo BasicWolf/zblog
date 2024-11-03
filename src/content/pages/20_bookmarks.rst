@@ -98,6 +98,23 @@ Software engineering
   and deadline propagation to handle it.
   | #network #requests #retry #amplification #highload #circuit-breaker #lessons-learned
 
+
+* `Bottom-up Architecture: Bridging the Architecture-Code Gap (2024) <https://www.youtube.com/watch?v=LkVIpwHcknE>`_
+  by Oliver Drotbohm at GOTO 2024.
+  |br|
+  Oliver talks about aligning software architecture with DDD and enforcing
+  architecture via tools like ArchUnit and jMolecules.
+  He shows jMolecules usage in a Spring Boot project and talks about
+  ways of decomposing Spring Boot -based applications via **Spring Modulith**.
+
+  Oliver also discusses software decomposition in general.
+  For example, he mentions that *the primary goal of Software Architecture
+  is to find a way to decompose the domain model*. He also notices
+  that *"Do we want to decompose a domain"* should not be equated with
+  *"Do we want to do microservices?"*
+  | #architecture #ddd #spring-boot #spring-modulith #goto #video
+
+
 Personal development
 ====================
 * `What monks know about foucs (2024)
