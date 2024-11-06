@@ -41,6 +41,7 @@ DISPLAY_CATEGORIES_ON_MENU = True
 MENUITEMS = (
     ('Archives', '/archives.html'),
     ('Tags', '/tags.html'),
+    ('Privacy Policy', '/pages/privacy-policy.html')
 )
 
 LINKS = (
