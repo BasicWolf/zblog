@@ -10,21 +10,6 @@ Hello, I'm Zaur. It's nice to meet you on my website.
    :width: 25%
    :alt: Zaur Nasibov
 
-Originally from Azerbaijan, I moved to Saint Petersburg, Russia to study
-computer science at the State Polytechnical University.
-On the third year of studies, I participated in a short-term exchange program
-with Finland, and felt in love with it.
-After graduation, I moved to Finland in 2008, continued studies at
-University of Eastern Finland in the city of Joensuu.
-And here I am, still living in Joensuu, enjoying the beautiful nature of North Karelia,
-and working as Software Engineer at Nordea.
-
-.. class:: clearfix
-
-\
-
-\
-
 .. class:: clearfix
 
 Software Engineering
@@ -104,8 +89,20 @@ Docker.
 Renovate.
 Sphinx.
 
+My story
+========
+
+Originally from Azerbaijan, I moved to Saint Petersburg, Russia to study
+computer science at the State Polytechnical University.
+On the third year of studies, I participated in a short-term exchange program
+with Finland, and felt in love with this beautiful northern country.
+After graduation, I moved to Finland in 2008, continued studies at
+University of Eastern Finland in the city of Joensuu.
+And here I am, still living in Joensuu, enjoying the beautiful nature of North Karelia,
+and working as Software Engineer at Nordea.
+
 Contact me
------------
+==========
 
 I like being in touch with people, so please for any questions, comments, suggestions,
 code patches or personal, send an email to comments (at) zaurnasibov.com.
