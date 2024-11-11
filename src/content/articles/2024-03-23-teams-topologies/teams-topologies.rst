@@ -130,7 +130,7 @@ four team types acts as a powerful template for effective organization design,
 especially when combined with well-defined software boundaries and efficient
 team interactions.
 
-The **strteam-aligned** team is the primary team type in an organization, and
+The **stream-aligned** team is the primary team type in an organization, and
 the purpose of the other fundamental team topologies. A *stream* represents the
 continuous flow of work aligned to a business domain or organizational
 capability. The team is empowered to build and deliver customer or user
