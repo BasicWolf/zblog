@@ -114,6 +114,10 @@ Software engineering
   *"Do we want to do microservices?"*
   | #architecture #ddd #spring-boot #spring-modulith #goto #video
 
+* `I/O Redirection <https://tldp.org/LDP/abs/html/io-redirection.html>`_
+  by The Linux Documentation Project's Advanced Bash-Scripting Guide
+  |br|
+  A very concise and comprehensive guide to I/O redirection in shell.
 
 Personal development
 ====================
