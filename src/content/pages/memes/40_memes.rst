@@ -11,6 +11,27 @@ the Universe, and everything.
 Software Engineering
 ====================
 
+.. image:: {static}img/full-stack-developer.webp
+   :alt: The dog says: "I can't fly."
+         The fish says: "I can't walk."
+         The bird says: "I can't walk".
+         The duck - a full-stack developer smiles.
+   :loading: lazy
+
+Is a full-stack developer - "the jack of all trades master of none"?
+
+I strongly believe in T-shaping when it comes to your knowledge and skills.
+The best way to understand how web/mobile people
+use your frontend-facing API - is to spend time with them and build
+a user-facing application on top of your backend API. The same works other way
+around: a frontend or mobile expert can ensure the best backend behaviour
+and API for their use case when developing it together with backend people.
+
+And if you are in a small company, or a solo developer - you just do it all,
+not overthinking what sort of developer are you :)
+
+-----
+
 .. image:: {static}img/the-second-system-effect.webp
    :alt: An Engineer who builds a messy house from clear foundation.
    :loading: lazy
