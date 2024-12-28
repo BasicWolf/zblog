@@ -118,6 +118,7 @@ Software engineering
   by The Linux Documentation Project's Advanced Bash-Scripting Guide
   |br|
   A very concise and comprehensive guide to I/O redirection in shell.
+  | #io #bash #redirection
 
 Personal development
 ====================
