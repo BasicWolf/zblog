@@ -24,6 +24,22 @@ Hexagonal architecture and Python - Part II: Domain,  Application Services, Port
 * `Part II: Domain,  Application Services, Ports and Adapters <{filename}../2022_09_18_hexarch_di_python_part_2/2022_09_18_hexarch_di_python_part_2.rst>`_
 * `Part III: Persistence, Transactions, Exceptions and The Final Assembly <{filename}../2022_12_31_hexarch_di_python_part_3/2022_12_31_hexarch_di_python_part_3.rst>`_
 
+
+
+Update
+======
+
+**February 2025**
+
+*Originally, I said that the domain model is the first thing to put in code.
+Today, I always start with public interfaces, and in the case of RESTful services,
+the API. Though what I consider "the right way" has changed, I left this article
+almost intact, only commenting in a few places why the API should go first.*
+
+Intro
+=====
+
+
 Now that you are familiar with the basic principles of Hexagonal architecture
 (`see part I <{filename}../2021_10_30_hexarch_di_python_part_1/2021_10_30_hexarch_di_python_part_1.rst>`_)
 let's try implementing a Django-based application following these principles.
@@ -139,23 +155,27 @@ Let's consider the options:
    Its best design emerges when API consumers and producers collaborate.
    After the API specification is ready, the consumers and the producer (our service) can
    implement their part of the contract independently, and
-   start integration as soon as both parties are ready.
+   start integration as early as possible, even when no domain/business logic
+   code exists yet!
 
-   Sounds fantastic, but there is a catch!
-   The API details will likely influence the implementation
-   of the other parts of the application.
-   We need the opposite - the domain model should
-   serve as the foundation of the API.
-   We can conclude that the domain model should be implemented
-   before the API is set in stone.
+   *As mentioned above, nowadays I start the process by agreeing
+   on early API details with consumers and implementing the API first.
+   In the early stages, I hard-code the returned values and focus on making sure
+   that consumers can integrate. Only then do I start implementing the actual
+   business logic.*
 
-3. **Domain**. Starting with the domain model gives a superior advantage:
+3. **Domain**. Starting with the domain model gives an advantage:
    we can test our **understanding** of the domain model, by expressing it
-   in the code. Behaviour-driven development is essential at this stage.
+   in the code.
+   Behaviour-driven development is essential at this stage.
    BDD brings techniques and tools to test the domain model code against
-   the previously defined user stories. A domain model, which fulfils all the
-   user stories is a solid foundation for the API and the database layers.
+   the previously defined user stories.
+   The problem is that we don't have the means to interact with the model yet.
+   Which means that we have to go API first.
 
+   *However, the article continues as originally put - the Domain model
+   is implemented before API View. The flow of implementing the API first
+   is quite different from domain-first.*
 
 The domain
 ==========
