@@ -10,6 +10,19 @@ become priority number one!
 Recent
 ======
 
+`Testified Documentation plugin for Sphinx
+<https://github.com/BasicWolf/sphinx-testify>`_.
+Testified documentation is a way to build living documentation from an engineer's
+perspective. Imagine documentation sources that reference
+(automated) test results, and these references are verified during
+the build process. As a result, we can keep every paragraph even every
+sentence of the documentation aligned with the code, as long as
+there is a test that "testifies" the described behaviour.
+I explain more about Testified Documentation in
+`this article <{filename}../articles/2024-09-29-testified-documentation/testified-documentation.rst>`_
+written in September 2024.
+
+
 `Experiments with Django and Hexagonal Architecture
 <https://github.com/BasicWolf/hexagonal-architecture-django>`_
 - is a Python project that backs up my
