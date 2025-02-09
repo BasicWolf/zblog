@@ -68,3 +68,15 @@ As of October 2024, I'm still not intimately familiar with Kubernetes
 What I learned from people who manage Kubernetes - they are complex,
 but considering what they provide in aggregate - they are simpler than
 any other bulk of solutions glued together.
+
+
+Quotes
+======
+
+..
+
+   LLMs hallucinate. That is nothing at all like creativity. LLMs do not think, and they do not have human characteristics like creativity. None of the code they produce can be trusted, though I suppose you could say that of Stackoverflow as well.
+
+   .. class:: right
+
+      Allen Holub (2024)
