@@ -23,7 +23,8 @@ Hexagonal architecture and Python - Part II: Domain,  Application Services, Port
 * `Part I: Dependency Injection and componential architecture <{filename}../2021_10_30_hexarch_di_python_part_1/2021_10_30_hexarch_di_python_part_1.rst>`_
 * `Part II: Domain,  Application Services, Ports and Adapters <{filename}../2022_09_18_hexarch_di_python_part_2/2022_09_18_hexarch_di_python_part_2.rst>`_
 * `Part III: Persistence, Transactions, Exceptions and The Final Assembly <{filename}../2022_12_31_hexarch_di_python_part_3/2022_12_31_hexarch_di_python_part_3.rst>`_
-
+* `Part IV: Sociable tests <{filename}../2025-02-08-hexarch-sociable-tests/hexarch-sociable-tests.rst>`_
+* `The code  <https://github.com/BasicWolf/hexagonal-architecture-django/tree/blog>`_
 
 
 Update
@@ -34,7 +35,7 @@ Update
 *Originally, I said that the domain model is the first thing to put in code.
 Today, I always start with public interfaces, and in the case of RESTful services,
 the API. Though what I consider "the right way" has changed, I left this article
-almost intact, only commenting in a few places why the API should go first.*
+almost intact, only commenting in a few places why API should be **coded** first.*
 
 Intro
 =====
@@ -158,8 +159,10 @@ Let's consider the options:
    start integration as early as possible, even when no domain/business logic
    code exists yet!
 
-   *As mentioned above, nowadays I start the process by agreeing
-   on early API details with consumers and implementing the API first.
+   *We should always start by studying the domain, building shared understanding
+   and deriving API from a detailed domain model. But when it comes to putting
+   things in code, nowadays I tend to release API integration components
+   as early as possible.
    In the early stages, I hard-code the returned values and focus on making sure
    that consumers can integrate. Only then do I start implementing the actual
    business logic.*
