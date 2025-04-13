@@ -3,8 +3,9 @@ Hexagonal architecture and Python - Part IV: Sociable Tests
 
 :slug: hexarch-python-part-4-sociable-tests
 :category: Articles
-:tags: architecture, testing, sociable tests, hexagonal architecture, programming, python
+:tags: architecture, testing, sociable tests, hexagonal architecture, programming, python, django
 :date: 2025-02-08 12:00
+:status: draft
 :summary: .. image:: {static}hexarch-sociable-tests.webp
              :align: center
              :alt: Pythons and hexagons with Part IV
@@ -18,11 +19,11 @@ Hexagonal architecture and Python - Part IV: Sociable Tests
           as a whole and have to rely on expensive integration or
           end-to-end tests to do so.
 
-          Sociable unit tests let us test the application as a whole.
-          We avoid end-to-end testing by mocking the application's
-          edges - the parts that interact with its downstream dependencies.
+          We can test the application components in *sociable* manner,
+          leaving our components' direct dependencies as-is,
+          and pushing the mocks further to the edges of the application.
 
-          Let's see how we can build sociable unit tests in a context
+          Let's see how we can utilize sociable unit tests in a context
           of Django application and what benefits we can reap.
 
 
