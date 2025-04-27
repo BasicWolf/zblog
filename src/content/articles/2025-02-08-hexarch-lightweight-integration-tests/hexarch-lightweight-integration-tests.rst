@@ -1,12 +1,12 @@
-Hexagonal architecture and Python - Part IV: Sociable Tests
-###########################################################
+Hexagonal architecture and Python - Part IV: Lightweight integration tests
+##########################################################################
 
-:slug: hexarch-python-part-4-sociable-tests
+:slug: hexarch-python-part-4-lightweight-integration-tests
 :category: Articles
-:tags: architecture, testing, sociable tests, hexagonal architecture, programming, python, django
+:tags: architecture, django, hexagonal architecture, lightweight integration tests, programming, python, testing
 :date: 2025-02-08 12:00
 :status: draft
-:summary: .. image:: {static}hexarch-sociable-tests.webp
+:summary: .. image:: {static}hexarch-lightweight-integration-tests.webp
              :align: center
              :alt: Pythons and hexagons with Part IV
              :target: {filename}hexarch-sociable-tests.rst
@@ -21,9 +21,11 @@ Hexagonal architecture and Python - Part IV: Sociable Tests
 
           We can test the application components in *sociable* manner,
           leaving our components' direct dependencies as-is,
-          and pushing the mocks further to the edges of the application.
+          and pushing the mocks further to the application edges.
 
-          Let's see how we can utilize sociable unit tests in a context
+          If we push the mocks too far, we end up with
+          *lightweight integration tests*.
+          Let's explore how we can utilise such tests in a context
           of Django application and what benefits we can reap.
 
 
@@ -35,7 +37,7 @@ Hexagonal architecture and Python - Part IV: Sociable Tests
 * `Part I: Dependency Injection and componential architecture <{filename}../2021_10_30_hexarch_di_python_part_1/2021_10_30_hexarch_di_python_part_1.rst>`_
 * `Part II: Domain,  Application Services, Ports and Adapters <{filename}../2022_09_18_hexarch_di_python_part_2/2022_09_18_hexarch_di_python_part_2.rst>`_
 * `Part III: Persistence, Transactions, Exceptions and The Final Assembly <{filename}../2022_12_31_hexarch_di_python_part_3/2022_12_31_hexarch_di_python_part_3.rst>`_
-* `Part IV: Sociable tests <{filename}../2025-02-08-hexarch-sociable-tests/hexarch-sociable-tests.rst>`_
+* `Part IV: Lightweight integration tests <{filename}../2025-02-08-hexarch-sociable-tests/hexarch-lightweight-integration-tests.rst>`_
 * `The code  <https://github.com/BasicWolf/hexagonal-architecture-django/tree/blog4>`_
 
 Intro
@@ -49,13 +51,29 @@ However, the problem with such an approach is that we never
 test the application as a whole, and have to rely on expensive
 integration or end-to-end tests to do so.
 
-Sociable unit tests allow us to test the application as a whole.
-We avoid end-to-end testing by mocking the very edges of
-the application - the parts that interact with its downstream
-dependencies.
+We can test the application components in *sociable* manner,
+leaving our components' direct dependencies as-is,
+and pushing the mocks further to the application edges.
 
-Let's see how we can build sociable unit tests in the context
-of Django application and what benefits we will reap.
+If we push the mocks too far, we end up with
+*lightweight integration tests*.
+Let's explore how we can utilise such tests in a context
+of Django application and what benefits we can reap.
+
+..
+
+   The original article focused on such "lightweight integration" tests.
+   I even dared to call them "sociable"!
+   `Jarkko "jmp" Piiroinen <https://github.com/jmp>`_ was very generous to
+   thoroughly review the article. He pointed that *sociable tests*,
+   rather implies testing a thing within the application core (or "Application" in
+   `Alistair Cockburn's definition <https://alistair.cockburn.us/hexagonal-architecture>`_)
+   with its neighbours/collaborators. Testing the whole flow by mocking the
+   rightmost calls is "sociable tests pushed too far", or as Jarkko put it
+   "rather lightweight end-to-end tests".
+
+   The updated article is about exploring the ways to conduct such tests
+   in a Django application setup, focusing on the benefits and caveats.
 
 ------
 
@@ -63,7 +81,7 @@ of Django application and what benefits we will reap.
 
 
 .. contents:: Table of Contents
-    :depth: 3
+    :depth: 1
 
 Time flies (darn, I say that again)!
 I wrote the original "Hexagonal Architecture and Python" series
@@ -74,16 +92,16 @@ has deepened. But the biggest shift, however, has occurred in where I start
 and how I test.
 
 I used to believed that the *implementation* of the domain model should precede
-exposing any API. I still design the domain model first before deriving API structure
-from if. However, I now *implement* a barebones API first, initially hard-coding and
+exposing any API. I still *design* the domain model first before deriving API structure
+from if. However, I *implement* barebones API first, initially hard-coding and
 short-circuiting domain logic, to enable early integrations and
 feedback.
 This approach helps steer the development in the right direction,
 keeps API consumers happy and avoids "big bang" release surprises.
 
 This led to the second change. I used to TDD every layer and every component
-of the application *independently*. Today, I aim at unit testing the system
-as a whole.
+of the application *independently*. Today, I aim at unit testing the
+interconnected parts of the system.
 
 Bear in mind, that the system users often don't care about what's happening
 under its hood.
@@ -98,22 +116,24 @@ we reduce the need to test the application layers in isolation.
 Just so we're clear, I'm not calling anyone to put the whole thing together
 and test it on the launch pad. That's a recipe for disaster - remember what
 happened to the
-`Soviet N1 Moon rocket <https://en.wikipedia.org/wiki/N1_(rocket)>`_?
+`Soviet N1 Moon rocket <https://en.wikipedia.org/wiki/N1_(rocket)>`__?
 
 ..
 
   Adverse characteristics of the large cluster of thirty engines and its complex
   fuel and oxidizer feeder systems were not revealed earlier in development
-  because static test firings had not been conducted. (Wikipedia)
+  because static test firings had not been conducted.
+  (`Wikipedia <https://en.wikipedia.org/wiki/N1_(rocket)>`__)
 
 Instead, I'm looking for relatively lightweight ways to test the entire
 system, without going for a full end-to-end setup.
 
-Hexagonal architecture
-======================
+
+Hexagonal architecture - as described in the articles series
+============================================================
 
 Let's recall the application and its architecture as described
-in the article series:
+in the articles series:
 
 .. figure:: {static}full-app.svg
    :align: center
@@ -121,10 +141,15 @@ in the article series:
    :width: 100%
 
    The example application is built using hexagonal architecture principles.
+   This is beyond what Alistair Cockburn describes in the original
+   `"Hexagonal Architecture" article <https://alistair.cockburn.us/hexagonal-architecture>`_.
+   Cockburn only defines **Ports**, **Adapters**, **Application** and their
+   interactions.
+
 
 The **Application** has a layered structure: the Core, which includes Domain
-models and services; The API (application programming interface)
-and SPI (service provider interface) ports for incoming and outgoing interactions;
+models and services; The driving/in/API (application programming interface)
+and driven/out/SPI (service provider interface) ports for incoming and outgoing interactions;
 and API and SPI adapters.
 
 Python wise:
@@ -163,7 +188,6 @@ Tests like these run blazingly fast, but they only test the isolated behaviour
 of a given component (like an HTTP controller, an application service,
 or a database entities mapper) with fake downstream layer interactions.
 
-
 .. figure:: {static}api-solitary-test.svg
    :align: center
    :alt: A diagram of solitary API test
@@ -171,16 +195,23 @@ or a database entities mapper) with fake downstream layer interactions.
 
    A mockist-style HTTP adapter test.
 
-On the other side is system testing in an integration environment via
-high level end-to-end tests. These tests are slow and prone to breaks cascading
-from downstream dependencies.
+Defining sociable tests is trickier:
 
-So, what if we combined the best aspects of both approaches?
-If the goal of a unit test is to verify a unit of behaviour within
-the application, then we can mock the components that directly interact
-with external dependencies. This ensures that an API test flow passes forward
-and back through the whole application
-in a deterministic and isolated environment.
+..
+
+  When xunit testing began in the 90's we made no attempt to go solitary unless
+  communicating with the collaborators was awkward
+  (such as a remote credit card verification system).
+
+  I think that the term “unit testing” is appropriate because these tests
+  are tests of the behavior of a single unit.
+  We write the tests assuming everything other than that unit is working correctly.
+
+  -- Martin Fowler, `"Unit Test" <https://martinfowler.com/bliki/UnitTest.html>`__.
+
+So, in my perspective *a unit test is sociable when it verifies a unit of behaviour
+across multiple components boundaries. In the verified interaction, at least
+one direct dependency is not mocked, however the further dependencies can be mocked.*
 
 .. figure:: {static}api-sociable-test.svg
    :align: center
@@ -190,18 +221,76 @@ in a deterministic and isolated environment.
    A classical-style HTTP adapter test.
 
 
+Finally, we utilise higher-level integration or end-to-end tests to verify the behaviour flow throughout the application and its dependencies.
+Nowadays, tools such as `Testcontainers <https://testcontainers.com/?language=python>`__
+allow the isolation of these tests by spinning up the real databases, caches
+and other dependencies for a short test lifetime.
+However, this setup might be too resource-intensive, or other downstream dependencies,
+that cannot be dockerised may need to come into play.
+This leaves us with slow and fragile classical e2e tests in an
+integration environment.
+
+What if we push sociable tests a bit further?
+We can mock the layer which stands between our adapters and external dependencies.
+This ensures that an API test flow passes forward
+and back through the whole application
+in a deterministic and isolated environment:
 
 
-Sociable tests-driven development
-=================================
+.. figure:: {static}api-lightweight-integration-test.svg
+   :align: center
+   :alt: A diagram of a lightweight integration API test.
+   :width: 100%
 
-Doing test-driven development with sociable tests is an iterative and deeply
-recursive process.
-We pick up a unit of behaviour and implement it from top-level API
-all the way down to dependencies.
-Initially we skip Clean Architecture principles, and only bring them in
-when the benefits are worth the extra complexity.
-After doing many iterations you may notice a certain pattern:
+   A lightweight integration test.
+
+
+
+Architecture revised
+====================
+
+Software architecture is important because it allows us to independently evolve
+different parts of the application and delay decisions.
+In a way, architecture constrains us, but helps keep the system organised.
+
+My presentation of Hexagonal Architecture in this series of articles,
+especially the testing part, was a bit bloated.
+Alistair Cockburn
+`said nothing <https://alistair.cockburn.us/hexagonal-architecture>`_
+about the application's (core) internals.
+It's up to us whether we introduce "Service", "Domain" or any other layer
+or concept.
+Just think: if an HTTP adapter handles a GET request to return
+raw data from the database, why even bother with "Service" and "Domain" layers
+which would only perform data transformations?
+
+So, when it comes to lightweight integration testing,
+we leave the application core as a black box,
+and interact with adapters only.
+
+.. figure:: {static}hexagonal-core.svg
+   :align: center
+   :alt: A hexagonal architecture application diagram
+   :width: 100%
+
+   We are free to implement the application core in any way
+   when applying Hexagonal Architecture principles.
+
+
+Lightweight integration tests -driven development
+=================================================
+
+A classical end-to-end test is a poor development driver.
+It takes minutes, sometimes tens of minutes to run, often breaks,
+has a complicated setup, and ... (your favourite fallacies here).
+A lightweight integration test is somewhat better: it's fast
+and fully under our control.
+However, it may drive the development of adapters,
+but **NOT** the development of the application core.
+It also requires a complicates setup, especially the test doubles.
+
+Nevertheless, let's explore how such a test drives implementation.
+What steps would we take?
 
 1. Pick a behaviour unit.
 2. Write a test for its API, asserting only the response.
@@ -219,7 +308,7 @@ Let's walk through these steps by implementing the original
 "Vote for an article" use case from scratch.
 I **will not** include implementation code here, just the tests code.
 That's because the implementation stays the same, but the tests
-will change a lot.
+are quite different.
 
 Use case: Vote for an article
 =============================
@@ -391,9 +480,16 @@ Mocks are for humans, not machines!
 I personally find ``spy.call_args[0][0]`` very ugly and non-intuitive.
 The fact that there is a comment explaining *what the line does* is already
 a code smell. How about writing a custom spy object which stores the saved
-entity? For example:
+entity, so that we can get the captured entity via self-explanatory
 
 .. code-block:: python
+
+   def test_when_user__successfully_votes_for_existing_article__system_persists_the_vote_in_the_database(...):
+       ...
+       entity = spy.saved_article_voted_entity
+       assert entity.vote == 'down'
+       ...
+
 
    class SaveArticleVoteEntitySpy:
        saved_article_voted_entity: Optional[ArticleVoteEntity] = None
@@ -412,11 +508,6 @@ entity? For example:
                return spy
            yield _mock_persisting_article_vote
 
-We can now get the captured entity via self-explanatory
-
-.. code-block:: python
-
-   entity = spy.saved_article_voted_entity
 
 
 Remove duplication in tests
@@ -637,52 +728,17 @@ and moving Django model interaction code to SPI adapters.
 
    This is where things get a bit controversial.
    Remember that tests are meant to guide development.
-   So, if your domain model or application service is complicated,
-   do not hesitate to TDD.
-   Sociable tests can confirm that the application's edges work as expected,
-   but they don't necessarily drive the implementation of the application core.
+   TDD the application core via proper solitary and sociable tests!
 
 We are able do these refactorings because our tests cut through
 all the application layers and verify the behavior on its edges.
 
 
-Architecture revised
-====================
-
-Software architecture is important because it allows us to independently evolve different parts of the application and delay decisions.
-In a way, architecture constrains us, but it helps keep the system organised.
-
-My presentation of Hexagonal Architecture in this series of articles,
-especially the testing part, was a bit bloated.
-If we test behaviour on the application's edges while letting the flow
-pass through the application, **how** we implement the internals doesn't
-really matter!
-
-Regarding Hexagonal Architecture,
-anything to the right of the API adapters and to the left of the SPI adapters
-is strictly optional. That includes the Service and Domain layers!
-In other words, if your HTTP adapter handles a GET request to return
-raw data from the database, why even bother with "Service" and "Domain" layers
-that would only make function calls and data transformations?
-
-Don't build these layers just for sake of being aligned with the
-architecture.
-
-
-.. figure:: {static}hexagonal-core.svg
-   :align: center
-   :alt: A hexagonal architecture application diagram
-   :width: 100%
-
-   We are free to implement the application core in any way
-   when applying Hexagonal Architecture principles.
-
-
 The price to pay
 ================
 
-Sociable tests let us test application as a whole, using mocks only
-at the system edges.
+The lightweight integration tests let us quickly test application as a whole,
+using mocks only at the system edges.
 However, these mocks can become quite sophisticated because a single
 use case triggered at the API often results in many downstream
 interactions.
@@ -695,18 +751,37 @@ via a mocked ``Article.objects`` manager.
 At some point, the mocks can become *too* sophisticated and create a mess
 of their own.
 Plausible alternative include in-memory implementation (like in-memory SQLite)
-or even `TestContainers <https://testcontainers.com/>`_.
+or even `Testcontainers <https://testcontainers.com/>`__.
 Just remember, that unit tests are meant to provide rapid feedback.
 For me, even 10 seconds of environment setup can feel too long!
 
 Conclusion
 ==========
 
-Solitary unit tests are excellent for developing individual
-components in isolation.
-However, it's the sociable tests which ensure that all components
+Solitary unit tests are excellent for developing individual components in isolation.
+Sociable unit tests are a classical approach to testing pieces together, mocking
+the complicated dependencies, for example, those which cross the I/O boundary.
+Both solitary and sociable unit tests are my tools of choice
+for test-driven development.
+
+Lightweight integration tests ensures that all components
 work together correctly as a complete application,
-while preserving the speed and flexibility of solitary unit tests.
-You'll likely need to invest significantly in edge mocks to emulate right-most
-interactions, but in my opinion, these investments yield greater benefits
-than testing and mocking *all* application layers individually.
+while preserving the speed and flexibility of unit tests.
+However, we need to invest significantly in edge mocks to emulate rightmost
+interactions. Moreover, these tests drive only the implementation of the
+application edges - the adapters.
+
+Lightweight integration tests are a good alternative
+to either missing integration tests or integration tests which require
+an equally complicated setup.
+They can be quite useful when refactoring a legacy system, that doesn't have
+any tests. We can capture the interaction on the edges and ensure that
+it doesn't change during development.
+
+
+Acknowledgements
+================
+
+Once again, `Jarkko "jmp" Piiroinen <https://github.com/jmp>`_
+nudged me to dive deeper into the subject and test my own knowledge and beliefs.
+I'm very grateful for your input, Jarkko!
