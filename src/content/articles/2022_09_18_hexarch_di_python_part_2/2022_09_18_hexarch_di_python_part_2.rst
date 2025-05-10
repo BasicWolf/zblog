@@ -23,6 +23,7 @@ Hexagonal architecture and Python - Part II: Domain,  Application Services, Port
 * `Part I: Dependency Injection and componential architecture <{filename}../2021_10_30_hexarch_di_python_part_1/2021_10_30_hexarch_di_python_part_1.rst>`_
 * `Part II: Domain,  Application Services, Ports and Adapters <{filename}../2022_09_18_hexarch_di_python_part_2/2022_09_18_hexarch_di_python_part_2.rst>`_
 * `Part III: Persistence, Transactions, Exceptions and The Final Assembly <{filename}../2022_12_31_hexarch_di_python_part_3/2022_12_31_hexarch_di_python_part_3.rst>`_
+* `Part IV: Lightweight integration tests <{filename}../2025-02-08-hexarch-lightweight-integration-tests/hexarch-lightweight-integration-tests.rst>`_
 * `The code  <https://github.com/BasicWolf/hexagonal-architecture-django/tree/blog>`_
 
 

@@ -5,7 +5,7 @@ Hexagonal architecture and Python - Part IV: Lightweight integration tests
 :category: Articles
 :tags: architecture, django, hexagonal architecture, lightweight integration tests, programming, python, testing
 :date: 2025-02-08 12:00
-:status: draft
+:status: published
 :summary: .. image:: {static}hexarch-lightweight-integration-tests.webp
              :align: center
              :alt: Pythons and hexagons with Part IV
@@ -30,14 +30,14 @@ Hexagonal architecture and Python - Part IV: Lightweight integration tests
 
 
 
-.. image:: {static}hexarch-sociable-tests.webp
+.. image:: {static}hexarch-lightweight-integration-tests.webp
              :align: center
              :alt: Pythons and hexagons with Part IV
 
 * `Part I: Dependency Injection and componential architecture <{filename}../2021_10_30_hexarch_di_python_part_1/2021_10_30_hexarch_di_python_part_1.rst>`_
 * `Part II: Domain,  Application Services, Ports and Adapters <{filename}../2022_09_18_hexarch_di_python_part_2/2022_09_18_hexarch_di_python_part_2.rst>`_
 * `Part III: Persistence, Transactions, Exceptions and The Final Assembly <{filename}../2022_12_31_hexarch_di_python_part_3/2022_12_31_hexarch_di_python_part_3.rst>`_
-* `Part IV: Lightweight integration tests <{filename}../2025-02-08-hexarch-sociable-tests/hexarch-lightweight-integration-tests.rst>`_
+* `Part IV: Lightweight integration tests <{filename}../2025-02-08-hexarch-lightweight-integration-tests/hexarch-lightweight-integration-tests.rst>`_
 * `The code  <https://github.com/BasicWolf/hexagonal-architecture-django/tree/blog4>`_
 
 Intro
@@ -261,7 +261,8 @@ about the application's (core) internals.
 It's up to us whether we introduce "Service", "Domain" or any other layer
 or concept.
 Just think: if an HTTP adapter handles a GET request to return
-raw data from the database, why even bother with "Service" and "Domain" layers
+raw data from a single table in the database,
+why even bother with "Service" and "Domain" layers
 which would only perform data transformations?
 
 So, when it comes to lightweight integration testing,
@@ -285,9 +286,10 @@ It takes minutes, sometimes tens of minutes to run, often breaks,
 has a complicated setup, and ... (your favourite fallacies here).
 A lightweight integration test is somewhat better: it's fast
 and fully under our control.
-However, it may drive the development of adapters,
-but **NOT** the development of the application core.
-It also requires a complicates setup, especially the test doubles.
+However, it rather drives adapters development,
+**NOT** the application core development.
+It also requires a complicates setup, especially when it comes
+to test doubles.
 
 Nevertheless, let's explore how such a test drives implementation.
 What steps would we take?
@@ -518,7 +520,7 @@ tests have the similar *Given* and *When* or *Arrange* and *Act* parts.
 As a matter of fact, they **should** have identical parts because
 we're testing the same behaviour, just from different ends!
 
-However, we would rather not repeat ourselves and avoid repetition.
+Let's not repeat ourselves.
 One way is to group the behaviour tests in a single class and
 extract the *Arrange* and *Act* parts into their own fixtures
 and methods. Now, this might be an overkill for a small setup, but here
@@ -728,7 +730,8 @@ and moving Django model interaction code to SPI adapters.
 
    This is where things get a bit controversial.
    Remember that tests are meant to guide development.
-   TDD the application core via proper solitary and sociable tests!
+   Hence, we must drive the development of the application core
+   via proper solitary and sociable tests!
 
 We are able do these refactorings because our tests cut through
 all the application layers and verify the behavior on its edges.
@@ -750,10 +753,10 @@ via a mocked ``Article.objects`` manager.
 
 At some point, the mocks can become *too* sophisticated and create a mess
 of their own.
-Plausible alternative include in-memory implementation (like in-memory SQLite)
-or even `Testcontainers <https://testcontainers.com/>`__.
-Just remember, that unit tests are meant to provide rapid feedback.
-For me, even 10 seconds of environment setup can feel too long!
+That's when *real* integration testing alternatives like in-memory SQLite,
+or even `Testcontainers <https://testcontainers.com/>`__ start making more sense.
+We may loose the rapid feedback of unit tests, but save ourselves a lot of
+time spent on maintenance of messy test doubles.
 
 Conclusion
 ==========
@@ -768,7 +771,7 @@ Lightweight integration tests ensures that all components
 work together correctly as a complete application,
 while preserving the speed and flexibility of unit tests.
 However, we need to invest significantly in edge mocks to emulate rightmost
-interactions. Moreover, these tests drive only the implementation of the
+interactions. Moreover, these tests primarily drive the implementation of
 application edges - the adapters.
 
 Lightweight integration tests are a good alternative
@@ -783,5 +786,6 @@ Acknowledgements
 ================
 
 Once again, `Jarkko "jmp" Piiroinen <https://github.com/jmp>`_
-nudged me to dive deeper into the subject and test my own knowledge and beliefs.
+nudged me to dive deeper into the subject and challenge
+my own understanding of the subject.
 I'm very grateful for your input, Jarkko!
