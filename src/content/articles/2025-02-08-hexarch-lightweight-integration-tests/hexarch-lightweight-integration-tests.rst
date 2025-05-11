@@ -788,6 +788,6 @@ Acknowledgements
 ================
 
 Once again, `Jarkko "jmp" Piiroinen <https://github.com/jmp>`_
-nudged me to dive deeper into the subject and challenge
+nudged me to dive deeper and challenge
 my own understanding of the subject.
 I'm very grateful for your input, Jarkko!
