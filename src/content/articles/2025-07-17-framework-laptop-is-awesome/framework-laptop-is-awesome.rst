@@ -185,7 +185,7 @@ Shall you join the club?
 Before I say anything, I must make a confession: I like MacBook chassis,
 especially the battery-life-to-processing-power ratio.
 But I absolutely hate Apple's policies when it comes to
-`the right to repair. <https://www.youtube.com/watch?v=r0Hwb5xvBn8&t=958s>`_.
+`the right to repair <https://www.youtube.com/watch?v=r0Hwb5xvBn8&t=958s>`_.
 As another example, compare
 `this <https://www.ifixit.com/Guide/MacBook+Pro+14-Inch+Late+2023+(M3)+Fan+Replacement/167783>`__
 to
@@ -211,7 +211,7 @@ My setup specs and other numbers for nerds
 * Framework 13 DIY edition with 2.8k 2880x1920 screen, with `AMD Ryzen 5 7640u <https://www.amd.com/en/products/processors/laptop/ryzen/7000-series/amd-ryzen-5-7640u.html>`_
   CPU.
 * Translucent Black bezel.
-* `Crucial 32GB RAM Kit (16GBx2) DDR5-5600 <https://www.crucial.com/memory/ddr5/CT2K16G56C46S5>`_
+* `Crucial 32GB RAM Kit (16GBx2) DDR5-5600 <https://www.crucial.com/memory/ddr5/CT2K16G56C46S5>`_.
 * `Crucial P3 2TB PCIe M.2 2280 SSD <https://www.crucial.com/ssd/p3/ct2000p3ssd8>`_.
 * Ports: USB-C, USB-A, HDMI, SD Card.
 * The CPU core temperature sensor (k10temp) showed the highest temperature
