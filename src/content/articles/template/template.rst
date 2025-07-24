@@ -5,7 +5,7 @@ A template article
 
 :slug: template-article-in-url
 :category: Articles
-:tags: a-tag another-tag
+:tags: a-tag, another-tag, comma-separated
 :date: 2025-01-01 00:00
 :status: draft
 :summary:
