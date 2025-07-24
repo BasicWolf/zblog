@@ -42,7 +42,7 @@ A rant about a broken screen
 "...Dammit! I **did** cut that antenna cable! Well, there's still one left.
 Damn Lenovo and all modern electronics manufacturers!" - I cursed
 every second of the two hours it took me to disassemble and reassemble
-my better half's ThinkPad to swap
+my better half's IdeaPad to swap
 the broken screen. She had accidentally closed her laptop lid with a smart card
 reader cable lying on the keyboard — resulting in the lower-right quarter
 of the screen dying.
