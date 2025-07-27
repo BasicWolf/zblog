@@ -98,3 +98,6 @@ THEME = '../Flex'
 
 CACHE_CONTENT = True
 LOAD_CONTENT_CACHE = True
+
+# Prevent HTML files from being processed as input
+READERS = {"html": None}
