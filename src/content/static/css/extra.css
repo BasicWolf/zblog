@@ -42,13 +42,6 @@ img.align-center {
     background-color: #ddd;
 }
 
-@media (prefers-color-scheme: dark) {
-    .docutils.literal {
-        background-color: #636363;
-    }
-
-}
-
 .strike {
     text-decoration: line-through;
 }
