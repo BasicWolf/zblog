@@ -47,6 +47,7 @@ MENUITEMS = (
 
 LINKS = (
     ('<strong>Articles</strong>', '/posts.html'),
+    ('Shorts', '/pages/shorts.html'),
     ('Books', '/category/books.html'),
 )
 
