@@ -1,7 +1,9 @@
 /* make global font size a bit bigger */
 /* I simply like it that way :) */
-html, body {
-    font-size: 1.1em;
+@media screen and (min-width: 768px) {
+    html, body {
+        font-size: 1.1em;
+    }
 }
 
 
