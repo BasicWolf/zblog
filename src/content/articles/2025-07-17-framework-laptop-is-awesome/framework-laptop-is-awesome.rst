@@ -5,7 +5,7 @@ Framework Laptop is awesome!
 
 :slug: framework-laptop-is-awesome
 :category: Articles
-:tags: framework-laptop, linux
+:tags: framework-laptop, laptop, linux
 :date: 2025-07-20 23:16
 :status: published
 :summary:
