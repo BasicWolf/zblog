@@ -11,12 +11,23 @@ the Universe, and everything.
 Software Engineering
 ====================
 
+
+.. image:: {static}img/genie-overflow.webp
+   :alt: What is 0 wishes minus one?
+   :loading: lazy
+
+So glad that my first programming language at university was C and that
+I professionally programmed in C.
+The bugs related to integer overflows bring eerie memories :)
+
 .. image:: {static}img/full-stack-developer.webp
    :alt: The dog says: "I can't fly."
          The fish says: "I can't walk."
          The bird says: "I can't walk".
          The duck - a full-stack developer smiles.
    :loading: lazy
+
+----
 
 Is a full-stack developer - "the jack of all trades master of none"?
 
