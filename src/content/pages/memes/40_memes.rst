@@ -32,14 +32,14 @@ So glad that my first programming language at university was C and that
 I professionally programmed in C.
 The bugs related to integer overflows bring eerie memories :)
 
+------
+
 .. image:: {static}img/full-stack-developer.webp
    :alt: The dog says: "I can't fly."
          The fish says: "I can't walk."
          The bird says: "I can't walk".
          The duck - a full-stack developer smiles.
    :loading: lazy
-
-----
 
 Is a full-stack developer - "the jack of all trades master of none"?
 
@@ -53,7 +53,7 @@ and API for their use case when developing it together with backend people.
 And if you are in a small company, or a solo developer - you just do it all,
 not overthinking what sort of developer are you :)
 
------
+------
 
 .. image:: {static}img/the-second-system-effect.webp
    :alt: An Engineer who builds a messy house from clear foundation.
