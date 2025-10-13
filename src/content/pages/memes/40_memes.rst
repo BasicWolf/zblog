@@ -11,6 +11,18 @@ the Universe, and everything.
 Software Engineering
 ====================
 
+.. image:: {static}img/my-github-portfolio.webp
+   :alt: When Github portfolio consists of the weirdest planes ever.
+
+I found this one in a LinkedIn discussion about how recruiters evaluate
+software engineers based on their Github (Gitlab etc.) profile.
+First, a blank activity simply means that people spend their valuable
+free time somewhere else, beside committing to repositories.
+Second, tens of half-baked projects is nothing to be ashamed of!
+One is not born a good engineer, but can only become one through
+thousands hours of practice :)
+
+------
 
 .. image:: {static}img/genie-overflow.webp
    :alt: What is 0 wishes minus one?
