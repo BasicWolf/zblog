@@ -3,3 +3,4 @@ pelican-redirect==1.0.2
 ghp-import==2.1.0
 minchin.pelican.plugins.post-stats==1.2.0
 pelican-neighbors==1.2.0
+pytest==8.4.2
