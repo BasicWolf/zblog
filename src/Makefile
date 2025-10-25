@@ -1,6 +1,6 @@
 PY?=python3
 PELICAN?=pelican
-PELICANOPTS=
+PELICANOPTS=--fatal=warnings
 
 BASEDIR=$(CURDIR)
 CACHEDIRS=$(CURDIR)/cache $(CURDIR)/__pycache__

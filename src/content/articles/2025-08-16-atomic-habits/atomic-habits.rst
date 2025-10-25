@@ -28,7 +28,6 @@ The Power of Atomic Habits
 .. image:: {static}img/cover.webp
    :align: center
    :alt: Atomic Habits book cover
-   :target: {filename}atomic-habits.rst
 
 We shape our habits and our habits shape us.
 You go to sleep late every day — that's a habit.
@@ -74,7 +73,7 @@ James describes a habit as a loop consisting of four stages:
    :align: center
    :width: 50%
    :alt: The Habit Loop
-   :target: {filename}img/the-habit-loop.webp
+   :target: {static}img/the-habit-loop.webp
 
 A **cue** is a trigger that initiates the behaviour, which is expected to
 result in a reward.

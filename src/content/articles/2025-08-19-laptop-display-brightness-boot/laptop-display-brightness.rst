@@ -18,7 +18,6 @@ Fixing low display brightness on LUKS password prompt
 .. image:: {static}img/luks-password-prompt.webp
    :align: center
    :alt: LUKS password prompt
-   :target: {filename}laptop-display-brightness.rst
 
 **Given:**
 

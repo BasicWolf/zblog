@@ -53,7 +53,6 @@ Since you are already reading this, scroll down to feed your curiosity!
 .. image:: {static}img/keymap.webp
    :align: center
    :alt: Explain what's in the image
-   :target: {filename}xkbcommon-and-my-custom-russian-phonetic-layout.rst
 
 
 .. note::
@@ -132,7 +131,7 @@ in an application. I'll omit deep technicalities to keep the narrative short.
    :width: 100%
    :alt: Diagram explaining how pressing a keyboard key ends up in application
          while passing through libxkbcommon.
-   :target: {filename}img/xkb-diagram.svg
+   :target: {static}img/xkb-diagram.svg
 
 
    A high-level diagram of how a key press event travels from a keyboard to
