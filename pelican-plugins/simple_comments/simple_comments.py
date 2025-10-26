@@ -13,18 +13,34 @@ class CommentDirective(Directive):
 
     def run(self) -> list[nodes.Node]:
         self.assert_has_content()
-        comment_from = self.options['from']
-        comment_text = '\n'.join(self.content)
-
-        header_node = nodes.paragraph('', '', nodes.Text(comment_from))
-        body_node = nodes.paragraph('', comment_text)
-        body_node['classes'].append('comment-body')
-
         return [
             # A logical container for the comment header and body
-            nodes.topic('', header_node, body_node)
+            nodes.topic(
+                '',
+                self._build_header_node(),
+                self._build_comment_body_node()
+            )
         ]
 
+    def _build_header_node(self) -> nodes.paragraph:
+        comment_author = self.options['from']
+        published_at = self.options['published_at']
+
+        published_at_node = nodes.inline('', published_at)
+        published_at_node['classes'].append('comment-published-at')
+        return nodes.paragraph(
+            '',
+            '',
+            nodes.inline('', comment_author),
+            nodes.Text(' on '),
+            published_at_node
+        )
+
+    def _build_comment_body_node(self) -> nodes.paragraph:
+        comment_text = '\n'.join(self.content)
+        body_node = nodes.paragraph('', comment_text)
+        body_node['classes'].append('comment-body')
+        return body_node
 
 def register():
     directives.register_directive("comment", CommentDirective)
