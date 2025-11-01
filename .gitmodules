@@ -1,4 +1,4 @@
 [submodule "Flex"]
-	path = Flex
+	path = src/Flex
 	url = https://github.com/basicwolf/Flex.git
 	branch = v3-zaur
