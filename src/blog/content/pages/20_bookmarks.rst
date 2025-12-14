@@ -120,6 +120,13 @@ Software engineering
   A very concise and comprehensive guide to I/O redirection in shell.
   | #io #bash #redirection
 
+* `Enforce Proper direnv Setup <https://joeyates.info/posts/enforce-proper-direnv-setup/>`_
+  by Joe Yates
+  |br|
+  Ensure that the variables declared in envrc are documented and get properly loaded
+  from a private or global environment
+  | #envrc #direnv #environment
+
 Personal development
 ====================
 * `What monks know about foucs (2024)
