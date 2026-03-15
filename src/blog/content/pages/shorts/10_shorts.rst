@@ -7,6 +7,29 @@ Shorts
 Sometimes I just want to put some thoughts on paper without talking too
 much about it :)
 
+Winter 2025-2026
+================
+
+Today is March 15, 2026. Yet, here in Joensuu, Finland it feels like mid-April.
+Just look at this:
+
+.. image:: {static}img/2026.03.15-forecast.webp
+   :alt: Forecast for 2026.03.15 + 10 days. Warm, getting as hot as +8C in shade.
+   :loading: lazy
+   :target: {static}img/2026.03.15-forecast.webp
+
+A strange winter. December was dark and warm, and the first real snow
+started just before Christmas. Cold struck around the same time.
+January and February were *cold*. By cold I mean -20C and lower, and it stayed
+cold for 2 months, yet we barely had any more snow.
+In March someone suddenly flipped the switch and it's warm again.
+Frankly speaking, it's rather hot for this time of year.
+Not that I complain (who doesn't like an early spring after all?),
+but it just doesn't feel right!
+Ah, and my downhill skiing season is
+over from nothing: it was too cold to ski in Jan-Feb, and now all the snow
+has melted :(. On the last note: YLE `confirms <https://yle.fi/a/74-20215367>`_,
+this is exceptionally rare weather.
 
 Oho! GNU/Linux has just upgraded a plugged device firmware!
 ===========================================================
