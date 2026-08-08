@@ -98,6 +98,13 @@ Software engineering
   and deadline propagation to handle it.
   | #network #requests #retry #amplification #highload #circuit-breaker #lessons-learned
 
+* `Новое облако для умных устройств Яндекса: IoT без хаба, без лишних соединений и без надежды на хороший Wi‑Fi
+  <https://habr.com/ru/companies/yandex/articles/1063792/>`_
+  by Ivanov Vadim (Yandex).
+  |br|
+  A high-level description of how Yandex solved the problem of IoT devices
+  talking directly to a back-end server - without an intermediary gateway.
+  | #iot #architecture #network #highload #yandex
 
 * `Bottom-up Architecture: Bridging the Architecture-Code Gap (2024) <https://www.youtube.com/watch?v=LkVIpwHcknE>`_
   by Oliver Drotbohm at GOTO 2024.
