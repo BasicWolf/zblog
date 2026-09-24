@@ -134,6 +134,12 @@ Software engineering
   from a private or global environment
   | #envrc #direnv #environment
 
+* `Вам не нужен OpenClaw — напишите свой <https://habr.com/ru/articles/1029326/>`_
+  by Pastukhov Nikita
+  |br|
+  The article explains how LLM-based tools we nowadays call "AI Agents" actually work.
+  | #ai #llm #agent
+
 Personal development
 ====================
 * `What monks know about foucs (2024)
