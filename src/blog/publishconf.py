@@ -18,5 +18,6 @@ DELETE_OUTPUT_DIRECTORY = True
 
 CACHE_CONTENT = False
 
+SITEURL = "https://www.zaurnasibov.com/"
 
 SIMPLE_COMMENTS = False
