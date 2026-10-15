@@ -10,6 +10,11 @@ become priority number one!
 Recent
 ======
 
+`RRCounter <https://github.com/BasicWolf/rrcounter/>`_ - a simple website visitor
+counter written in Rust. The sole purpose of this project is to learn Rust,
+however I deployed it to "production", and now counting my site visitors with it.
+Btw, "RR" stands for visito\ **R** counte\ **R** :)
+
 `Testified Documentation plugin for Sphinx
 <https://github.com/BasicWolf/sphinx-testify>`_.
 Testified documentation is a way to build living documentation from an engineer's
