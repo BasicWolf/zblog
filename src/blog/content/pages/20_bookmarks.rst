@@ -24,6 +24,13 @@ Software organizations
   - it has been and happening at Creative Assembly - the company
   behind Total War series. | #game #total-war #mismanagement #war-stories
 
+* `Microservices (2020) <https://www.youtube.com/watch?v=y8OnoxKotPQ>`_
+  by KRAZAM
+  |br|
+  How hard can it be to display a user's birthday on a page?
+  Or rather, how did we come here?
+  | #microservices #over-engineering
+
 Software engineering
 ====================
 * `Ruby vs Python comes down to the for loop (2021)
